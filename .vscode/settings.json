@@ -1,0 +1,10 @@
+{
+  // 保留 JSON 验证，确保代码提示和语法检查正常工作
+  "json.validate.enable": true,
+
+  // 将 uni-app 中允许写注释的配置文件关联为 jsonc 格式
+  "files.associations": {
+    "manifest.json": "jsonc",
+    "pages.json": "jsonc"
+  }
+}

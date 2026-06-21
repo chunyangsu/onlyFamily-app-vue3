@@ -1,16 +1,59 @@
 {
-	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-		{
-			"path": "pages/index/index",
-			"style": {
-				"navigationBarTitleText": "uni-app"
-			}
-		}
-	],
-	"globalStyle": {
-		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-app",
-		"navigationBarBackgroundColor": "#F8F8F8",
-		"backgroundColor": "#F8F8F8"
-	}
+  "pages": [
+    {
+      "path": "pages/home/index", // 名字叫不叫index无所谓，位置在第一个，就是首页
+      "style": {
+        "navigationBarTitleText": "首页", // 导航栏标题
+        "enablePullDownRefresh": true // 允许下拉刷新
+      }
+    },
+    {
+      "path": "pages/foodMenu/index",
+      "style": {
+        "navigationBarTitleText": "菜单"
+      }
+    },
+    {
+      "path": "pages/my/index",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8"
+  },
+  // 组件自动引入
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^wd-(.*)": "wot-design-uni/components/wd-$1/wd-$1.vue"
+    }
+  },
+  // 配置底部 tabBar
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#007AFF",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "首页"
+        // "iconPath": "static/images/home.png",
+        // "selectedIconPath": "static/images/home-active.png"
+      },
+      {
+        "pagePath": "pages/foodMenu/index",
+        "text": "菜单"
+        // "iconPath": "static/images/home.png",
+        // "selectedIconPath": "static/images/home-active.png"
+      },
+      {
+        "pagePath": "pages/my/index",
+        "text": "我的"
+      }
+    ]
+  }
 }
