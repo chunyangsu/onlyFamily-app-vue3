@@ -3,7 +3,7 @@
     <view class="text-area">
       <text class="title">{{ title }}</text>
     </view>
-    <wd-button type="success">成功按钮22</wd-button>
+    <wd-button type="success">成功按钮111</wd-button>
     <wd-icon name="add-circle" />
   </view>
 </template>
