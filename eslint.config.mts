@@ -58,7 +58,6 @@ export default defineConfig([
       '@typescript-eslint/ban-types': 'off',
       '@typescript-eslint/no-var-requires': 'off',
       '@typescript-eslint/no-use-before-define': 'off',
-      '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       // ============== vue规则 ==============
       'vue/multi-word-component-names': 'off', // 关闭多单词组件名称的限制
@@ -89,7 +88,6 @@ export default defineConfig([
           math: 'always',
         },
       ],
-      'vue/multi-word-component-names': 'off',
     },
     // eslint不能对html文件生效
     // overrides: [

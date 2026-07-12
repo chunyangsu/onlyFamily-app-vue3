@@ -1,7 +1,7 @@
 <template>
   <view class="content">
     <view class="text-area">
-      <text class="title">{{ title }}</text>
+      <text class="title" style="color: red">{{ title }}</text>
     </view>
     <wd-button type="success">成功按钮111</wd-button>
     <wd-icon name="add-circle" />
@@ -12,7 +12,7 @@
 const title = ref('Hello scy')
 </script>
 
-<style>
+<style lang="scss">
 .content {
   display: flex;
   flex-direction: column;
@@ -32,10 +32,10 @@ const title = ref('Hello scy')
 .text-area {
   display: flex;
   justify-content: center;
-}
 
-.title {
-  font-size: 36rpx;
-  color: #8f8f94;
+  .title {
+    font-size: 36rpx;
+    color: #8f8f94;
+  }
 }
 </style>

@@ -17,7 +17,7 @@
       "@/*": ["./src/*"]
     },
     "lib": ["esnext", "dom"],
-    "types": ["@dcloudio/types", "wot-design-uni/global"],
+    "types": ["@wot-ui/ui/global"],
     // 新增：替代已删除的 importsNotUsedAsValues 和 preserveValueImports
     "verbatimModuleSyntax": true,
     // 新增：解决 moduleResolution=node10 弃用警告，Vite/Vue3 项目推荐使用 bundler

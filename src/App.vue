@@ -10,4 +10,7 @@ onHide(() => {
   console.log('App Hide')
 })
 </script>
-<style></style>
+<style lang="scss">
+// 引入wot-ui的组件库样式
+@use '@wot-ui/ui/styles/theme/index.scss' as *;
+</style>
