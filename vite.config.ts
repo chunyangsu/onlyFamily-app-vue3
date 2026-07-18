@@ -6,6 +6,8 @@ import AutoImport from 'unplugin-auto-import/vite'
 // https://vitejs.dev/config/
 export default defineConfig(async () => {
   // const UnoCss = await import('unocss/vite').then((i) => i.default)
+  // 使用 await import 动态引入 UnoCSS
+  const UnoCSS = (await import('unocss/vite')).default
 
   return {
     css: {
@@ -24,6 +26,9 @@ export default defineConfig(async () => {
       uni(),
       // 配置 UnoCSS
       // UnoCss(),
+      UnoCSS({
+        mode: 'per-module', // 关键配置：让 UnoCSS 为每个组件生成独立样式，实现样式隔离
+      }),
       // 配置自动导入插件
       AutoImport({
         imports: ['vue', 'uni-app'], // 自动导入 Vue 和 UniApp 的 API

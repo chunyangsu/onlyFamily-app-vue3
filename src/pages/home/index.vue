@@ -1,7 +1,7 @@
 <template>
   <view class="content">
-    <view class="text-area">
-      <text class="title">{{ title }}</text>
+    <view class="text-area m-b-50rpx">
+      <text class="title">11{{ title }}</text>
     </view>
     <wd-button type="success">成功按钮111</wd-button>
     <wd-icon name="add-circle" />
