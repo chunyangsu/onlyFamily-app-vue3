@@ -1,10 +1,30 @@
 {
+  "npm.packageManager": "pnpm",
+
   // 保留 JSON 验证，确保代码提示和语法检查正常工作
   "json.validate.enable": true,
-
   // 将 uni-app 中允许写注释的配置文件关联为 jsonc 格式
   "files.associations": {
     "manifest.json": "jsonc",
     "pages.json": "jsonc"
-  }
+  },
+
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.codeActionsOnSave": {
+    // "source.fixAll": "explicit", Prettier插件升级到12.1.0版本后，source.fixAll这种通配的写法失效，需要指定明确的格式化配置文件
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "explicit",
+    "source.fixAll.prettier": "explicit"
+  },
+  "eslint.format.enable": true,
+  "eslint.run": "onSave",
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "vue",
+    "html"
+  ]
 }
