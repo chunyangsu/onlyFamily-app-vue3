@@ -3,13 +3,21 @@
     <view class="text-area m-b-50rpx">
       <text class="title">11{{ title }}</text>
     </view>
-    <wd-button type="success">成功按钮111</wd-button>
+    <wd-button type="success" @click="getUserList">成功按钮111</wd-button>
     <wd-icon name="add-circle" />
   </view>
 </template>
 
 <script setup lang="ts">
+import { getUserListApi } from '@/api/modules/user';
+
 const title = ref('Hello scy')
+
+const getUserList = async () => {
+  getUserListApi().then(res => {
+    console.log(res)
+  })
+}
 </script>
 
 <style lang="scss">

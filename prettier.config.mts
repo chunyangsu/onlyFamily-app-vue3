@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   // (x)=>{},单个参数箭头函数是否显示小括号。(always:始终显示;avoid:省略括号。默认:always)
   arrowParens: "always",
   // 开始标签的右尖括号是否跟随在最后一行属性末尾，默认false
@@ -34,8 +34,6 @@ module.exports = {
   // vue 文件中是否缩进 <style> 和 <script> 标签，默认 false
   vueIndentScriptAndStyle: false,
   endOfLine: "auto",
-  // JSX标签闭合位置 默认false(单起一行)
-  bracketSameLine: false,
   // 配置html的parser
   overrides: [
     {
