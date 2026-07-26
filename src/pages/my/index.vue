@@ -2,14 +2,13 @@
   <view class="content">
     <image class="logo" src="/static/logo.png" />
     <view class="text-area">
-      <text class="title">{{ title }}</text>
+      <navigator url="/pages/login/index">立即登录</navigator>
     </view>
   </view>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-const title = ref('Hello scy')
+// import { ref } from 'vue'
 </script>
 
 <style>

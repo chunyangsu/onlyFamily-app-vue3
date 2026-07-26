@@ -9,12 +9,16 @@
 </template>
 
 <script setup lang="ts">
-import { getUserListApi } from '@/api/modules/user';
+// 全局属性
+// api
+import { getUserListApi } from '@/api/modules/user'
+// ts
+// utils
 
 const title = ref('Hello scy')
 
 const getUserList = async () => {
-  getUserListApi().then(res => {
+  getUserListApi().then((res) => {
     console.log(res)
   })
 }
