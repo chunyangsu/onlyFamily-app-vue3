@@ -55,8 +55,8 @@
     "@dcloudio/uni-mp-xhs": "3.0.0-4080420251103001",
     "@dcloudio/uni-quickapp-webview": "3.0.0-4080420251103001",
     "@wot-ui/ui": "^2.2.0",
-    "pinia": "^4.0.2",
-    "pinia-plugin-persistedstate": "^4.7.1",
+    "pinia": "^2.3.0",
+    "pinia-plugin-persistedstate": "^2.3.0",
     "vue": "^3.4.21",
     "vue-i18n": "^9.1.9",
     "zod": "^4.4.3"

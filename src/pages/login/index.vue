@@ -25,10 +25,12 @@
 import { z } from 'zod'
 import { zodAdapter } from '@wot-ui/ui'
 // 全局属性
+import { useUserStore } from '@/stores/useUserStore'
 // api
-import { loginApi } from '@/api/modules/user'
 // ts
 import type { LoginForm } from '@/api/modules/user/types'
+
+const userStore = useUserStore()
 
 const formRef = ref()
 // 表单数据
@@ -61,11 +63,9 @@ const submitData = async () => {
     const { valid } = await formRef.value?.validate()
     if (!valid) return
     // loading.value = true
-    const response: any = await loginApi(formData.value)
-    // 保存 Token
-    uni.setStorageSync('token', response.token)
-    uni.showToast({ title: '登录成功', icon: 'success' })
+    await userStore.login(formData.value)
 
+    uni.showToast({ title: '登录成功', icon: 'success' })
     setTimeout(() => {
       // 跳转首页
       uni.switchTab({ url: '/pages/home/index' })

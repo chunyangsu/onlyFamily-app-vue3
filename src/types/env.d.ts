@@ -17,3 +17,10 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+// 解决 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate' 的ts错误
+declare module 'pinia-plugin-persistedstate' {
+  import type { PiniaPlugin } from 'pinia'
+  const piniaPluginPersistedstate: PiniaPlugin
+  export default piniaPluginPersistedstate
+}
