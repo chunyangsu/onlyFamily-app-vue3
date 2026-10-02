@@ -24,6 +24,12 @@
       "style": {
         "navigationBarTitleText": "登录"
       }
+    },
+    {
+      "path": "views/food/addDish/index",
+      "style": {
+        "navigationBarTitleText": "添加菜品"
+      }
     }
   ],
   "globalStyle": {

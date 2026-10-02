@@ -12,20 +12,13 @@
     </view>
     <!-- 顶部tab导航 -->
     <view class="top-tab">
-      <!-- <wd-tabs v-model="tab">
-        <block v-for="item in 4" :key="item">
-          <wd-tab :title="`标签${item}`">
-            <view class="content">内容{{ item }}</view>
-          </wd-tab>
-        </block>
+      <!-- <wd-tabs v-model="navTab" @change="changeNavTab">
+        <wd-tab :title="`我要点餐`" name="order" />
+        <wd-tab :title="`添加菜品`" name="add" />
       </wd-tabs> -->
-      <wd-tabs v-model="tab">
-        <block v-for="item in 4" :key="item">
-          <wd-tab :title="`标签${item}`">
-            <view class="content">内容{{ item }}</view>
-          </wd-tab>
-        </block>
-      </wd-tabs>
+      <view>
+        <wd-button @click="goToAddDish">添加菜品</wd-button>
+      </view>
     </view>
     <view class="main">
       <!-- 左侧导航 -->
@@ -37,8 +30,12 @@
 </template>
 
 <script setup lang="ts">
-// 当前选中的 Tab 名称，默认选中 'order'（我要点餐）
-const tab = ref<number>(0)
+// 跳转"添加菜品"页面
+const goToAddDish = () => {
+  uni.navigateTo({
+    url: '/views/food/addDish/index'
+  })
+}
 </script>
 
 <style lang="scss" scoped>
