@@ -1,5 +1,5 @@
 <template>
-  <view class="content">
+  <view class="container">
     <!-- 表单 -->
     <view class="main">
       <wd-form ref="formRef" :model="formData" :schema="schema" :title-width="100">
@@ -41,10 +41,12 @@
 
 <script setup lang="ts">
 // api
-import { getDishCategoryListApi, createDishApi } from '@/api/modules/food'
+import { getDishCategoryListApi } from '@/api/modules/food/category'
+import { createDishApi } from '@/api/modules/food/dish'
 // ts
 // import type { UploadFile } from '@/uni_modules/wot-ui/components/wd-upload/types'
-import type { DishCategoryItem, DishForm } from '@/api/modules/food/types'
+import type { DishCategoryItem } from '@/api/modules/food/category/types'
+import type { DishForm } from '@/api/modules/food/dish/types'
 import { z } from 'zod'
 import { zodAdapter } from '@wot-ui/ui'
 
@@ -132,7 +134,7 @@ onLoad(() => {
 </script>
 
 <style lang="scss" scoped>
-.content {
+.container {
   display: flex;
   flex-direction: column;
   align-items: center;

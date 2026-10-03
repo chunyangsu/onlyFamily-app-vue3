@@ -30,6 +30,12 @@
       "style": {
         "navigationBarTitleText": "添加菜品"
       }
+    },
+    {
+      "path": "views/food/confirmOrder/index",
+      "style": {
+        "navigationBarTitleText": "确认订单"
+      }
     }
   ],
   "globalStyle": {

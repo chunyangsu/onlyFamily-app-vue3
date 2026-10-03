@@ -1,17 +1,16 @@
 import request from '@/api/service'
-import type { DishCategoryItem, DishForm } from '@/api/modules/food/types'
+import type { DishForm } from '@/api/modules/food/dish/types'
 
 /**
- * 获取菜品分类列表
+ * 获取菜品列表
  * @returns
  */
-export const getDishCategoryListApi = () => {
+export const getDishListApi = () => {
   return request({
-    url: '/api/dishCategory/getList',
+    url: '/api/dish/getList',
     method: 'GET'
   })
 }
-
 
 /**
  * 新建菜品

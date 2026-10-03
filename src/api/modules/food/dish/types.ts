@@ -1,8 +1,3 @@
-// 菜品分类列表字段
-export interface DishCategoryItem {
-  value: string
-  label: string // 分类名称
-}
 
 // 菜品表单
 export interface DishForm {
@@ -11,4 +6,13 @@ export interface DishForm {
   introduction: string // 介绍
   makeProcess: string // 制作过程
   price: string // 价格
+}
+
+// 菜品列表字段
+export interface DishItem {
+  id: number
+  name: string // 名称
+  price: string // 价格
+  saleNum: number // 销量
+  cartNum: number // 购物车数量(临时暂存)
 }
