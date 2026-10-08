@@ -17,6 +17,7 @@
         <wd-tab :title="`添加菜品`" name="add" />
       </wd-tabs> -->
         <view>
+          <wd-button @click="goToFoodOrder">订单管理</wd-button>
           <wd-button @click="goToAddDish">添加菜品</wd-button>
         </view>
       </view>
@@ -67,6 +68,12 @@ import { getDishListApi } from '@/api/modules/food/dish'
 import type { DishCategoryItem } from '@/api/modules/food/category/types'
 import type { DishItem } from '@/api/modules/food/dish/types'
 
+// 跳转"订单管理"页面
+const goToFoodOrder = () => {
+  uni.navigateTo({
+    url: '/views/food/foodOrder/index'
+  })
+}
 // 跳转"添加菜品"页面
 const goToAddDish = () => {
   uni.navigateTo({

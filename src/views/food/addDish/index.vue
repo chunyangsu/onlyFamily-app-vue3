@@ -127,7 +127,7 @@ const saveData = async () => {
 // 发布菜品
 const publishDish = () => { }
 
-// 页面加载时获取分类列表
+// 页面加载时触发
 onLoad(() => {
   getDishCategoryList()
 })

@@ -4,13 +4,19 @@
       <!-- 订单列表 -->
       <view class="order-list">
         <view v-for="(item, index) in orderList" :key="index" class="order-item">
-          <view class="order-name">{{ item.name }}</view>
-          <view class="order-price">价格：{{ item.price }}</view>
-          <view class="order-num">数量：{{ item.num }}</view>
+          <view class="order-img">11</view>
+          <view class="order-content">
+            <view class="order-name">{{ item.name }}</view>
+            <view class="price-num">
+              <view class="order-price">￥ {{ item.price }}</view>
+              <view class="order-num">×{{ item.num }}</view>
+            </view>
+          </view>
         </view>
       </view>
       <!-- 订单备注 -->
       <view class="order-remark">
+        <view>订单备注</view>
         <wd-textarea v-model="remark" placeholder="请输入" />
       </view>
     </view>
@@ -91,6 +97,45 @@ onLoad(() => {
 
   .main {
     flex: 1;
+
+    .order-list {
+      .order-item {
+        display: flex;
+        margin-bottom: 8px;
+
+        .order-img {
+          width: 80px;
+          height: 80px;
+          text-align: center;
+          line-height: 78px;
+          background-color: #666;
+          color: #fff;
+          border-radius: 4px;
+        }
+
+        .order-content {
+          flex: 1;
+          padding: 0 10px;
+
+          .order-name {
+            height: 50px;
+          }
+
+          .price-num {
+            display: flex;
+            justify-content: space-between;
+
+            .order-num {
+              color: #666;
+            }
+          }
+        }
+      }
+    }
+
+    .order-remark {
+      margin-top: 20px;
+    }
   }
 
   .footer {
