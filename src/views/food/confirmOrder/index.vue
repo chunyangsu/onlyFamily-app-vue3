@@ -6,12 +6,12 @@
         <view v-for="(item, index) in orderList" :key="index" class="order-item">
           <view class="order-name">{{ item.name }}</view>
           <view class="order-price">价格：{{ item.price }}</view>
-          <view class="order-num">数量：{{ item.cartNum }}</view>
+          <view class="order-num">数量：{{ item.num }}</view>
         </view>
       </view>
       <!-- 订单备注 -->
       <view class="order-remark">
-        <wd-textarea placeholder="请输入订单备注" />
+        <wd-textarea v-model="remark" placeholder="请输入" />
       </view>
     </view>
     <!-- 底部按钮 -->
@@ -25,37 +25,46 @@
 import { getCurrentInstance } from 'vue'
 // api
 import { getDishCategoryListApi } from '@/api/modules/food/category'
-import { createDishApi } from '@/api/modules/food/dish'
+import { createFoodOrderApi } from '@/api/modules/food/foodOrder'
 // ts
 // import type { UploadFile } from '@/uni_modules/wot-ui/components/wd-upload/types'
-import type { DishCategoryItem } from '@/api/modules/food/category/types'
-import type { DishItem } from '@/api/modules/food/dish/types'
+import type { FoodOrderFormApi } from '@/api/modules/food/foodOrder/types'
+
+interface FoodOrderDishItem {
+  id: number // 菜品id
+  name: string // 菜品名称
+  categoryId: number // 分类id
+  price: string // 价格
+  num: number // 数量
+}
 
 // 订单列表
-const orderList = ref<DishItem[]>([])
+const orderList = ref<FoodOrderDishItem[]>([])
+
+const remark = ref('')
 
 // 确认下单
 const confirmData = async () => {
-  // try {
-  //   // 表单校验
-  //   const { valid } = await formRef.value?.validate()
-  //   if (!valid) return
-  //   // loading.value = true
-  //   const tempData = {
-  //     name: formData.value.name,
-  //     categoryId: Number(categoryArr.value[0]),
-  //     introduction: formData.value.introduction,
-  //     makeProcess: formData.value.makeProcess,
-  //     price: formData.value.price
-  //   }
-  //   const response = await createDishApi(tempData)
-  //   console.log(response)
-  // } catch (err) {
-  //   // 接口请求失败
-  //   console.error(err)
-  // } finally {
-  //   // loading.value = false
-  // }
+  try {
+    // 表单校验
+    // const { valid } = await formRef.value?.validate()
+    // if (!valid) return
+    // loading.value = true
+    const tempData: FoodOrderFormApi = {
+      dishArr: orderList.value.map((item) => ({
+        id: item.id,
+        num: item.num
+      })),
+      remark: remark.value
+    }
+    const response = await createFoodOrderApi(tempData)
+    console.log(response)
+  } catch (err) {
+    // 接口请求失败
+    console.error(err)
+  } finally {
+    // loading.value = false
+  }
 }
 
 // 页面加载时触发

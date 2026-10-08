@@ -1,7 +1,8 @@
 <template>
   <view class="container">
-    <!-- 搜索栏 -->
-    <!-- <view class="search">
+    <view class="main">
+      <!-- 搜索栏 -->
+      <!-- <view class="search">
       <view class="search-input">
         <input type="text" placeholder="请输入搜索内容" />
       </view>
@@ -9,40 +10,41 @@
         <button>搜索</button>
       </view>
     </view> -->
-    <!-- 顶部tab导航 -->
-    <view class="top-tab">
-      <!-- <wd-tabs v-model="navTab" @change="changeNavTab">
+      <!-- 顶部tab导航 -->
+      <view class="top-tab">
+        <!-- <wd-tabs v-model="navTab" @change="changeNavTab">
         <wd-tab :title="`我要点餐`" name="order" />
         <wd-tab :title="`添加菜品`" name="add" />
       </wd-tabs> -->
-      <view>
-        <wd-button @click="goToAddDish">添加菜品</wd-button>
+        <view>
+          <wd-button @click="goToAddDish">添加菜品</wd-button>
+        </view>
       </view>
-    </view>
-    <view class="main">
-      <wd-sidebar v-model="active">
-        <wd-sidebar-item v-for="(item, index) in categoryList" :key="index" :value="item.value" :label="item.label" />
-      </wd-sidebar>
-      <!-- <scroll-view class="page-sidebar-demo1__content" scroll-y scroll-with-animation :scroll-top="scrollTop"
+      <view class="order-food">
+        <wd-sidebar v-model="active">
+          <wd-sidebar-item v-for="(item, index) in categoryList" :key="index" :value="item.value" :label="item.label" />
+        </wd-sidebar>
+        <!-- <scroll-view class="page-sidebar-demo1__content" scroll-y scroll-with-animation :scroll-top="scrollTop"
         :throttle="false" @scroll="onScroll"> -->
-      <view class="main-content">
-        <view v-for="(item, index) in dishList" :key="index" class="dish-item">
-          <view class="dish-img">主图</view>
-          <view class="dish-content">
-            <view class="dish-name">{{ item.name }}</view>
-            <view class="dish-price">价格：{{ item.price }}</view>
-            <view class="dish-btn-bar">
-              <view class="sale-num">销量：{{ item.saleNum }}</view>
-              <view class="cart-box">
-                <view v-if="item.cartNum > 0" class="minus-btn" @click="item.cartNum--">-</view>
-                <view v-if="item.cartNum > 0" class="cart-num">{{ item.cartNum }}</view>
-                <view class="plus-btn" @click="item.cartNum++">+</view>
+        <view class="order-food-content">
+          <view v-for="(item, index) in dishList" :key="index" class="dish-item">
+            <view class="dish-img">主图</view>
+            <view class="dish-content">
+              <view class="dish-name">{{ item.name }}</view>
+              <view class="dish-price">价格：{{ item.price }}</view>
+              <view class="dish-btn-bar">
+                <view class="sale-num">销量：{{ item.saleNum }}</view>
+                <view class="cart-box">
+                  <view v-if="item.cartNum > 0" class="minus-btn" @click="item.cartNum--">-</view>
+                  <view v-if="item.cartNum > 0" class="cart-num">{{ item.cartNum }}</view>
+                  <view class="plus-btn" @click="item.cartNum++">+</view>
+                </view>
               </view>
             </view>
           </view>
         </view>
+        <!-- </scroll-view> -->
       </view>
-      <!-- </scroll-view> -->
     </view>
     <!-- 购物车 -->
     <view class="footer">
@@ -72,12 +74,37 @@ const goToAddDish = () => {
   })
 }
 
+interface FoodOrderDishItem {
+  id: number // 菜品id
+  name: string // 菜品名称
+  categoryId: number // 分类id
+  price: string // 价格
+  num: number // 数量
+}
+
 // 跳转"确认订单"页面
 const goToConfirmOrder = () => {
+  if (cartData.value.length === 0) {
+    // uni.showToast({
+    //   title: '请先选择菜品',
+    //   icon: 'none'
+    // })
+    return
+  }
+  const tempArr: FoodOrderDishItem[] = []
+  cartData.value.forEach((item) => {
+    tempArr.push({
+      id: item.id,
+      name: item.name,
+      categoryId: item.categoryId,
+      price: item.price,
+      num: item.cartNum
+    })
+  })
   uni.navigateTo({
     url: '/views/food/confirmOrder/index',
     success(res) {
-      res.eventChannel.emit('cartData', cartData.value)
+      res.eventChannel.emit('cartData', tempArr)
     }
   })
 }
@@ -99,6 +126,9 @@ const getDishCategoryList = async () => {
   })
 }
 
+// 菜品列表
+const dishList = ref<DishItem[]>([])
+
 // 获取菜品列表
 const getDishList = async () => {
   getDishListApi().then((res: any) => {
@@ -107,6 +137,7 @@ const getDishList = async () => {
       dishList.value.push({
         id: item.id,
         name: item.name,
+        categoryId: item.categoryId,
         price: item.price,
         saleNum: 0,
         cartNum: 0
@@ -114,9 +145,6 @@ const getDishList = async () => {
     })
   })
 }
-
-// 菜品列表
-const dishList = ref<DishItem[]>([])
 
 // 购物车数据(已选菜品及数量)
 const cartData = computed(() => {
@@ -147,16 +175,20 @@ onLoad(() => {
 
 <style lang="scss" scoped>
 .container {
-  // display: flex;
-  // flex-direction: column;
-  // align-items: center;
-  // justify-content: center;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+
+  .main {
+    flex: 1;
+  }
 }
 
-.main {
+.order-food {
   display: flex;
 
-  .main-content {
+  .order-food-content {
     flex: 1;
 
     .dish-item {
@@ -231,12 +263,20 @@ onLoad(() => {
 }
 
 .footer {
+  flex-shrink: 0;
   display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 20rpx 32rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  // background: #fff;
+  border-top: 1rpx solid #eee;
+
   justify-content: space-between;
   border-radius: 8px;
   margin: 0 10px;
   padding: 8px;
-  box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.1);
+  // box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.1);
 
   .cart {
     display: flex;

@@ -1,4 +1,3 @@
-
 // 菜品表单
 export interface DishForm {
   name: string // 名称
@@ -12,6 +11,7 @@ export interface DishForm {
 export interface DishItem {
   id: number
   name: string // 名称
+  categoryId: number // 分类id
   price: string // 价格
   saleNum: number // 销量
   cartNum: number // 购物车数量(临时暂存)
