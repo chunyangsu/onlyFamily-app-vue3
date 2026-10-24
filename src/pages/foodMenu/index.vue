@@ -194,6 +194,7 @@ onLoad(() => {
 
 .order-food {
   display: flex;
+  margin-top: 10px;
 
   .order-food-content {
     flex: 1;

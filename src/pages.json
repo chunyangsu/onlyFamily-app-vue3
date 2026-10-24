@@ -10,7 +10,13 @@
     {
       "path": "pages/foodMenu/index",
       "style": {
-        "navigationBarTitleText": "菜单"
+        "navigationBarTitleText": "厨房"
+      }
+    },
+    {
+      "path": "pages/transaction/index",
+      "style": {
+        "navigationBarTitleText": "账单"
       }
     },
     {
@@ -70,7 +76,13 @@
       },
       {
         "pagePath": "pages/foodMenu/index",
-        "text": "菜单"
+        "text": "厨房"
+        // "iconPath": "static/images/home.png",
+        // "selectedIconPath": "static/images/home-active.png"
+      },
+      {
+        "pagePath": "pages/transaction/index",
+        "text": "账单"
         // "iconPath": "static/images/home.png",
         // "selectedIconPath": "static/images/home-active.png"
       },

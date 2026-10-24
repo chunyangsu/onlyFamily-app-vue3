@@ -4,10 +4,12 @@
     <view class="main">
       <wd-form ref="formRef" :model="formData" :schema="schema" :title-width="100">
         <!-- 上传主图 -->
-        <!-- <wd-form-item title="上传主图" required prop="fileList">
-          <wd-upload v-model:file-list="fileList" accept="image" image-mode="aspectFill" :action="action"
-            :success-status="[200, 201]"></wd-upload>
-        </wd-form-item> -->
+        <wd-form-item title="上传主图" required>
+          <!-- <wd-upload v-model:file-list="fileList" accept="image" image-mode="aspectFill" :action="action"
+            :success-status="[200, 201]"></wd-upload> -->
+          <su-upload v-model="attachmentList" category="food" :max-count="2" @success="handleUploadSuccess"
+            @fail="handleUploadFail" />
+        </wd-form-item>
         <!-- 菜品名称 -->
         <wd-form-item title="菜品名称" required prop="name">
           <wd-input v-model="formData.name" placeholder="请输入" />
@@ -50,6 +52,9 @@ import type { DishForm } from '@/api/modules/food/dish/types'
 import { z } from 'zod'
 import { zodAdapter } from '@wot-ui/ui'
 
+import SuUpload from '@/components/su/SuUpload/index.vue'
+import type { AttachmentInfo } from '@/components/su/SuUpload/types'
+
 const formRef = ref()
 
 // 表单数据
@@ -61,13 +66,17 @@ const formData = ref<DishForm>({
   price: ''
 })
 
-const action = 'https://69bd04402bc2a25b22ad0a49.mockapi.io/upload'
+// const action = 'https://69bd04402bc2a25b22ad0a49.mockapi.io/upload'
 
-// const fileList = ref<UploadFile[]>([
-//   {
-//     url: 'https://wot-ui.cn/assets/panda.jpg'
-//   }
-// ])
+const attachmentList = ref<AttachmentInfo[]>([])
+
+const handleUploadSuccess = (file: AttachmentInfo) => {
+  console.log('OSS 上传成功：', file.objectKey)
+}
+
+const handleUploadFail = (error: unknown) => {
+  console.error('OSS 上传失败：', error)
+}
 
 const categoryArr = ref<string[]>([])
 

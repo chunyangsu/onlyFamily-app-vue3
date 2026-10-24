@@ -1,10 +1,20 @@
 <template>
   <view class="content">
-    <view class="text-area m-b-50rpx">
-      <text class="title">11{{ title }}</text>
+    <!-- 轮播图 -->
+    <view class="swiper">
+      <wd-swiper :list="swiperList" autoplay v-model:current="current" :indicator="{ type: 'dots' }"></wd-swiper>
     </view>
-    <wd-button type="success" @click="getUserList">成功按钮111</wd-button>
-    <wd-icon name="add-circle" />
+    <!-- 菜单栏 -->
+    <view class="menu-list card-box">
+      <view class="menu-item">点餐</view>
+      <view class="menu-item">记账</view>
+      <view class="menu-item">分享</view>
+    </view>
+    <!-- 人气推荐 -->
+    <view class="food-recommend card-box">
+      <view class="recommend-title">美食·人气推荐</view>
+      <view class="recommend-list">暂无数据</view>
+    </view>
   </view>
 </template>
 
@@ -15,39 +25,30 @@ import { getUserListApi } from '@/api/modules/user'
 // ts
 // utils
 
-const title = ref('Hello scy')
+const current = ref(0)
 
-const getUserList = async () => {
-  getUserListApi().then((res) => {
-    console.log(res)
-  })
-}
+const swiperList = ref([
+  'https://wot-ui.cn/assets/redpanda.jpg',
+  'https://wot-ui.cn/assets/capybara.jpg',
+  'https://wot-ui.cn/assets/panda.jpg',
+  'https://wot-ui.cn/assets/moon.jpg',
+  'https://wot-ui.cn/assets/meng.jpg'
+])
 </script>
 
 <style lang="scss">
 .content {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
 
-.logo {
-  height: 200rpx;
-  width: 200rpx;
-  margin-top: 200rpx;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 50rpx;
-}
+  .menu-list {
+    margin-top: 10px;
+    display: flex;
 
-.text-area {
-  display: flex;
-  justify-content: center;
-
-  .title {
-    font-size: 36rpx;
-    color: #8f8f94;
+    .menu-item {
+      flex: 1;
+      text-align: center;
+    }
   }
 }
 </style>
