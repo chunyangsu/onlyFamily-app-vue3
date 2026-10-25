@@ -25,8 +25,10 @@
 // 全局属性
 // api
 import { getUploadPolicyApi } from '@/api/common/oss'
+import { addAttachmentApi } from '@/api/common/attachment'
 // ts
 import type { UploadPolicyRequest, UploadPolicyResponse } from '@/api/common/oss/types'
+import type { AddAttachmentItem } from '@/api/common/attachment/types'
 import type {
   UploadFileItem,
   UploadMethod,
@@ -83,8 +85,11 @@ const emit = defineEmits<{
   exceed: [event: UploadExceedEvent]
 }>()
 
-// 文件列表
+// 附件列表
 const fileList = ref<UploadFileItem[]>([])
+// oss上传成功后的数据：用于存到后端附件表中
+const ossData = new Map<number, AddAttachmentItem>()
+
 /** 防止父组件更新 v-model 时覆盖内部上传状态 */
 let syncingFromModel = false
 /** 记录正在上传的任务，支持后续中断 */
@@ -97,6 +102,16 @@ const uploadMetadata = new Map<
     contentType: string
   }
 >()
+
+/** OSS 上传成功、等待登记到 MySQL 的附件 */
+// const ossData = new Map<
+//   number,
+//   {
+//     name: string
+//     category: string
+//     objectKey: string
+//   }
+// >()
 
 /** 生成前端文件标识 */
 let uidSeed = 1
@@ -267,17 +282,14 @@ const beforeUpload = (option: { files: Record<string, any>[]; fileList: UploadFi
  * 4. 不将长期AccessKey放到前端
  */
 const customUpload: UploadMethod = (file, formData, options) => {
-  console.log(1)
-  console.log(file)
-  console.log(formData)
   void (async () => {
     try {
-      const name = getFileName({ ...file, type: props.accept })
+      const fileName = getFileName({ ...file, type: props.accept })
       // 将回退名称写回列表，避免微信端后续 toAttachment 仍然拿到空 name
       // if (!file.name) {
       //   file.name = name
       // }
-      const mimeType = getMimeType(name, props.accept)
+      const mimeType = getMimeType(fileName, props.accept)
 
       if (!mimeType) {
         throw new Error('不支持的图片格式')
@@ -317,6 +329,13 @@ const customUpload: UploadMethod = (file, formData, options) => {
         formData: ossFormData,
 
         success(res) {
+          // OSS上传成功，暂存登记数据库所需的信息
+          ossData.set(file.uid, {
+            name: fileName,
+            category: props.category,
+            objectKey: policy.objectKey
+          })
+
           uploadTasks.delete(file.uid)
           if ([200, 201, 204].includes(res.statusCode)) {
             options.onSuccess(res, file, ossFormData)
@@ -327,11 +346,11 @@ const customUpload: UploadMethod = (file, formData, options) => {
           }
         },
         fail(error) {
-          uploadTasks.delete(file.uid)
+          // uploadTasks.delete(file.uid)
           options.onError(error, file, ossFormData)
         }
       })
-      uploadTasks.set(file.uid, task)
+      // uploadTasks.set(file.uid, task)
       task.onProgressUpdate((res) => {
         options.onProgress(res, file)
       })
@@ -354,8 +373,18 @@ function handleFileListUpdate(list: UploadFileItem[]) {
 //   emitFileListChange(event.fileList)
 // }
 
-/** 上传成功 */
-function handleSuccess(event: UploadSuccessEvent) {
+// 上传成功
+const handleSuccess = async (event: UploadSuccessEvent) => {
+  console.log(2)
+  console.log(event)
+  console.log(ossData)
+  const tempArr: AddAttachmentItem[] = []
+  tempArr.push({
+    name: ossData.get(event.file.uid)?.name ?? '',
+    category: ossData.get(event.file.uid)?.category ?? '',
+    objectKey: ossData.get(event.file.uid)?.objectKey ?? ''
+  })
+  await addAttachmentApi(tempArr)
   // const attachment = toAttachment(event.file)
   // attachment.status = 'success'
   // attachment.percent = 100
