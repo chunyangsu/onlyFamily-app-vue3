@@ -5,10 +5,7 @@
       <wd-form ref="formRef" :model="formData" :schema="schema" :title-width="100">
         <!-- 上传主图 -->
         <wd-form-item title="上传主图" required>
-          <!-- <wd-upload v-model:file-list="fileList" accept="image" image-mode="aspectFill" :action="action"
-            :success-status="[200, 201]"></wd-upload> -->
-          <su-upload v-model="attachmentList" category="food" :max-count="2" @success="handleUploadSuccess"
-            @fail="handleUploadFail" />
+          <su-upload v-model="attachmentList" module="dish" accept="image" />
         </wd-form-item>
         <!-- 菜品名称 -->
         <wd-form-item title="菜品名称" required prop="name">
@@ -60,26 +57,15 @@ const formRef = ref()
 // 表单数据
 const formData = ref<DishForm>({
   name: '',
+  attachmentId: 0,
   categoryId: 0,
   introduction: '',
   makeProcess: '',
   price: ''
 })
 
-// const action = 'https://69bd04402bc2a25b22ad0a49.mockapi.io/upload'
-
-const attachmentList = ref<AttachmentInfo[]>([])
-
-const handleUploadSuccess = (file: AttachmentInfo) => {
-  console.log('OSS 上传成功：', file.objectKey)
-}
-
-const handleUploadFail = (error: unknown) => {
-  console.error('OSS 上传失败：', error)
-}
-
+const attachmentList = ref<number[]>([])
 const categoryArr = ref<string[]>([])
-
 const categoryList = ref<DishCategoryItem[]>([])
 
 // 表单校验
@@ -116,8 +102,9 @@ const saveData = async () => {
     const { valid } = await formRef.value?.validate()
     if (!valid) return
     // loading.value = true
-    const tempData = {
+    const tempData: DishForm = {
       name: formData.value.name,
+      attachmentId: attachmentList.value[0],
       categoryId: Number(categoryArr.value[0]),
       introduction: formData.value.introduction,
       makeProcess: formData.value.makeProcess,

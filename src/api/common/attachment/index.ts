@@ -1,5 +1,5 @@
 import request from '@/api/service'
-import type { AddAttachmentItem } from '@/api/common/attachment/types'
+import type { AddAttachmentRequestItem, AddAttachmentResponseItem } from '@/api/common/attachment/types'
 
 /**
  * 获取附件列表
@@ -17,8 +17,8 @@ import type { AddAttachmentItem } from '@/api/common/attachment/types'
  *
  * @param data
  */
-export function addAttachmentApi(attachmentArr: AddAttachmentItem[]) {
-  return request({
+export function addAttachmentApi(attachmentArr: AddAttachmentRequestItem[]): Promise<AddAttachmentResponseItem[]> {
+  return request<AddAttachmentResponseItem[]>({
     url: '/api/attachment/add',
     method: 'POST',
     data: { attachmentArr }

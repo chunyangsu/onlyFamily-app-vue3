@@ -15,12 +15,16 @@
       {{ hint }}
     </view> -->
 
-    <wd-upload v-model:file-list="fileList" :before-upload="beforeUpload" :upload-method="customUpload" :accept="accept"
-      :multiple="multiple" :success-status="[200, 201, 204]" @update:file-list="handleFileListUpdate"
-      @success="handleSuccess" @fail="handleFail"></wd-upload>
+    <wd-upload v-model:file-list="attachmentList" :before-upload="beforeUpload" :upload-method="customUpload"
+      :accept="accept" :success-status="[200, 201, 204]" @success="handleSuccess" @fail="handleFail"></wd-upload>
   </view>
 </template>
 
+<script lang="ts">
+export default {
+  name: 'SuUpload' // 上传组件
+}
+</script>
 <script setup lang="ts">
 // 全局属性
 // api
@@ -28,80 +32,74 @@ import { getUploadPolicyApi } from '@/api/common/oss'
 import { addAttachmentApi } from '@/api/common/attachment'
 // ts
 import type { UploadPolicyRequest, UploadPolicyResponse } from '@/api/common/oss/types'
-import type { AddAttachmentItem } from '@/api/common/attachment/types'
+import type { AddAttachmentRequestItem, AddAttachmentResponseItem } from '@/api/common/attachment/types'
 import type {
   UploadFileItem,
   UploadMethod,
-  ChooseFile,
-  UploadFormData,
   UploadSuccessEvent,
   UploadErrorEvent,
   UploadProgressEvent,
   UploadOversizeEvent as WdUploadOversizeEvent,
   UploadRemoveEvent
 } from '@wot-ui/ui/components/wd-upload/types'
-import type { AttachmentInfo, UploadAccept, UploadCategory, UploadFailEvent, UploadOversizeEvent, UploadExceedEvent } from './types'
+// import type { AttachmentInfo, UploadFailEvent, UploadOversizeEvent, UploadExceedEvent } from './types'
 // utils
 import { buildOssRequest, parseOssUploadError } from './util'
 
-defineOptions({
-  name: 'SuUpload'
-})
-
+// props属性
 interface Props {
-  modelValue: AttachmentInfo[]
-  category: UploadCategory
-  accept?: UploadAccept
-  maxCount?: number
-  maxSize?: number
-  multiple?: boolean
-  disabled?: boolean
-  readonly?: boolean
-  showUpload?: boolean
-  deletable?: boolean
-  hint?: string
+  modelValue: number[]
+  module: 'avatar' | 'dish'
+  accept?: 'image' // 接受上传的文件类型
+  // maxCount?: number
+  // maxSize?: number
+  // multiple?: boolean
+  // disabled?: boolean
+  // readonly?: boolean
+  // showUpload?: boolean
+  // deletable?: boolean
+  // hint?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
   modelValue: () => [],
-  accept: 'image',
-  maxCount: 9,
-  maxSize: 0,
-  multiple: true,
-  disabled: false,
-  readonly: false,
-  showUpload: true,
-  deletable: true,
-  hint: ''
+  accept: 'image'
+  // maxCount: 9,
+  // maxSize: 0,
+  // multiple: true,
+  // disabled: false,
+  // readonly: false,
+  // showUpload: true,
+  // deletable: true,
+  // hint: ''
 })
 
 const emit = defineEmits<{
-  'update:modelValue': [value: AttachmentInfo[]]
-  change: [value: AttachmentInfo[]]
-  success: [file: AttachmentInfo]
-  fail: [event: UploadFailEvent]
-  remove: [file: AttachmentInfo]
-  oversize: [event: UploadOversizeEvent]
-  exceed: [event: UploadExceedEvent]
+  'update:modelValue': [value: number[]]
+  'upload-success': [value: number[]]
 }>()
 
+interface AttachmentItem extends UploadFileItem {
+  id: number // 附件id
+}
 // 附件列表
-const fileList = ref<UploadFileItem[]>([])
+const attachmentList = ref<AttachmentItem[]>([])
 // oss上传成功后的数据：用于存到后端附件表中
-const ossData = new Map<number, AddAttachmentItem>()
+const ossData = new Map<number, AddAttachmentRequestItem>()
 
 /** 防止父组件更新 v-model 时覆盖内部上传状态 */
-let syncingFromModel = false
+// let syncingFromModel = false
 /** 记录正在上传的任务，支持后续中断 */
 const uploadTasks = new Map<number, UniApp.UploadTask>()
+
 /** 记录每个文件申请到的 OSS 对象信息 */
-const uploadMetadata = new Map<
-  number,
-  {
-    objectKey: string
-    contentType: string
-  }
->()
+// const uploadMetadata = new Map<
+//   number,
+//   {
+//     objectKey: string
+//     contentType: string
+//   }
+// >()
 
 /** OSS 上传成功、等待登记到 MySQL 的附件 */
 // const ossData = new Map<
@@ -114,50 +112,50 @@ const uploadMetadata = new Map<
 // >()
 
 /** 生成前端文件标识 */
-let uidSeed = 1
+// let uidSeed = 1
 
-function createUid() {
-  return Date.now() + uidSeed++
-}
+// function createUid() {
+//   return Date.now() + uidSeed++
+// }
 
 /**
  * 获取文件名称
  * 微信小程序 chooseMedia 的返回项没有 name 字段，且临时路径通常也没有
  */
-const getFileName = (file: { name?: string; path?: string; url?: string; type?: string }) => {
-  const name = file.name?.trim()
-  if (name) return name
+// const getFileName = (file: { name?: string; path?: string; url?: string; type?: string }) => {
+//   const name = file.name?.trim()
+//   if (name) return name
 
-  const path = file.path || file.url || ''
-  const pathName = path.split(/[\\/]/).pop()?.split('?')[0] || ''
-  if (pathName && /\.[^./]+$/.test(pathName)) return pathName
+//   const path = file.path || file.url || ''
+//   const pathName = path.split(/[\\/]/).pop()?.split('?')[0] || ''
+//   if (pathName && /\.[^./]+$/.test(pathName)) return pathName
 
-  return file.type === 'image' ? 'image.jpg' : '未命名文件'
+//   return file.type === 'image' ? 'image.jpg' : '未命名文件'
+// }
+
+// 图片类型的MIME枚举
+const imageMimeEnum = ['image/jpeg', 'image/png', 'image/webp']
+
+type SupportedMimeType = (typeof imageMimeEnum)[number]
+
+const mimeMap: Record<string, SupportedMimeType> = {
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  png: 'image/png',
+  webp: 'image/webp'
 }
-
-// MIME类型白名单
-const MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'] as const
-
-type SupportedMimeType = (typeof MIME_TYPES)[number]
-
 /**
- * 根据文件名称推断MIME类型
- * 不支持的类型直接拒绝，不能默认当作JPEG上传
+ * 获取文件的MIME类型(推断，不能决定保证)
+ * 注意：MP-WEIXIN 的 chooseMedia 只返回 tempFilePath/fileType，不返回原始文件名
  */
-const getMimeType = (name = '', fileType?: string): SupportedMimeType | undefined => {
-  const extension = name.split('.').pop()?.toLowerCase()
-
-  const mimeMap: Record<string, SupportedMimeType> = {
-    jpg: 'image/jpeg',
-    jpeg: 'image/jpeg',
-    png: 'image/png',
-    webp: 'image/webp'
-  }
-
-  // MP-WEIXIN 的 chooseMedia 只返回 tempFilePath/fileType，不返回原始文件名
+const getFileMimeType = (path: string, fileType: string) => {
+  // 获取后缀扩展名
+  const extension = path.split('.').pop()?.toLowerCase()
   // 没有扩展名时，图片先按 JPEG 处理（调用方仍可通过真实 name/路径扩展名覆盖）
-  if (extension) return mimeMap[extension]
-  return fileType === 'image' ? 'image/jpeg' : undefined
+  if (extension && mimeMap[extension]) {
+    return mimeMap[extension]
+  }
+  return fileType === 'image' ? 'image/jpeg' : ''
 }
 
 // 从本地文件生成附件对象
@@ -209,12 +207,11 @@ const beforeUpload = (option: { files: Record<string, any>[]; fileList: UploadFi
   const files = option.files || []
 
   for (const rawFile of files) {
-    const name = getFileName(rawFile) // 附件名称
+    console.log(rawFile)
     // const size = Number(rawFile.size || 0) // 附件大小
-    const mimeType = getMimeType(name, rawFile.type) // 附件格式
-
+    const mimeType = getFileMimeType(rawFile.path, rawFile.type) // 附件格式
     // 校验：附件格式
-    if (!mimeType) {
+    if (mimeType === '') {
       uni.showToast({
         title: '仅支持 JPG、PNG、WEBP 图片',
         icon: 'none'
@@ -240,10 +237,8 @@ const beforeUpload = (option: { files: Record<string, any>[]; fileList: UploadFi
     //   })
     //   return false
     // }
-
     // 后续增加 校验：上传数量
     // const currentCount = option.fileList?.length || 0
-
     // if (currentCount >= props.maxCount) {
     //   const file: AttachmentInfo = {
     //     name,
@@ -256,7 +251,6 @@ const beforeUpload = (option: { files: Record<string, any>[]; fileList: UploadFi
     //     file,
     //     maxCount: props.maxCount
     //   })
-
     //   uni.showToast({
     //     title: `最多上传 ${props.maxCount} 张图片`,
     //     icon: 'none'
@@ -284,26 +278,17 @@ const beforeUpload = (option: { files: Record<string, any>[]; fileList: UploadFi
 const customUpload: UploadMethod = (file, formData, options) => {
   void (async () => {
     try {
-      const fileName = getFileName({ ...file, type: props.accept })
-      // 将回退名称写回列表，避免微信端后续 toAttachment 仍然拿到空 name
-      // if (!file.name) {
-      //   file.name = name
-      // }
-      const mimeType = getMimeType(fileName, props.accept)
+      console.log(file)
+      if (!file.url) throw new Error('缺少本地上传文件路径')
+      const mimeType = getFileMimeType(file.url, props.accept)
 
-      if (!mimeType) {
-        throw new Error('不支持的图片格式')
-      }
-
+      // 获取policy
       const tempParams: UploadPolicyRequest = {
-        category: props.category,
-        contentType: mimeType
+        module: props.module
       }
-
       const policy: UploadPolicyResponse = await getUploadPolicyApi(tempParams)
 
       const ossRequest = buildOssRequest(policy)
-      // if (!file.url) throw new Error('缺少本地上传文件路径')
 
       /** 本地再次校验服务端返回的大小限制 */
       // const maxFileSize = Math.min(props.maxSize > 0 ? props.maxSize : Infinity, policy.maxFileSize)
@@ -317,9 +302,7 @@ const customUpload: UploadMethod = (file, formData, options) => {
       //   contentType: policy.contentType
       // })
 
-      /**
-       * 整合上传OSS的表单数据
-       */
+      // 整合上传OSS的表单数据
       const ossFormData = ossRequest.formData
 
       const task = uni.uploadFile({
@@ -329,10 +312,11 @@ const customUpload: UploadMethod = (file, formData, options) => {
         formData: ossFormData,
 
         success(res) {
-          // OSS上传成功，暂存登记数据库所需的信息
+          // OSS上传成功，收集保存数据库所需的信息
           ossData.set(file.uid, {
-            name: fileName,
-            category: props.category,
+            name: '',
+            module: props.module,
+            mimeType: mimeType,
             objectKey: policy.objectKey
           })
 
@@ -350,7 +334,7 @@ const customUpload: UploadMethod = (file, formData, options) => {
           options.onError(error, file, ossFormData)
         }
       })
-      // uploadTasks.set(file.uid, task)
+      uploadTasks.set(file.uid, task)
       task.onProgressUpdate((res) => {
         options.onProgress(res, file)
       })
@@ -361,45 +345,48 @@ const customUpload: UploadMethod = (file, formData, options) => {
   })()
 }
 
-// 更新文件列表
-function handleFileListUpdate(list: UploadFileItem[]) {
-  fileList.value = list
-  // emitFileListChange(list)
-}
-
 /** 文件列表变化 */
 // function handleChange(event: { fileList: UploadFileItem[] }) {
 //   fileList.value = event.fileList
 //   emitFileListChange(event.fileList)
 // }
 
-// 上传成功
+// OSS上传成功
 const handleSuccess = async (event: UploadSuccessEvent) => {
-  console.log(2)
-  console.log(event)
-  console.log(ossData)
-  const tempArr: AddAttachmentItem[] = []
+  const tempArr: AddAttachmentRequestItem[] = []
   tempArr.push({
     name: ossData.get(event.file.uid)?.name ?? '',
-    category: ossData.get(event.file.uid)?.category ?? '',
+    module: ossData.get(event.file.uid)?.module ?? '',
+    mimeType: ossData.get(event.file.uid)?.mimeType ?? '',
     objectKey: ossData.get(event.file.uid)?.objectKey ?? ''
   })
-  await addAttachmentApi(tempArr)
-  // const attachment = toAttachment(event.file)
-  // attachment.status = 'success'
-  // attachment.percent = 100
-  // attachment.objectKey = uploadMetadata.get(event.file.uid)?.objectKey
-  // emit('success', attachment)
-  // emitFileListChange(event.fileList)
-  console.log('上传成功')
-  // const attachment = toAttachment(event.file)
+  try {
+    const response: AddAttachmentResponseItem[] = await addAttachmentApi(tempArr)
+    // 添加附件id
+    attachmentList.value.forEach((item) => {
+      if (item.uid === event.file.uid) {
+        item.id = response[0].id
+      }
+    })
+    updateModelValue()
+    // console.log('上传成功')
+    // const attachment = toAttachment(event.file)
+    // attachment.status = 'success'
+    // attachment.percent = 100
+    // attachment.objectKey = uploadMetadata.get(event.file.uid)?.objectKey
+    // emit('success', attachment)
+    // emitFileListChange(event.fileList)
+    // const attachment = toAttachment(event.file)
 
-  // attachment.status = 'success'
-  // attachment.percent = 100
-  // attachment.objectKey = uploadMetadata.get(event.file.uid)?.objectKey
+    // attachment.status = 'success'
+    // attachment.percent = 100
+    // attachment.objectKey = uploadMetadata.get(event.file.uid)?.objectKey
 
-  // emit('success', attachment)
-  // emitFileListChange(event.fileList)
+    // emit('success', attachment)
+    // emitFileListChange(event.fileList)
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 /** 上传失败 */
@@ -499,27 +486,48 @@ function handleFail(event: UploadErrorEvent) {
 //   uploadTasks.clear()
 // }
 
+// 附件上传成功后的处理
+const handleUploadSuccess = (attachmentIdArr: number[]) => {
+  // if (props.limit === 1) {
+  //   // 单附件
+  //   emits('upload-success', attachmentIdArr[0])
+  // } else {
+  //   // 多附件
+  //   emits('upload-success', attachmentIdArr)
+  // }
+}
+
+// 更新附件id
+const updateModelValue = () => {
+  const tempArr: number[] = []
+  if (attachmentList.value.length > 0) {
+    attachmentList.value.forEach((item) => {
+      tempArr.push(item.id)
+    })
+  }
+  emit('update:modelValue', tempArr)
+  emit('upload-success', tempArr)
+}
+
 // 同步父组件v-model到上传列表
 watch(
   () => props.modelValue,
   (value) => {
-    syncingFromModel = true
-
-    fileList.value = (value || []).map((item) => ({
-      uid: item.uid ?? createUid(),
-      name: item.name,
-      size: item.size,
-      url: item.previewUrl || item.url || '',
-      thumb: item.previewUrl || item.url || '',
-      percent: item.percent ?? 100,
-      status: item.status === 'success' ? 'success' : item.status === 'failed' ? 'fail' : item.status === 'uploading' ? 'loading' : 'pending',
-      objectKey: item.objectKey,
-      attachmentId: item.attachmentId,
-      mimeType: item.mimeType,
-      error: item.error
-    }))
-
-    syncingFromModel = false
+    // syncingFromModel = true
+    // fileList.value = (value || []).map((item) => ({
+    //   uid: item.uid ?? createUid(),
+    //   name: item.name,
+    //   size: item.size,
+    //   url: item.previewUrl || item.url || '',
+    //   thumb: item.previewUrl || item.url || '',
+    //   percent: item.percent ?? 100,
+    //   status: item.status === 'success' ? 'success' : item.status === 'failed' ? 'fail' : item.status === 'uploading' ? 'loading' : 'pending',
+    //   objectKey: item.objectKey,
+    //   attachmentId: item.attachmentId,
+    //   mimeType: item.mimeType,
+    //   error: item.error
+    // }))
+    // syncingFromModel = false
   },
   {
     immediate: true,

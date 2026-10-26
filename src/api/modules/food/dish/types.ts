@@ -1,6 +1,7 @@
 // 菜品表单
 export interface DishForm {
   name: string // 名称
+  attachmentId: number // 附件id(菜品主图)
   categoryId: number // 分类id
   introduction: string // 介绍
   makeProcess: string // 制作过程
