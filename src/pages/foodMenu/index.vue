@@ -29,7 +29,11 @@
         :throttle="false" @scroll="onScroll"> -->
         <view class="order-food-content">
           <view v-for="(item, index) in dishList" :key="index" class="dish-item">
-            <view class="dish-img">主图</view>
+            <!-- 主图 -->
+            <view class="dish-img">
+              <wd-img :width="100" :height="100" :src="item.attachmentUrl" />
+            </view>
+            <!-- 详情信息 -->
             <view class="dish-content">
               <view class="dish-name">{{ item.name }}</view>
               <view class="dish-price">价格：{{ item.price }}</view>
@@ -64,6 +68,7 @@
 // api
 import { getDishCategoryListApi } from '@/api/modules/food/category'
 import { getDishListApi } from '@/api/modules/food/dish'
+import { getAttachmentListApi } from '@/api/common/attachment'
 // ts
 import type { DishCategoryItem } from '@/api/modules/food/category/types'
 import type { DishItem } from '@/api/modules/food/dish/types'
@@ -138,17 +143,33 @@ const dishList = ref<DishItem[]>([])
 
 // 获取菜品列表
 const getDishList = async () => {
-  getDishListApi().then((res: any) => {
+  const tempIdArr: number[] = []
+  getDishListApi().then((response: any) => {
     dishList.value = []
-    res.forEach((item: any) => {
+    response.forEach((item: any) => {
       dishList.value.push({
         id: item.id,
         name: item.name,
+        attachmentId: item.attachmentId,
+        attachmentUrl: '',
         categoryId: item.categoryId,
         price: item.price,
         saleNum: 0,
         cartNum: 0
       })
+      tempIdArr.push(item.attachmentId)
+    })
+    // 获取对应的附件
+    getAttachmentListApi({ idArr: tempIdArr }).then((res: any[]) => {
+      if (res && res.length > 0) {
+        res.forEach((item) => {
+          dishList.value.forEach((val) => {
+            if (val.attachmentId === item.id) {
+              val.attachmentUrl = item.url
+            }
+          })
+        })
+      }
     })
   })
 }

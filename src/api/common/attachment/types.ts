@@ -1,4 +1,9 @@
-// 附件表单
+// 附件
+
+export interface AttachmentQuery {
+  // module: string // 业务模块
+  idArr: number[] // 附件ids
+}
 
 // 添加附件的请求参数字段
 export interface AddAttachmentRequestItem {

@@ -1,16 +1,17 @@
 import request from '@/api/service'
-import type { AddAttachmentRequestItem, AddAttachmentResponseItem } from '@/api/common/attachment/types'
+import type { AttachmentQuery, AddAttachmentRequestItem, AddAttachmentResponseItem } from '@/api/common/attachment/types'
 
 /**
  * 获取附件列表
  * @returns
  */
-// export const getDishListApi = () => {
-//   return request({
-//     url: '/api/dish/getList',
-//     method: 'GET'
-//   })
-// }
+export const getAttachmentListApi = (query: AttachmentQuery): Promise<any[]> => {
+  return request({
+    url: '/api/attachment/getList',
+    method: 'GET',
+    data: query
+  })
+}
 
 /**
  * 添加附件
