@@ -48,7 +48,7 @@ export function buildOssRequest(policy: UploadPolicyResponse) {
   }
 
   // Do not hardcode 200 if the signed policy requires 201 or 204.
-  // let successStatus = String(policy.successActionStatus ?? 200)
+  let successStatus = String(policy.successActionStatus ?? 200)
   for (const condition of signedPolicy.conditions) {
     if (Array.isArray(condition)) {
       // if (condition[0] === 'eq' && condition[1] === '$success_action_status') successStatus = String(condition[2])
@@ -66,9 +66,9 @@ export function buildOssRequest(policy: UploadPolicyResponse) {
     'x-oss-signature-version': policy.signatureVersion,
     'x-oss-credential': policy.credential,
     'x-oss-date': policy.date,
-    'x-oss-signature': policy.signature
+    'x-oss-signature': policy.signature,
+    success_action_status: successStatus
     // 'Content-Type': policy.contentType,
-    // success_action_status: successStatus
   }
   // A token is required for STS, but must not be submitted as undefined/empty
   // when the server signs using long-term credentials.

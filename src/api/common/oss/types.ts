@@ -20,5 +20,5 @@ export interface UploadPolicyResponse {
   securityToken?: string // 使用 STS 临时凭证时必填；长期凭证签名时不传
   // maxFileSize: number // 单个文件允许的最大字节数
   // expiration: string // 凭证过期时间
-  // successActionStatus?: 200 | 201 | 204 // 必须与签名 policy 条件一致；未返回时从 policy 读取
+  successActionStatus?: 200 | 201 | 204 // 必须与签名 policy 条件一致；未返回时从policy读取
 }
