@@ -13,4 +13,9 @@ onHide(() => {
 <style lang="scss">
 // 引入wot-ui的组件库样式
 @use '@wot-ui/ui/styles/theme/index.scss' as *;
+
+// 全局背景色
+page {
+  background-color: $pageBg;
+}
 </style>

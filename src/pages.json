@@ -53,19 +53,26 @@
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "uni-app",
-    "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F8F8F8"
+    "navigationBarBackgroundColor": "#faf8f2",
+    "backgroundColor": "#faf8f2"
   },
   // 组件自动引入
   "easycom": {
     "autoscan": true,
     "custom": {
+      // 自定义组件
+      "^SuButton$": "@/components/su/SuButton/index.vue",
+      "^SuCard$": "@/components/su/SuCard/index.vue",
+      "^SuImage$": "@/components/su/SuImage/index.vue",
+      "^SuUpload$": "@/components/su/SuUpload/index.vue",
+      // wot组件
       "^wd-(.*)": "@wot-ui/ui/components/wd-$1/wd-$1.vue"
     }
   },
   // 配置底部 tabBar
   "tabBar": {
     "color": "#999999",
+    "backgroundColor": "#faf8f2",
     "selectedColor": "#007AFF",
     "list": [
       {

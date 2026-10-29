@@ -1,0 +1,20 @@
+/**
+* 自定义样式
+*/
+
+// 清除浮动
+.clearfix::after {
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+  content: '';
+}
+
+// 容器
+.common-container {
+  // display: flex;
+  // flex-direction: column;
+  // height: 100vh;
+  // overflow: hidden;
+}

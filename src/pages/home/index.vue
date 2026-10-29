@@ -1,53 +1,138 @@
 <template>
-  <view class="content">
-    <!-- 轮播图 -->
-    <view class="swiper">
-      <wd-swiper :list="swiperList" autoplay v-model:current="current" :indicator="{ type: 'dots' }"></wd-swiper>
+  <view class="common-container home">
+    <!-- 家庭信息-模块 -->
+    <view class="family">
+      <view class="family-content">
+        <view class="family-date">2026.10.28 星期四</view>
+        <view class="family-title">早上好！欢迎回家</view>
+        <view class="family-name">我们的小家</view>
+        <!-- 家庭成员 -->
+        <view class="family-member">
+          <view class="member-item">爸爸</view>
+          <view class="member-item">妈妈</view>
+          <view class="member-item">儿子</view>
+        </view>
+      </view>
+      <view class="family-logo">图片</view>
     </view>
-    <!-- 菜单栏 -->
-    <view class="menu-list card-box">
-      <view class="menu-item">点餐</view>
-      <view class="menu-item">记账</view>
-      <view class="menu-item">分享</view>
+    <!-- 今日菜单-模块 -->
+    <view class="card-item">
+      <SuCard title="今日菜单">
+        <view class="food-menu">
+          <view class="food-menu-main">
+            <view class="left-img">图片</view>
+            <view class="left-content">
+              <view class="dish-item">土豆炖牛腩</view>
+              <view class="dish-item">青椒土豆丝</view>
+              <view class="dish-item">番茄鸡蛋汤</view>
+              <view class="dish-item">米饭</view>
+            </view>
+          </view>
+          <view class="add-food-btn">继续点餐</view>
+          <!-- <view class="food-footer">
+          <view>午餐/晚餐</view>
+          <view>3人用餐</view>
+        </view> -->
+        </view>
+      </SuCard>
     </view>
-    <!-- 人气推荐 -->
-    <view class="food-recommend card-box">
-      <view class="recommend-title">美食·人气推荐</view>
-      <view class="recommend-list">暂无数据</view>
+    <!-- 本月账单-模块 -->
+    <view class="card-item">
+      <SuCard title="本月账单">
+        <view class="transaction">本月账单</view>
+      </SuCard>
     </view>
+    <!-- 生活动态-模块 -->
+    <!-- <view class="card-item">
+      <SuCard title="生活动态">
+        <view class="life">生活动态</view>
+      </SuCard>
+    </view> -->
   </view>
 </template>
 
 <script setup lang="ts">
 // 全局属性
 // api
-import { getUserListApi } from '@/api/modules/user'
+// import { getUserListApi } from '@/api/modules/user'
 // ts
 // utils
-
-const current = ref(0)
-
-const swiperList = ref([
-  'https://wot-ui.cn/assets/redpanda.jpg',
-  'https://wot-ui.cn/assets/capybara.jpg',
-  'https://wot-ui.cn/assets/panda.jpg',
-  'https://wot-ui.cn/assets/moon.jpg',
-  'https://wot-ui.cn/assets/meng.jpg'
-])
 </script>
 
-<style lang="scss">
-.content {
-  display: flex;
-  flex-direction: column;
+<style lang="scss" scoped>
+.home {
+  padding: 0 24rpx;
 
-  .menu-list {
-    margin-top: 10px;
+  .card-item {
+    margin-top: 24rpx;
+  }
+
+  // 家庭信息
+  .family {
     display: flex;
 
-    .menu-item {
+    .family-content {
       flex: 1;
+
+      .family-date {
+        color: #666;
+      }
+
+      .family-title {
+        font-size: 50rpx;
+      }
+
+      .family-name {}
+
+      .family-member {
+        display: flex;
+
+        .member-item {
+          width: 80rpx;
+          height: 80rpx;
+          border-radius: 50%;
+          background-color: #ccc;
+        }
+      }
+    }
+
+    .family-logo {
+      width: 200rpx;
+      height: 200rpx;
+      line-height: 198rpx;
       text-align: center;
+      border-radius: 50%;
+      background-color: #ccc;
+    }
+  }
+
+  // 今日菜单
+  .food-menu {
+    .food-menu-main {
+      display: flex;
+
+      .left-img {
+        width: 200rpx;
+        height: 200rpx;
+        line-height: 198rpx;
+        text-align: center;
+        border-radius: 12rpx;
+        background-color: #ccc;
+      }
+
+      .left-content {
+        flex: 1;
+      }
+    }
+
+    .add-food-btn {
+      width: 100%;
+      padding: 16rpx 0;
+      border-radius: 12rpx;
+      background-color: $primary;
+      text-align: center;
+      color: #fff;
+      margin-top: 24rpx;
     }
   }
 }
