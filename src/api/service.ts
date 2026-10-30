@@ -12,6 +12,8 @@ const request = <T>(options: UniApp.RequestOptions): Promise<T> => {
   return new Promise((resolve, reject) => {
     // 获取本地存储的 token
     const token = uni.getStorageSync('token')
+    // 获取本地存储的用户信息
+    const userInfo = uni.getStorageSync('userInfo')
 
     // 发起请求
     uni.request({
@@ -22,8 +24,10 @@ const request = <T>(options: UniApp.RequestOptions): Promise<T> => {
       header: {
         'Content-Type': 'application/json;charset=UTF-8',
         ...options.header,
-        // 身份认证：如果存在 token，则自动添加到请求头
-        Authorization: token ? `Bearer ${token}` : ''
+        // 身份认证：如果存在token，则自动添加到请求头
+        Authorization: token ? `Bearer ${token}` : '',
+        'user-id': 1, // 用户id(临时写死)
+        'family-id': 1 // 所属家庭id(临时写死)
       },
       // 请求成功
       success: (response) => {

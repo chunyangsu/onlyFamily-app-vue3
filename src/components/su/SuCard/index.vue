@@ -6,8 +6,8 @@
         <view class="card-title">{{ title }}</view>
       </view>
       <view class="header-right">
-        <view>查看更多</view>
-        <view>》</view>
+        <view class="view-more">查看更多</view>
+        <view class="view-icon">{{ '》' }}</view>
       </view>
     </view>
     <view class="main">
@@ -54,11 +54,28 @@ const props = withDefaults(defineProps<Props>(), {
 
     .header-left {
       display: flex;
+
+      .card-title {
+        color: $textDark;
+        font-size: 36rpx;
+        font-weight: bold;
+      }
     }
 
     .header-right {
       display: flex;
+      color: #8d8d8d;
+
+      .view-more {}
+
+      .view-icon {
+        margin-left: 8rpx;
+      }
     }
+  }
+
+  .main {
+    margin-top: 20rpx;
   }
 }
 </style>

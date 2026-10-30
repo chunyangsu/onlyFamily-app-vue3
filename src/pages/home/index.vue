@@ -4,7 +4,7 @@
     <view class="family">
       <view class="family-content">
         <view class="family-date">2026.10.28 星期四</view>
-        <view class="family-title">早上好！欢迎回家</view>
+        <view class="family-title">早上好！欢迎回家！</view>
         <view class="family-name">我们的小家</view>
         <!-- 家庭成员 -->
         <view class="family-member">
@@ -28,7 +28,7 @@
               <view class="dish-item">米饭</view>
             </view>
           </view>
-          <view class="add-food-btn">继续点餐</view>
+          <view class="add-btn">继续点餐</view>
           <!-- <view class="food-footer">
           <view>午餐/晚餐</view>
           <view>3人用餐</view>
@@ -39,15 +39,42 @@
     <!-- 本月账单-模块 -->
     <view class="card-item">
       <SuCard title="本月账单">
-        <view class="transaction">本月账单</view>
+        <view class="transaction">
+          <view class="transaction-main">
+            <view class="main-left">
+              <view class="label">本月支出</view>
+              <view class="amount">￥3500.26</view>
+            </view>
+            <view class="main-right">
+              <view class="main-right-row">
+                <view class="label">收入</view>
+                <view class="amount">￥12000.00</view>
+              </view>
+              <view class="main-right-row balance">
+                <view class="label">结余</view>
+                <view class="amount">￥3000.00</view>
+              </view>
+            </view>
+          </view>
+          <view class="add-btn">+记一笔</view>
+        </view>
       </SuCard>
     </view>
     <!-- 生活动态-模块 -->
-    <!-- <view class="card-item">
+    <view class="card-item m-b-24rpx">
       <SuCard title="生活动态">
-        <view class="life">生活动态</view>
+        <view class="life">
+          <view class="header">
+            <view class="user-avatar">头像</view>
+            <view class="header-info">
+              <view class="user-name">妈妈</view>
+              <view class="time">今天 08:30</view>
+            </view>
+          </view>
+          <view class="content"> 周末做了丰富的早餐，开启元气满满的一天！ </view>
+        </view>
       </SuCard>
-    </view> -->
+    </view>
   </view>
 </template>
 
@@ -75,32 +102,43 @@
       flex: 1;
 
       .family-date {
-        color: #666;
+        color: $textLight;
       }
 
       .family-title {
-        font-size: 50rpx;
+        color: $textDark;
+        font-size: 48rpx;
+        font-weight: bold;
       }
 
-      .family-name {}
+      .family-name {
+        margin-top: 24rpx;
+        color: $textDefault;
+        font-weight: bold;
+      }
 
       .family-member {
+        margin-top: 24rpx;
         display: flex;
 
         .member-item {
           width: 80rpx;
           height: 80rpx;
+          line-height: 76rpx;
+          text-align: center;
           border-radius: 50%;
           background-color: #ccc;
+          margin-right: 12rpx;
         }
       }
     }
 
     .family-logo {
-      width: 200rpx;
-      height: 200rpx;
-      line-height: 198rpx;
+      width: 250rpx;
+      height: 250rpx;
+      line-height: 246rpx;
       text-align: center;
+      margin-top: 24rpx;
       border-radius: 50%;
       background-color: #ccc;
     }
@@ -112,9 +150,9 @@
       display: flex;
 
       .left-img {
-        width: 200rpx;
-        height: 200rpx;
-        line-height: 198rpx;
+        width: 300rpx;
+        height: 300rpx;
+        line-height: 298rpx;
         text-align: center;
         border-radius: 12rpx;
         background-color: #ccc;
@@ -122,10 +160,16 @@
 
       .left-content {
         flex: 1;
+        margin-left: 24rpx;
+
+        .dish-item {
+          color: $textLight;
+          line-height: 52rpx;
+        }
       }
     }
 
-    .add-food-btn {
+    .add-btn {
       width: 100%;
       padding: 16rpx 0;
       border-radius: 12rpx;
@@ -133,6 +177,97 @@
       text-align: center;
       color: #fff;
       margin-top: 24rpx;
+    }
+  }
+
+  // 本月账单
+  .transaction {
+    .transaction-main {
+      display: flex;
+
+      .main-left {
+        flex: 1;
+
+        .label {
+          color: $textLight;
+        }
+
+        .amount {
+          color: $textDark;
+          font-size: 52rpx;
+          font-weight: bold;
+        }
+      }
+
+      .main-right {
+        flex: 1;
+        border-left: 1px solid $textLine;
+        padding-left: 24rpx;
+
+        .main-right-row {
+          display: flex;
+          justify-content: space-between;
+
+          .label {
+            color: $textLight;
+          }
+
+          .amount {
+            color: $textDark;
+            font-size: 32rpx;
+            font-weight: bold;
+          }
+        }
+
+        // 结余
+        .balance {
+          margin-top: 24rpx;
+        }
+      }
+    }
+
+    .add-btn {
+      width: 100%;
+      padding: 16rpx 0;
+      border-radius: 12rpx;
+      background-color: $primaryBg;
+      text-align: center;
+      color: $primary;
+      margin-top: 24rpx;
+    }
+  }
+
+  // 生活动态
+  .life {
+    .header {
+      display: flex;
+
+      .user-avatar {
+        width: 80rpx;
+        height: 80rpx;
+        line-height: 76rpx;
+        text-align: center;
+        border-radius: 50%;
+        background-color: #ccc;
+      }
+
+      .header-info {
+        margin-left: 24rpx;
+
+        .user-name {
+          color: $textDark;
+        }
+
+        .time {
+          color: $textLight;
+          font-size: 28rpx;
+        }
+      }
+    }
+
+    .content {
+      margin-top: 24rpx;
+      color: $textDefault;
     }
   }
 }

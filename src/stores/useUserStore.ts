@@ -7,6 +7,7 @@ import type { LoginForm } from '@/api/modules/user/types'
 interface UserInfo {
   id: number
   name: string
+  familyId: number // 所属家庭
 }
 
 // uni-app 存储适配器（提取复用）
@@ -24,7 +25,8 @@ export const useUserStore = defineStore(
     // 用户信息
     const userInfo = ref<UserInfo>({
       id: 0,
-      name: ''
+      name: '',
+      familyId: 0
     })
 
     // 登录
@@ -35,7 +37,8 @@ export const useUserStore = defineStore(
       token.value = response.token
       userInfo.value = {
         id: response.id,
-        name: response.name
+        name: response.name,
+        familyId: 1
       }
     }
 

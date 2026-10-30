@@ -2,9 +2,20 @@
 * 全局样式变量
 */
 
-// 主题色
 $primary: #feae39; // 主题色
+$primaryBg: #fff0d4; // 主题色
 $pageBg: #fff9f0; // 页面背景色
+
+// 文字
+$textDefault: #343a30; // 正文
+$textDark: #0e2446; // 标题、重点
+$textLight: #8d8d8d; // 适用：说明、辅助文字
+$textLine: #e8e5da; // 线条、边框线、分割线
+// $textWeak: #bcc1c9;
+
+// 图标
+
+// 功能
 // $success: #009e50; // 正常/成功
 // $warning: #ff9003; // 警告/提示
 // $danger: #ee3b33; // 错误/危险
