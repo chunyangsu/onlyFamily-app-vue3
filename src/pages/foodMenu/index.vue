@@ -2,20 +2,16 @@
   <view class="container">
     <view class="main">
       <!-- 搜索栏 -->
-      <!-- <view class="search">
-      <view class="search-input">
-        <input type="text" placeholder="请输入搜索内容" />
+      <view class="search">
+        <view class="search-input">
+          <input type="text" placeholder="请输入搜索内容" />
+        </view>
+        <view class="search-btn">
+          <button>搜索</button>
+        </view>
       </view>
-      <view class="search-btn">
-        <button>搜索</button>
-      </view>
-    </view> -->
       <!-- 顶部tab导航 -->
       <view class="top-tab">
-        <!-- <wd-tabs v-model="navTab" @change="changeNavTab">
-        <wd-tab :title="`我要点餐`" name="order" />
-        <wd-tab :title="`添加菜品`" name="add" />
-      </wd-tabs> -->
         <view>
           <wd-button @click="goToFoodOrder">订单管理</wd-button>
           <wd-button @click="goToAddDish">添加菜品</wd-button>

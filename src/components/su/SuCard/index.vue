@@ -2,12 +2,16 @@
   <view class="su-card">
     <view class="header">
       <view class="header-left">
-        <view v-if="icon !== ''" class="card-icon">1</view>
+        <view v-if="props.icon !== ''" class="card-icon">
+          <SuImage :name="props.icon + '.png'"></SuImage>
+        </view>
         <view class="card-title">{{ title }}</view>
       </view>
       <view class="header-right">
         <view class="view-more">查看更多</view>
-        <view class="view-icon">{{ '》' }}</view>
+        <view class="view-icon">
+          <wd-icon name="right" size="28rpx"></wd-icon>
+        </view>
       </view>
     </view>
     <view class="main">
@@ -55,21 +59,34 @@ const props = withDefaults(defineProps<Props>(), {
     .header-left {
       display: flex;
 
+      .card-icon {
+        margin-right: 16rpx;
+        width: 48rpx;
+        height: 48rpx;
+        line-height: 44rpx;
+        text-align: center;
+        overflow: hidden;
+      }
+
       .card-title {
         color: $textDark;
         font-size: 36rpx;
         font-weight: bold;
+        line-height: 48rpx;
       }
     }
 
     .header-right {
       display: flex;
       color: #8d8d8d;
+      align-items: center;
 
       .view-more {}
 
       .view-icon {
+        display: flex;
         margin-left: 8rpx;
+        padding-top: 6rpx;
       }
     }
   }

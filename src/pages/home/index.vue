@@ -1,26 +1,39 @@
 <template>
-  <view class="common-container home">
+  <view class="su-container home">
     <!-- 家庭信息-模块 -->
     <view class="family">
       <view class="family-content">
         <view class="family-date">2026.10.28 星期四</view>
         <view class="family-title">早上好！欢迎回家！</view>
-        <view class="family-name">我们的小家</view>
+        <view class="family-name">
+          <view>我们的小家</view>
+          <view class="m-l-8rpx"><wd-icon name="caret-down" size="26px" color="#feae39"></wd-icon></view>
+        </view>
         <!-- 家庭成员 -->
         <view class="family-member">
-          <view class="member-item">爸爸</view>
-          <view class="member-item">妈妈</view>
-          <view class="member-item">儿子</view>
+          <view class="member-item">
+            <SuImage name="卡卡西和凯.jpg"></SuImage>
+          </view>
+          <view class="member-item">
+            <SuImage name="雏田.jpg"></SuImage>
+          </view>
+          <view class="member-item">
+            <SuImage name="旋风冲锋.jpg"></SuImage>
+          </view>
         </view>
       </view>
-      <view class="family-logo">图片</view>
+      <view class="family-logo">
+        <SuImage name="卡卡西和凯.jpg"></SuImage>
+      </view>
     </view>
     <!-- 今日菜单-模块 -->
     <view class="card-item">
-      <SuCard title="今日菜单">
+      <SuCard title="今日菜单" icon="cutlery">
         <view class="food-menu">
           <view class="food-menu-main">
-            <view class="left-img">图片</view>
+            <view class="left-img">
+              <SuImage name="雏田.jpg"></SuImage>
+            </view>
             <view class="left-content">
               <view class="dish-item">土豆炖牛腩</view>
               <view class="dish-item">青椒土豆丝</view>
@@ -28,7 +41,7 @@
               <view class="dish-item">米饭</view>
             </view>
           </view>
-          <view class="add-btn">继续点餐</view>
+          <view class="add-btn" @click="goToFoodMenu">继续点餐</view>
           <!-- <view class="food-footer">
           <view>午餐/晚餐</view>
           <view>3人用餐</view>
@@ -38,34 +51,36 @@
     </view>
     <!-- 本月账单-模块 -->
     <view class="card-item">
-      <SuCard title="本月账单">
+      <SuCard title="本月账单" icon="wallet">
         <view class="transaction">
           <view class="transaction-main">
             <view class="main-left">
               <view class="label">本月支出</view>
-              <view class="amount">￥3500.26</view>
+              <view class="amount">￥{{ moneyFormat(3560.26) }}</view>
             </view>
             <view class="main-right">
               <view class="main-right-row">
                 <view class="label">收入</view>
-                <view class="amount">￥12000.00</view>
+                <view class="amount">￥{{ moneyFormat(12000) }}</view>
               </view>
               <view class="main-right-row balance">
                 <view class="label">结余</view>
-                <view class="amount">￥3000.00</view>
+                <view class="amount">￥{{ moneyFormat(8439.74) }}</view>
               </view>
             </view>
           </view>
-          <view class="add-btn">+记一笔</view>
+          <view class="add-btn" @click="goToTransaction">+记一笔</view>
         </view>
       </SuCard>
     </view>
     <!-- 生活动态-模块 -->
-    <view class="card-item m-b-24rpx">
-      <SuCard title="生活动态">
+    <view class="card-item">
+      <SuCard title="生活动态" icon="image">
         <view class="life">
           <view class="header">
-            <view class="user-avatar">头像</view>
+            <view class="user-avatar">
+              <SuImage name="雏田.jpg"></SuImage>
+            </view>
             <view class="header-info">
               <view class="user-name">妈妈</view>
               <view class="time">今天 08:30</view>
@@ -84,6 +99,21 @@
 // import { getUserListApi } from '@/api/modules/user'
 // ts
 // utils
+import { moneyFormat } from '@/utils/money'
+
+// 跳转"厨房"页面
+const goToFoodMenu = () => {
+  uni.switchTab({
+    url: '/pages/foodMenu/index'
+  })
+}
+
+// 跳转"账单"页面
+const goToTransaction = () => {
+  uni.switchTab({
+    url: '/pages/transaction/index'
+  })
+}
 </script>
 
 <style lang="scss" scoped>
@@ -112,6 +142,7 @@
       }
 
       .family-name {
+        display: flex;
         margin-top: 24rpx;
         color: $textDefault;
         font-weight: bold;
@@ -129,6 +160,7 @@
           border-radius: 50%;
           background-color: #ccc;
           margin-right: 12rpx;
+          overflow: hidden;
         }
       }
     }
@@ -141,6 +173,7 @@
       margin-top: 24rpx;
       border-radius: 50%;
       background-color: #ccc;
+      overflow: hidden;
     }
   }
 
@@ -156,6 +189,7 @@
         text-align: center;
         border-radius: 12rpx;
         background-color: #ccc;
+        overflow: hidden;
       }
 
       .left-content {
@@ -249,6 +283,7 @@
         text-align: center;
         border-radius: 50%;
         background-color: #ccc;
+        overflow: hidden;
       }
 
       .header-info {

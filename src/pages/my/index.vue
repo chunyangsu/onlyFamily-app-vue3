@@ -1,6 +1,6 @@
 <template>
   <view class="content">
-    <image class="logo" src="/static/logo.png" />
+    <!-- <image class="logo" src="/assets/logo.png" /> -->
     <view class="text-area">
       <navigator url="/pages/login/index">立即登录</navigator>
     </view>
