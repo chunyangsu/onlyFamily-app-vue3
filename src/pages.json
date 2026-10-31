@@ -73,29 +73,31 @@
   "tabBar": {
     "color": "#999999",
     "backgroundColor": "#faf8f2",
-    "selectedColor": "#007AFF",
+    "selectedColor": "#feae39",
     "list": [
       {
         "pagePath": "pages/home/index",
-        "text": "首页"
-        // "iconPath": "static/images/home.png",
-        // "selectedIconPath": "static/images/home-active.png"
+        "text": "首页",
+        "iconPath": "static/images/home.png",
+        "selectedIconPath": "static/images/home-active.png"
       },
       {
         "pagePath": "pages/foodMenu/index",
-        "text": "厨房"
-        // "iconPath": "static/images/home.png",
-        // "selectedIconPath": "static/images/home-active.png"
+        "text": "厨房",
+        "iconPath": "static/images/chef-hat.png",
+        "selectedIconPath": "static/images/chef-hat-active.png"
       },
       {
         "pagePath": "pages/transaction/index",
-        "text": "账单"
-        // "iconPath": "static/images/home.png",
-        // "selectedIconPath": "static/images/home-active.png"
+        "text": "账单",
+        "iconPath": "static/images/ledger.png",
+        "selectedIconPath": "static/images/ledger-active.png"
       },
       {
         "pagePath": "pages/my/index",
-        "text": "我的"
+        "text": "我的",
+        "iconPath": "static/images/life-grid.png",
+        "selectedIconPath": "static/images/life-grid-active.png"
       }
     ]
   }
