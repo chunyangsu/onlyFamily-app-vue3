@@ -20,15 +20,15 @@
         </view>
         <view class="nav-item" @click="goToFoodOrder">
           <view class="nav-icon">
-            <SuImage name="order-manage.png"></SuImage>
-          </view>
-          <view class="nav-name">订单管理</view>
-        </view>
-        <view class="nav-item" @click="goToFoodOrder">
-          <view class="nav-icon">
             <SuImage name="favorites.png"></SuImage>
           </view>
           <view class="nav-name">我的收藏</view>
+        </view>
+        <view class="nav-item" @click="goToFoodOrder">
+          <view class="nav-icon">
+            <SuImage name="order-manage.png"></SuImage>
+          </view>
+          <view class="nav-name">订单管理</view>
         </view>
         <view class="nav-item" @click="goToAddDish">
           <view class="nav-icon">
@@ -82,9 +82,14 @@
     <!-- 购物车 -->
     <view class="footer">
       <view class="left-cart">
-        <view class="cart-icon">11</view>
-        <view class="cart-num">共3种菜品</view>
-        <view class="cart-price">总计：￥{{ cartPriceTotal }}</view>
+        <view class="cart-num">
+          <view class="cart-icon">
+            <SuImage name="cart.png"></SuImage>
+          </view>
+          <view class="dish-num">2</view>
+        </view>
+        <view class="cart-dish-type">共 3 种菜品</view>
+        <view class="cart-price">￥{{ cartPriceTotal }}</view>
       </view>
       <view class="right-btn" @click="goToConfirmOrder">下单</view>
     </view>
@@ -245,12 +250,13 @@ onLoad(() => {
   display: flex;
   background-color: #fff;
   border-radius: 32rpx;
-  border: 2rpx solid $textLine;
+  border: 2rpx solid $line;
   padding: 8rpx 16rpx;
   margin: 0 24rpx;
 
   .search-input {
     flex: 1;
+    margin-left: 16rpx;
   }
 }
 
@@ -298,16 +304,16 @@ onLoad(() => {
       // .cate-icon {}
 
       .cate-name {
-        color: $textDefault;
+        color: $textLight;
       }
     }
 
     .cate-item.active {
-      border-left: 8rpx solid $primary;
-      background-color: $primaryBg;
+      border-left: 8rpx solid $theme;
+      background-color: $themeBg;
 
       .cate-name {
-        color: $primary;
+        color: $theme;
       }
     }
   }
@@ -327,7 +333,7 @@ onLoad(() => {
         display: flex;
 
         .title-border {
-          background-color: $primary;
+          background-color: $theme;
           width: 8rpx;
           height: 100%;
           margin-right: 16rpx;
@@ -421,33 +427,52 @@ onLoad(() => {
 .footer {
   display: flex;
   align-items: center;
-  // flex-shrink: 0;
-  // gap: 16rpx;
-  // padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
-
   justify-content: space-between;
-  border-radius: 32rpx;
+  border-radius: 50rpx;
   padding: 16rpx;
   background-color: #f0f1e1;
+  margin: 0 24rpx;
   margin-bottom: 24rpx;
 
   .left-cart {
     display: flex;
+    align-items: center;
 
-    .cart-icon {}
+    .cart-num {
+      position: relative;
 
-    .cart-num {}
+      .cart-icon {
+        width: 70rpx;
+        height: 70rpx;
+        line-height: 68rpx;
+        text-align: center;
+      }
+
+      .dish-num {
+        position: absolute;
+        top: -4rpx;
+        right: -24rpx;
+        color: #fff;
+        background-color: $theme;
+        border-radius: 24rpx;
+        padding: 0 12rpx 2rpx 12rpx;
+      }
+    }
+
+    .cart-dish-type {
+      margin-left: 38rpx;
+    }
 
     .cart-price {
-      margin-left: 10px;
+      margin-left: 24rpx;
     }
   }
 
   .right-btn {
     color: #fff;
-    background-color: $primary;
-    border-radius: 32rpx;
-    padding: 6rpx 40rpx 8rpx 40rpx;
+    background-color: $theme;
+    border-radius: 50rpx;
+    padding: 16rpx 52rpx 20rpx 52rpx;
   }
 }
 </style>

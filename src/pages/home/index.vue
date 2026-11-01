@@ -207,7 +207,7 @@ const goToTransaction = () => {
       width: 100%;
       padding: 16rpx 0;
       border-radius: 12rpx;
-      background-color: $primary;
+      background-color: $theme;
       text-align: center;
       color: #fff;
       margin-top: 24rpx;
@@ -235,7 +235,7 @@ const goToTransaction = () => {
 
       .main-right {
         flex: 1;
-        border-left: 1px solid $textLine;
+        border-left: 2rpx solid $line;
         padding-left: 24rpx;
 
         .main-right-row {
@@ -264,9 +264,9 @@ const goToTransaction = () => {
       width: 100%;
       padding: 16rpx 0;
       border-radius: 12rpx;
-      background-color: $primaryBg;
+      background-color: $themeBg;
       text-align: center;
-      color: $primary;
+      color: $theme;
       margin-top: 24rpx;
     }
   }

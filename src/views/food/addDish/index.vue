@@ -1,40 +1,47 @@
 <template>
-  <view class="container">
+  <view class="su-container add-dish">
     <!-- 表单 -->
     <view class="main">
-      <wd-form ref="formRef" :model="formData" :schema="schema" :title-width="100">
-        <!-- 上传主图 -->
-        <wd-form-item title="上传主图" required>
-          <su-upload v-model="attachmentList" module="dish" accept="image" />
-        </wd-form-item>
-        <!-- 菜品名称 -->
-        <wd-form-item title="菜品名称" required prop="name">
-          <wd-input v-model="formData.name" placeholder="请输入" />
-        </wd-form-item>
-        <!-- 菜品分类 -->
-        <wd-form-item title="选择分类" required prop="categoryId">
+      <view class="card-item">
+        <SuFormItem title="菜品主图" required>
+          <SuUpload v-model="attachmentList" module="dish" accept="image" />
+        </SuFormItem>
+      </view>
+      <view class="card-item">
+        <SuFormItem title="菜品名称" required>
+          <SuInput v-model="formData.name" placeholder="请输入菜品名称" />
+        </SuFormItem>
+      </view>
+      <view class="card-item">
+        <SuFormItem title="选择分类" required>
           <wd-cell placeholder="请选择" :value="selectedCategoryLabel" is-link @click="show = true" />
           <wd-picker v-model="categoryArr" v-model:visible="show" :columns="categoryList" />
-        </wd-form-item>
-        <!-- 菜品介绍 -->
-        <wd-form-item title="菜品介绍">
-          <wd-textarea v-model="formData.introduction" placeholder="请输入" />
-        </wd-form-item>
-        <!-- 制作过程 -->
-        <wd-form-item title="制作过程">
-          <wd-textarea v-model="formData.makeProcess" placeholder="请输入" />
-        </wd-form-item>
-        <!-- 价格 -->
-        <wd-form-item title="价格">
-          <wd-input-number v-model="formData.price" :precision="2" disable-plus disable-minus />
-        </wd-form-item>
-      </wd-form>
+        </SuFormItem>
+      </view>
+      <view class="card-item">
+        <SuFormItem title="菜品介绍">
+          <SuInput v-model="formData.introduction" type="textarea" placeholder="请输入菜品介绍" />
+        </SuFormItem>
+      </view>
+      <view class="card-item">
+        <SuFormItem title="制作过程">
+          <SuInput v-model="formData.makeProcess" type="textarea" placeholder="请输入制作过程" />
+        </SuFormItem>
+      </view>
+      <view class="card-item">
+        <SuFormItem title="价格">
+          <view class="dish-price">
+            <!-- <view class="price-code">￥</view> -->
+            <view class="price-input">
+              <SuInputNumber v-model="formData.price" />
+            </view>
+            <view class="dish-unit">/ 份</view>
+          </view>
+        </SuFormItem>
+      </view>
     </view>
     <!-- 底部按钮 -->
-    <view class="footer">
-      <wd-button type="success" @click="saveData">保存</wd-button>
-      <!-- <wd-button type="success" @click="publishDish">发布菜品</wd-button> -->
-    </view>
+    <view class="footer" @click="saveData">发布菜品</view>
   </view>
 </template>
 
@@ -43,16 +50,10 @@
 import { getDishCategoryListApi } from '@/api/modules/food/category'
 import { createDishApi } from '@/api/modules/food/dish'
 // ts
-// import type { UploadFile } from '@/uni_modules/wot-ui/components/wd-upload/types'
 import type { DishCategoryItem } from '@/api/modules/food/category/types'
 import type { DishForm } from '@/api/modules/food/dish/types'
-import { z } from 'zod'
-import { zodAdapter } from '@wot-ui/ui'
 
-import SuUpload from '@/components/su/SuUpload/index.vue'
-import type { AttachmentInfo } from '@/components/su/SuUpload/types'
-
-const formRef = ref()
+// const formRef = ref()
 
 // 表单数据
 const formData = ref<DishForm>({
@@ -69,12 +70,12 @@ const categoryArr = ref<string[]>([])
 const categoryList = ref<DishCategoryItem[]>([])
 
 // 表单校验
-const schema = zodAdapter(
-  z.object({
-    name: z.string(),
-    categoryId: z.number()
-  })
-)
+// const schema = zodAdapter(
+//   z.object({
+//     name: z.string(),
+//     categoryId: z.number()
+//   })
+// )
 
 const show = ref(false)
 
@@ -99,8 +100,8 @@ const selectedCategoryLabel = computed(() => {
 const saveData = async () => {
   try {
     // 表单校验
-    const { valid } = await formRef.value?.validate()
-    if (!valid) return
+    // const { valid } = await formRef.value?.validate()
+    // if (!valid) return
     // loading.value = true
     const tempData: DishForm = {
       name: formData.value.name,
@@ -121,7 +122,7 @@ const saveData = async () => {
 }
 
 // 发布菜品
-const publishDish = () => { }
+// const publishDish = () => { }
 
 // 页面加载时触发
 onLoad(() => {
@@ -130,18 +131,43 @@ onLoad(() => {
 </script>
 
 <style lang="scss" scoped>
-.container {
+.add-dish {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  // align-items: center;
+  // justify-content: center;
+  padding: 0 24rpx;
+  padding-bottom: 160rpx;
 
   .main {
-    width: 100%;
+    .card-item {
+      margin-bottom: 24rpx;
+    }
+
+    .dish-price {
+      // border: 2rpx solid #e8e5da;
+      // border-radius: 12rpx;
+      // overflow: hidden;
+      display: flex;
+      align-items: center;
+
+      .price-input {
+        flex: 1;
+        margin: 0 12rpx;
+      }
+    }
   }
 
   .footer {
-    margin-top: 10px;
+    position: fixed;
+    bottom: 32rpx;
+    font-size: 32rpx;
+    width: calc(100% - 48rpx);
+    padding: 18rpx 0;
+    border-radius: 50rpx;
+    background-color: $theme;
+    text-align: center;
+    color: #fff;
   }
 }
 </style>

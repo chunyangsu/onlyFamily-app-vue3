@@ -65,6 +65,9 @@
       "^SuCard$": "@/components/su/SuCard/index.vue",
       "^SuImage$": "@/components/su/SuImage/index.vue",
       "^SuUpload$": "@/components/su/SuUpload/index.vue",
+      "^SuInput$": "@/components/su/SuInput/index.vue",
+      "^SuInputNumber$": "@/components/su/SuInputNumber/index.vue",
+      "^SuFormItem$": "@/components/su/SuFormItem/index.vue",
       // wot组件
       "^wd-(.*)": "@wot-ui/ui/components/wd-$1/wd-$1.vue"
     }
