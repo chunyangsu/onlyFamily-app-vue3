@@ -5,7 +5,7 @@ export interface DishForm {
   categoryId: number // 分类id
   introduction: string // 介绍
   makeProcess: string // 制作过程
-  price: string // 价格
+  price: number | undefined // 价格
 }
 
 // 菜品列表字段
@@ -15,7 +15,7 @@ export interface DishItem {
   attachmentId: number // 附件id(菜品主图)
   attachmentUrl: string // 附件url地址
   categoryId: number // 分类id
-  price: string // 价格
+  price: number // 价格
   saleNum: number // 销量
   cartNum: number // 购物车数量(临时暂存)
 }

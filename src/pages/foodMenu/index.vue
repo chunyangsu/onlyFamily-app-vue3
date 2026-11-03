@@ -59,12 +59,12 @@
             <view v-for="(item, index) in dishList" :key="index" class="dish-item">
               <!-- 主图 -->
               <view class="dish-img">
-                <wd-img :width="100" :height="100" :src="item.attachmentUrl" />
+                <SuImage :src="item.attachmentUrl"></SuImage>
               </view>
               <!-- 详情信息 -->
               <view class="dish-content">
                 <view class="dish-name">{{ item.name }}</view>
-                <view class="dish-price">价格：{{ item.price }}</view>
+                <view class="dish-price">￥{{ item.price }}</view>
                 <view class="dish-btn-bar">
                   <view class="sale-num">销量：{{ item.saleNum }}</view>
                   <view class="cart-box">
@@ -86,9 +86,9 @@
           <view class="cart-icon">
             <SuImage name="cart.png"></SuImage>
           </view>
-          <view class="dish-num">2</view>
+          <view class="dish-num">{{ selectedDishTotal }}</view>
         </view>
-        <view class="cart-dish-type">共 3 种菜品</view>
+        <view class="cart-dish-type">共 {{ cartData.length }} 种菜品</view>
         <view class="cart-price">￥{{ cartPriceTotal }}</view>
       </view>
       <view class="right-btn" @click="goToConfirmOrder">下单</view>
@@ -122,7 +122,7 @@ interface FoodOrderDishItem {
   id: number // 菜品id
   name: string // 菜品名称
   categoryId: number // 分类id
-  price: string // 价格
+  price: number // 价格
   num: number // 数量
 }
 
@@ -207,7 +207,18 @@ const getDishList = async () => {
   })
 }
 
-// 购物车数据(已选菜品及数量)
+// 已选菜品数量的总计
+const selectedDishTotal = computed(() => {
+  let total = 0
+  dishList.value.forEach((item) => {
+    if (item.cartNum > 0) {
+      total += item.cartNum
+    }
+  })
+  return total
+})
+
+// 购物车数据(已选菜品)
 const cartData = computed(() => {
   let tempArr: DishItem[] = []
   dishList.value.forEach((item) => {
@@ -222,7 +233,7 @@ const cartData = computed(() => {
 const cartPriceTotal = computed(() => {
   let total = 0
   dishList.value.forEach((item) => {
-    total += item.cartNum * parseFloat(item.price)
+    total += item.cartNum * item.price
   })
   return total.toFixed(2)
 })
@@ -230,6 +241,10 @@ const cartPriceTotal = computed(() => {
 // 页面加载时获取分类列表
 onLoad(() => {
   getDishCategoryList()
+  getDishList()
+})
+
+onShow(() => {
   getDishList()
 })
 </script>
@@ -363,7 +378,8 @@ onLoad(() => {
           line-height: 156rpx;
           background-color: #666;
           color: #fff;
-          border-radius: 8rpx;
+          border-radius: 16rpx;
+          overflow: hidden;
         }
 
         .dish-content {
@@ -371,12 +387,15 @@ onLoad(() => {
           padding: 0 20rpx;
 
           .dish-name {
-            // font-weight: bold;
+            font-weight: bold;
+            color: $textDark;
           }
 
           .dish-price {
             font-size: 28rpx;
             margin-top: 8rpx;
+            font-size: 32rpx;
+            color: $theme;
           }
         }
 
@@ -388,6 +407,7 @@ onLoad(() => {
           .sale-num {
             flex: 1;
             font-size: 28rpx;
+            color: $textLight;
           }
 
           .cart-box {
@@ -396,12 +416,13 @@ onLoad(() => {
             .minus-btn {
               width: 40rpx;
               height: 40rpx;
-              line-height: 36rpx;
+              line-height: 30rpx;
               text-align: center;
-              color: #666;
+              color: $textDefault;
               background-color: #fff;
+              font-size: 46rpx;
               border-radius: 50%;
-              border: 2rx solid #666;
+              border: 2rpx solid $theme;
             }
 
             .cart-num {
@@ -411,10 +432,11 @@ onLoad(() => {
             .plus-btn {
               width: 40rpx;
               height: 40rpx;
-              line-height: 18px;
+              line-height: 34rpx;
               text-align: center;
               color: white;
-              background-color: green;
+              background-color: $theme;
+              font-size: 36rpx;
               border-radius: 50%;
             }
           }

@@ -23,11 +23,11 @@ defineOptions({
 
 // props属性
 interface Props {
-  modelValue: string // 输入值
+  modelValue: number // 输入值
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: ''
+  modelValue: undefined
 })
 
 const emit = defineEmits<{
@@ -36,7 +36,8 @@ const emit = defineEmits<{
 
 // 在值改变时触发
 const handleChange = (event: any) => {
-  console.log(event)
+  // console.log(event)
+  emit('update:modelValue', event.value)
 }
 </script>
 

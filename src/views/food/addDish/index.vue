@@ -62,7 +62,7 @@ const formData = ref<DishForm>({
   categoryId: 0,
   introduction: '',
   makeProcess: '',
-  price: ''
+  price: undefined
 })
 
 const attachmentList = ref<number[]>([])
@@ -112,7 +112,11 @@ const saveData = async () => {
       price: formData.value.price
     }
     const response = await createDishApi(tempData)
-    console.log(response)
+    // console.log(response)
+    // 返回上一页
+    uni.navigateBack({
+      delta: 1
+    })
   } catch (err) {
     // 接口请求失败
     console.error(err)
@@ -160,7 +164,7 @@ onLoad(() => {
 
   .footer {
     position: fixed;
-    bottom: 32rpx;
+    bottom: 48rpx;
     font-size: 32rpx;
     width: calc(100% - 48rpx);
     padding: 18rpx 0;

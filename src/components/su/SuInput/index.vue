@@ -53,11 +53,10 @@ const emit = defineEmits<{
   'update:modelValue': [value: string]
 }>()
 
-// const inputValue = ref('')
-
 // 在input值改变时触发
 const handleInput = (event: any) => {
-  console.log(event)
+  // console.log(event)
+  emit('update:modelValue', event.value)
 }
 </script>
 
