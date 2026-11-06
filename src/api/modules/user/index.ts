@@ -5,7 +5,7 @@ import type { LoginForm } from '@/api/modules/user/types'
  * 获取用户列表
  * @returns
  */
-export const loginApi = (data: LoginForm) => {
+export const loginApi = (data: LoginForm): Promise<any> => {
   return request({
     url: '/api/user/login',
     method: 'POST',

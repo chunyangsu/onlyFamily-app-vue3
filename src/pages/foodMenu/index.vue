@@ -430,9 +430,9 @@ onShow(() => {
             }
 
             .plus-btn {
-              width: 40rpx;
-              height: 40rpx;
-              line-height: 34rpx;
+              width: 44rpx;
+              height: 44rpx;
+              line-height: 38rpx;
               text-align: center;
               color: white;
               background-color: $theme;

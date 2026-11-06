@@ -1,5 +1,6 @@
 // 登录表单
 export interface LoginForm {
-  mobile: string // 手机号
-  password: string // 密码
+  code: string // 微信登录临时授权凭证
+  // mobile: string // 手机号
+  // password: string // 密码
 }
