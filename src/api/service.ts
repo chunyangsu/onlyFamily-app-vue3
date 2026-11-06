@@ -1,4 +1,5 @@
 import type { Response } from './types'
+import { removeToken, removeUserInfo } from '@/utils/user'
 
 // 获取后端地址的基础路径
 const baseUrl = import.meta.env.VITE_APP_BASE_API
@@ -42,8 +43,8 @@ const request = <T>(options: UniApp.RequestOptions): Promise<T> => {
             resolve(result.data)
           } else {
             // 业务逻辑报错处理
-            if (result.code === 10107) {
-              // 手机号或密码错误
+            if (result.code === 10002) {
+              // 参数校验失败
               uni.showToast({ title: result.msg, icon: 'none' })
             } else {
               uni.showToast({ title: result.msg || '系统异常，请稍后重试', icon: 'none' })
@@ -52,6 +53,10 @@ const request = <T>(options: UniApp.RequestOptions): Promise<T> => {
           }
         } else {
           // http错误
+          if (statusCode === 401) {
+            // 身份凭证无效或过期
+            handleUnauthorized()
+          }
         }
       },
       // 请求失败
@@ -61,6 +66,24 @@ const request = <T>(options: UniApp.RequestOptions): Promise<T> => {
         reject(error)
       }
     })
+
+    // token失效后的处理
+    const handleUnauthorized = () => {
+      // if (isRedirecting) {
+      //   return
+      // }
+      // isRedirecting = true
+      removeToken()
+      removeUserInfo()
+
+      uni.reLaunch({
+        url: '/pages/login/index',
+        complete: () => {
+          // isRedirecting = false
+          uni.showToast({ title: '身份凭证无效或过期', icon: 'none' })
+        }
+      })
+    }
   })
 }
 
