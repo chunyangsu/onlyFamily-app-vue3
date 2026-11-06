@@ -1,13 +1,13 @@
 {
   "pages": [
     {
-      "path": "pages/login/index",
+      "path": "pages/login/index", // 名字叫不叫index无所谓，位置在第一个，就是首页
       "style": {
         "navigationBarTitleText": "登录"
       }
     },
     {
-      "path": "pages/home/index", // 名字叫不叫index无所谓，位置在第一个，就是首页
+      "path": "pages/home/index",
       "style": {
         "navigationBarTitleText": "首页", // 导航栏标题
         "enablePullDownRefresh": true // 允许下拉刷新

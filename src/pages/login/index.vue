@@ -24,20 +24,6 @@
         <view class="agreement">《用户服务协议》</view>
         <view class="policy">《隐私政策》</view>
       </view>
-      <view>
-        <!-- <wd-form ref="formRef" :model="formData" :schema="schema" :title-width="100">
-        <wd-form-item prop="mobile">
-          <wd-input type="number" v-model="formData.mobile" placeholder="手机号" />
-        </wd-form-item>
-
-        <wd-form-item prop="password">
-          <wd-input type="text" v-model="formData.password" placeholder="密码" show-password />
-        </wd-form-item>
-        <view class="footer">
-          <wd-button type="primary" size="large" @click="submitData" block>登录</wd-button>
-        </view>
-      </wd-form> -->
-      </view>
     </view>
   </view>
 </template>
@@ -49,36 +35,14 @@ import { zodAdapter } from '@wot-ui/ui'
 import { useUserStore } from '@/stores/useUserStore'
 // api
 // ts
-import type { LoginForm } from '@/api/modules/user/types'
 
 const userStore = useUserStore()
 
-const formRef = ref()
-// 表单数据
-const formData = ref<LoginForm>({
-  code: ''
-  // mobile: '',
-  // password: ''
-})
-
 const checked = ref(false)
-// 表单校验
-// const schema = zodAdapter(
-//   z.object({
-//     mobile: z
-//       .string()
-//       .min(1, '手机号不能为空')
-//       .regex(/^1[3-9]\d{9}$/, '手机号格式不正确'),
-//     password: z.string().min(6, '密码不能少于6位')
-//   })
-// )
 
 // 提交
 const submitData = async () => {
   try {
-    // 表单校验
-    // const { valid } = await formRef.value?.validate()
-    // if (!valid) return
     if (!checked.value) {
       uni.showToast({
         title: '请先阅读并同意相关协议',
@@ -102,6 +66,19 @@ const submitData = async () => {
     // loading.value = false
   }
 }
+
+// 登录页是启动时的默认页面。页面真正显示后再检查一次登录态
+onShow(async () => {
+  await userStore.initUserStore()
+  if (userStore.token) {
+    uni.reLaunch({
+      url: '/pages/home/index',
+      fail: (error) => {
+        console.error('[Login] 跳转首页失败:', error)
+      }
+    })
+  }
+})
 </script>
 
 <style lang="scss" scoped>
