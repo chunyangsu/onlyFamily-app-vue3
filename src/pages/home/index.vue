@@ -28,7 +28,7 @@
     </view>
     <!-- 今日菜单-模块 -->
     <view class="card-item">
-      <SuCard title="今日菜单" icon="cutlery">
+      <SuCard title="今日菜单" icon="cutlery" show-more>
         <view class="food-menu">
           <view class="food-menu-main">
             <view class="left-img">
@@ -51,7 +51,7 @@
     </view>
     <!-- 本月账单-模块 -->
     <view class="card-item">
-      <SuCard title="本月账单" icon="wallet">
+      <SuCard title="本月账单" icon="wallet" show-more>
         <view class="transaction">
           <view class="transaction-main">
             <view class="main-left">
@@ -75,7 +75,7 @@
     </view>
     <!-- 生活动态-模块 -->
     <view class="card-item">
-      <SuCard title="生活动态" icon="image">
+      <SuCard title="生活动态" icon="image" show-more>
         <view class="life">
           <view class="header">
             <view class="user-avatar">

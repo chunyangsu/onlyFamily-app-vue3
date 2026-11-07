@@ -1,6 +1,12 @@
 {
   "pages": [
     {
+      "path": "pages/my/index",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
+    },
+    {
       "path": "pages/login/index", // 名字叫不叫index无所谓，位置在第一个，就是首页
       "style": {
         "navigationBarTitleText": "登录"
@@ -23,12 +29,6 @@
       "path": "pages/transaction/index",
       "style": {
         "navigationBarTitleText": "账单"
-      }
-    },
-    {
-      "path": "pages/my/index",
-      "style": {
-        "navigationBarTitleText": "我的"
       }
     },
     {
