@@ -1,161 +1,188 @@
 <template>
   <view class="su-container my-container">
-    <view class="card-item">
-      <SuCard hide-header>
-        <view class="user-profile">
-          <view class="avatar">
-            <SuImage name="卡卡西和凯.jpg"></SuImage>
-          </view>
-          <view class="user-info">
-            <view class="nickname">青春尽情挥霍</view>
-            <view class="mobile">手机号：13057160969</view>
-            <!-- todo：编辑功能 -->
-          </view>
-        </view>
-      </SuCard>
+    <view class="bg-img">
+      <!-- <SuImage name="my-bg.png"></SuImage> -->
     </view>
-    <!-- 家庭管理 -->
-    <view class="card-item">
-      <SuCard hide-header>
-        <view class="family">
-          <view class="f-header">
-            <view class="f-icon">
-              <SuImage name="home-active.png"></SuImage>
+    <view class="content">
+      <view class="card-item">
+        <SuCard hide-header>
+          <view class="user-profile">
+            <view class="avatar-area">
+              <view class="avatar-icon">
+                <SuImage name="avatar.png"></SuImage>
+              </view>
             </view>
-            <view class="f-content">
-              <view class="f-name">爱的小家</view>
-              <view class="member-num">成员：3人</view>
+            <view class="user-info">
+              <view class="nickname">青春尽情挥霍</view>
+              <view class="mobile">手机号：13057160969</view>
             </view>
-            <view class="f-edit">
-              <view class="f-role">管理员</view>
-              <view class="f-arrow">
-                <wd-icon name="right" size="32rpx"></wd-icon>
+            <view class="setting-btn">
+              <SuImage name="my-setting.png"></SuImage>
+            </view>
+          </view>
+        </SuCard>
+      </view>
+      <!-- 家庭管理 -->
+      <view class="card-item">
+        <SuCard hide-header>
+          <view class="family">
+            <view class="f-header">
+              <view class="f-icon">
+                <SuImage name="family-home.png"></SuImage>
+              </view>
+              <view class="f-content">
+                <view class="f-name">爱的小家</view>
+                <view class="member-num">成员：3人</view>
+              </view>
+              <view class="f-edit">
+                <view class="f-role">管理员</view>
+                <view class="f-arrow">
+                  <wd-icon name="right" size="32rpx"></wd-icon>
+                </view>
+              </view>
+            </view>
+            <view class="nav-menu">
+              <view class="nav-item">
+                <view class="nav-icon">
+                  <view class="h-42rpx m-t-6rpx">
+                    <SuImage name="family-members.png"></SuImage>
+                  </view>
+                </view>
+                <view class="nav-name">成员管理</view>
+              </view>
+              <view class="nav-item">
+                <view class="nav-icon">
+                  <SuImage name="family-invite.png"></SuImage>
+                </view>
+                <view class="nav-name">邀请成员</view>
+              </view>
+              <view class="nav-item">
+                <view class="nav-icon">
+                  <SuImage name="family-create.png"></SuImage>
+                </view>
+                <view class="nav-name">创建家庭</view>
+              </view>
+              <view class="nav-item">
+                <view class="nav-icon">
+                  <SuImage name="family-switch.png"></SuImage>
+                </view>
+                <view class="nav-name">我的家庭</view>
               </view>
             </view>
           </view>
-          <view class="nav-menu">
-            <view class="nav-item">
-              <view class="nav-icon">
-                <SuImage name="favorites.png"></SuImage>
+        </SuCard>
+      </view>
+      <!-- 我的管理 -->
+      <view class="card-item">
+        <SuCard title="我的管理">
+          <view class="manage">
+            <view class="list-item">
+              <view class="item-left">
+                <view class="item-icon w-48rpx h-48rpx">
+                  <SuImage name="chef-hat.png"></SuImage>
+                </view>
               </view>
-              <view class="nav-name">成员管理</view>
+              <view class="item-name">我的菜谱</view>
+              <view class="item-arrow">
+                <wd-icon name="right" size="28rpx"></wd-icon>
+              </view>
             </view>
-            <view class="nav-item">
-              <view class="nav-icon">
-                <SuImage name="favorites.png"></SuImage>
+            <view class="list-item">
+              <view class="item-left">
+                <view class="item-icon w-50rpx h-44rpx">
+                  <SuImage name="favorite.png"></SuImage>
+                </view>
               </view>
-              <view class="nav-name">邀请成员</view>
+              <view class="item-name">我的收藏</view>
+              <view class="item-arrow">
+                <wd-icon name="right" size="28rpx"></wd-icon>
+              </view>
             </view>
-            <view class="nav-item">
-              <view class="nav-icon">
-                <SuImage name="favorites.png"></SuImage>
+            <view class="list-item">
+              <view class="item-left">
+                <view class="item-icon w-48rpx h-48rpx">
+                  <SuImage name="order.png"></SuImage>
+                </view>
               </view>
-              <view class="nav-name">创建家庭</view>
-            </view>
-            <view class="nav-item">
-              <view class="nav-icon">
-                <SuImage name="favorites.png"></SuImage>
+              <view class="item-name">我的订单</view>
+              <view class="item-arrow">
+                <wd-icon name="right" size="28rpx"></wd-icon>
               </view>
-              <view class="nav-name">我的家庭</view>
             </view>
           </view>
-        </view>
-      </SuCard>
-    </view>
-    <!-- 我的管理 -->
-    <view class="card-item">
-      <SuCard title="我的管理">
-        <view class="manage">
-          <view class="list-item">
-            <view class="item-icon">
-              <SuImage name="chef-hat.png"></SuImage>
-            </view>
-            <view class="item-name">我的菜谱</view>
-            <view class="item-arrow">
-              <wd-icon name="right" size="28rpx"></wd-icon>
-            </view>
-          </view>
-          <view class="list-item">
-            <view class="item-icon">
-              <SuImage name="chef-hat.png"></SuImage>
-            </view>
-            <view class="item-name">我的收藏</view>
-            <view class="item-arrow">
-              <wd-icon name="right" size="28rpx"></wd-icon>
-            </view>
-          </view>
-          <view class="list-item">
-            <view class="item-icon">
-              <SuImage name="chef-hat.png"></SuImage>
-            </view>
-            <view class="item-name">我的订单</view>
-            <view class="item-arrow">
-              <wd-icon name="right" size="28rpx"></wd-icon>
-            </view>
-          </view>
-        </view>
-      </SuCard>
-    </view>
+        </SuCard>
+      </view>
 
-    <!-- 其他设置 -->
-    <view class="card-item">
-      <SuCard title="其他设置">
-        <view class="setting">
-          <view class="list-item">
-            <view class="item-icon">
-              <SuImage name="chef-hat.png"></SuImage>
+      <!-- 其他设置 -->
+      <view class="card-item">
+        <SuCard title="其他设置">
+          <view class="setting">
+            <view class="list-item">
+              <view class="item-left">
+                <view class="item-icon w-48rpx h-48rpx">
+                  <SuImage name="notification.png"></SuImage>
+                </view>
+              </view>
+              <view class="item-name">消息通知</view>
+              <view class="item-arrow">
+                <wd-icon name="right" size="28rpx"></wd-icon>
+              </view>
             </view>
-            <view class="item-name">消息通知</view>
-            <view class="item-arrow">
-              <wd-icon name="right" size="28rpx"></wd-icon>
+            <view class="list-item">
+              <view class="item-left">
+                <view class="item-icon w-48rpx h-54rpx">
+                  <SuImage name="security.png"></SuImage>
+                </view>
+              </view>
+              <view class="item-name">隐私与账号安全</view>
+              <view class="item-arrow">
+                <wd-icon name="right" size="28rpx"></wd-icon>
+              </view>
+            </view>
+            <view class="list-item">
+              <view class="item-left">
+                <view class="item-icon w-48rpx h-48rpx">
+                  <SuImage name="policy.png"></SuImage>
+                </view>
+              </view>
+              <view class="item-name">用户服务协议与隐私政策</view>
+              <view class="item-arrow">
+                <wd-icon name="right" size="28rpx"></wd-icon>
+              </view>
+            </view>
+            <view class="list-item">
+              <view class="item-left">
+                <view class="item-icon w-52rpx h-48rpx">
+                  <SuImage name="feedback.png"></SuImage>
+                </view>
+              </view>
+              <view class="item-name">意见反馈</view>
+              <view class="item-arrow">
+                <wd-icon name="right" size="28rpx"></wd-icon>
+              </view>
+            </view>
+            <view class="list-item">
+              <view class="item-left">
+                <view class="item-icon w-48rpx h-48rpx">
+                  <SuImage name="about.png"></SuImage>
+                </view>
+              </view>
+              <view class="item-name">关于 OnlyFamily</view>
+              <view class="item-arrow">
+                <wd-icon name="right" size="28rpx"></wd-icon>
+              </view>
             </view>
           </view>
-          <view class="list-item">
-            <view class="item-icon">
-              <SuImage name="chef-hat.png"></SuImage>
-            </view>
-            <view class="item-name">隐私与账号安全</view>
-            <view class="item-arrow">
-              <wd-icon name="right" size="28rpx"></wd-icon>
-            </view>
+        </SuCard>
+      </view>
+      <!-- 底部 -->
+      <view class="footer">
+        <view class="logout">
+          <view class="logout-icon">
+            <SuImage name="logout.png"></SuImage>
           </view>
-          <view class="list-item">
-            <view class="item-icon">
-              <SuImage name="chef-hat.png"></SuImage>
-            </view>
-            <view class="item-name">用户服务协议与隐私政策</view>
-            <view class="item-arrow">
-              <wd-icon name="right" size="28rpx"></wd-icon>
-            </view>
-          </view>
-          <view class="list-item">
-            <view class="item-icon">
-              <SuImage name="chef-hat.png"></SuImage>
-            </view>
-            <view class="item-name">意见反馈</view>
-            <view class="item-arrow">
-              <wd-icon name="right" size="28rpx"></wd-icon>
-            </view>
-          </view>
-          <view class="list-item">
-            <view class="item-icon">
-              <SuImage name="chef-hat.png"></SuImage>
-            </view>
-            <view class="item-name">关于 OnlyFamily</view>
-            <view class="item-arrow">
-              <wd-icon name="right" size="28rpx"></wd-icon>
-            </view>
-          </view>
+          <view class="logout-text">退出登录</view>
         </view>
-      </SuCard>
-    </view>
-    <!-- 底部 -->
-    <view class="footer">
-      <view class="logout">
-        <view class="logout-icon">
-          <SuImage name="login-phone.png"></SuImage>
-        </view>
-        <view class="logout-text">退出登录</view>
       </view>
     </view>
   </view>
@@ -167,9 +194,22 @@
 
 <style lang="scss" scoped>
 .my-container {
+  position: relative;
+  min-height: 100vh;
   padding: 0 24rpx;
   padding-bottom: 24rpx;
 
+  .bg-img {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+}
+
+.content {
   .card-item {
     margin-bottom: 24rpx;
   }
@@ -177,17 +217,26 @@
   // 用户资料
   .user-profile {
     display: flex;
+    align-items: center;
 
-    .avatar {
+    .avatar-area {
       width: 130rpx;
       height: 130rpx;
-      line-height: 126rpx;
-      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       border-radius: 50%;
       overflow: hidden;
+      background-color: $subBg;
+
+      .avatar-icon {
+        width: 64rpx;
+        height: 70rpx;
+      }
     }
 
     .user-info {
+      flex: 1;
       margin-left: 24rpx;
       margin-top: 16rpx;
 
@@ -202,6 +251,11 @@
         margin-top: 6rpx;
       }
     }
+
+    .setting-btn {
+      width: 40rpx;
+      height: 40rpx;
+    }
   }
 
   // 家庭管理
@@ -210,8 +264,8 @@
       display: flex;
 
       .f-icon {
-        width: 100rpx;
-        height: 100rpx;
+        width: 90rpx;
+        height: 80rpx;
       }
 
       .f-content {
@@ -261,15 +315,16 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 12rpx 0;
+        padding: 20rpx 0;
 
         .nav-icon {
-          width: 80rpx;
-          height: 80rpx;
+          width: 50rpx;
+          height: 50rpx;
         }
 
         .nav-name {
           color: $textLight;
+          margin-top: 8rpx;
         }
       }
     }
@@ -285,12 +340,20 @@
   .list-item {
     display: flex;
     align-items: center;
-    padding: 12rpx 0;
+    height: 80rpx;
     border-top: 2rpx solid $line;
 
-    .item-icon {
+    .item-left {
       width: 60rpx;
-      height: 60rpx;
+      height: 80rpx;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .item-icon {
+        // width: 48rpx;
+        // height: 48rpx;
+      }
     }
 
     .item-name {
@@ -301,8 +364,6 @@
     .item-arrow {
       display: flex;
       color: $textLight;
-      // margin-left: 8rpx;
-      // padding-top: 6rpx;
     }
   }
 
@@ -310,13 +371,14 @@
     .logout {
       display: flex;
       justify-content: center;
+      align-items: center;
       background-color: #e8eddf;
       padding: 18rpx 0;
       border-radius: 50rpx;
 
       .logout-icon {
-        width: 40rpx;
-        height: 56rpx;
+        width: 36rpx;
+        height: 34rpx;
       }
 
       .logout-text {

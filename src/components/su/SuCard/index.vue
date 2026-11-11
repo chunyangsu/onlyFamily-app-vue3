@@ -78,7 +78,8 @@ const props = withDefaults(defineProps<Props>(), {
       .card-border {
         background-color: $theme;
         width: 8rpx;
-        height: 100%;
+        height: 38rpx;
+        margin-top: 6rpx;
         margin-right: 16rpx;
         border-radius: 8rpx;
       }

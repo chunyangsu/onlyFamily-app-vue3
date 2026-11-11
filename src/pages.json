@@ -1,12 +1,6 @@
 {
   "pages": [
     {
-      "path": "pages/my/index",
-      "style": {
-        "navigationBarTitleText": "我的"
-      }
-    },
-    {
       "path": "pages/login/index", // 名字叫不叫index无所谓，位置在第一个，就是首页
       "style": {
         "navigationBarTitleText": "登录"
@@ -29,6 +23,12 @@
       "path": "pages/transaction/index",
       "style": {
         "navigationBarTitleText": "账单"
+      }
+    },
+    {
+      "path": "pages/my/index",
+      "style": {
+        "navigationBarTitleText": "我的"
       }
     },
     {
@@ -87,8 +87,8 @@
       {
         "pagePath": "pages/foodMenu/index",
         "text": "厨房",
-        "iconPath": "static/images/chef-hat.png",
-        "selectedIconPath": "static/images/chef-hat-active.png"
+        "iconPath": "static/images/kitchen.png",
+        "selectedIconPath": "static/images/kitchen-active.png"
       },
       {
         "pagePath": "pages/transaction/index",
@@ -99,8 +99,8 @@
       {
         "pagePath": "pages/my/index",
         "text": "我的",
-        "iconPath": "static/images/life-grid.png",
-        "selectedIconPath": "static/images/life-grid-active.png"
+        "iconPath": "static/images/profile.png",
+        "selectedIconPath": "static/images/profile-active.png"
       }
     ]
   }
