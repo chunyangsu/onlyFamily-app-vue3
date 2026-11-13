@@ -16,7 +16,8 @@
     {
       "path": "pages/foodMenu/index",
       "style": {
-        "navigationBarTitleText": "厨房"
+        "navigationBarTitleText": "厨房",
+        "disableScroll": true // 禁止整页滚动
       }
     },
     {
