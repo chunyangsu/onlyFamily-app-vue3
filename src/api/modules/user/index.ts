@@ -2,7 +2,7 @@ import request from '@/api/service'
 import type { LoginForm } from '@/api/modules/user/types'
 
 /**
- * 获取用户列表
+ * 登录
  * @returns
  */
 export const loginApi = (data: LoginForm): Promise<any> => {

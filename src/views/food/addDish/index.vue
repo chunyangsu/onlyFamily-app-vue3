@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
 // api
-import { getDishCategoryListApi } from '@/api/modules/food/category'
+import { getDishCategoryListApi, createDishCategoryApi } from '@/api/modules/food/category'
 import { createDishApi } from '@/api/modules/food/dish'
 // ts
 import type { DishCategoryItem } from '@/api/modules/food/category/types'
@@ -95,6 +95,15 @@ const getDishCategoryList = async () => {
 const selectedCategoryLabel = computed(() => {
   return categoryList.value.find((item) => item.value === categoryArr.value[0])?.label || ''
 })
+
+// const categoryName = ref('')
+// 新建菜品分类
+// const createDishCategory = () => {
+//   const params = {
+//     name: categoryName.value
+//   }
+//   createDishCategoryApi(params).then((response) => { })
+// }
 
 // 保存
 const saveData = async () => {

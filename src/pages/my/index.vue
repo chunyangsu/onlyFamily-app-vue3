@@ -56,7 +56,7 @@
                 </view>
                 <view class="nav-name">邀请成员</view>
               </view>
-              <view class="nav-item">
+              <view class="nav-item" @click="createFamily">
                 <view class="nav-icon">
                   <SuImage name="family-create.png"></SuImage>
                 </view>
@@ -189,7 +189,21 @@
 </template>
 
 <script setup lang="ts">
-// import { ref } from 'vue'
+// 全局属性
+// api
+import { createFamilyApi } from '@/api/modules/family'
+// ts
+import type { FamilyForm } from '@/api/modules/family/types'
+// utils
+
+// 新建家庭
+const createFamily = () => {
+  // const params: FamilyForm = {
+  //   name: '苏春阳的家庭',
+  //   introduction: '昵称是狗窝'
+  // }
+  // createFamilyApi(params).then((response) => { })
+}
 </script>
 
 <style lang="scss" scoped>

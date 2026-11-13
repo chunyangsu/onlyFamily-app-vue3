@@ -28,7 +28,7 @@ const request = <T>(options: UniApp.RequestOptions): Promise<T> => {
         // 身份认证：如果存在token，则自动添加到请求头
         Authorization: token ? `Bearer ${token}` : '',
         'user-id': userInfo.id, // 用户id
-        'family-id': userInfo.familyId // 所属家庭id
+        'family-id': userInfo.familyId || 0 // 所属家庭id
       },
       // 请求成功
       success: (response) => {
