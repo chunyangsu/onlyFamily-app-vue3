@@ -53,24 +53,29 @@
               <view class="title-border"></view>
               <view class="title-text">荤菜</view>
             </view>
-            <view class="header-total">共12道菜</view>
+            <view class="header-total">共{{ dishTotal }}道菜</view>
           </view>
-          <view class="dish-list">
-            <view v-for="(item, index) in dishList" :key="index" class="dish-item">
-              <!-- 主图 -->
-              <view class="dish-img">
-                <SuImage :src="item.attachmentUrl"></SuImage>
-              </view>
-              <!-- 详情信息 -->
-              <view class="dish-content">
-                <view class="dish-name">{{ item.name }}</view>
-                <view class="dish-price">￥{{ item.price }}</view>
-                <view class="dish-btn-bar">
-                  <view class="sale-num">销量：{{ item.saleNum }}</view>
-                  <view class="cart-box">
-                    <view v-if="item.cartNum > 0" class="minus-btn" @click="item.cartNum--">-</view>
-                    <view v-if="item.cartNum > 0" class="cart-num">{{ item.cartNum }}</view>
-                    <view class="plus-btn" @click="item.cartNum++">+</view>
+          <view class="group-list">
+            <view v-for="(item, index) in dishGroupList" :key="item.categoryId" class="group-item">
+              <view class="group-name">{{ item.categoryName }}</view>
+              <view class="dish-list">
+                <view v-for="val in item.dishList" :key="val.id" class="dish-item">
+                  <!-- 主图 -->
+                  <view class="dish-img">
+                    <SuImage :src="val.attachmentUrl"></SuImage>
+                  </view>
+                  <!-- 详情信息 -->
+                  <view class="dish-content">
+                    <view class="dish-name">{{ val.name }}</view>
+                    <view class="dish-price">￥{{ val.price }}</view>
+                    <view class="dish-btn-bar">
+                      <view class="sale-num">销量：{{ val.saleNum }}</view>
+                      <view class="cart-box">
+                        <view v-if="val.cartNum > 0" class="minus-btn" @click="val.cartNum--">-</view>
+                        <view v-if="val.cartNum > 0" class="cart-num">{{ val.cartNum }}</view>
+                        <view class="plus-btn" @click="val.cartNum++">+</view>
+                      </view>
+                    </view>
                   </view>
                 </view>
               </view>
@@ -81,17 +86,19 @@
     </view>
     <!-- 购物车 -->
     <view class="footer">
-      <view class="left-cart">
-        <view class="cart-num">
-          <view class="cart-icon">
-            <SuImage name="cart.png"></SuImage>
+      <view class="footer-content">
+        <view class="left-cart">
+          <view class="cart-num">
+            <view class="cart-icon">
+              <SuImage name="cart.png"></SuImage>
+            </view>
+            <view class="dish-num">{{ selectedDishTotal }}</view>
           </view>
-          <view class="dish-num">{{ selectedDishTotal }}</view>
+          <view class="cart-dish-type">共 {{ cartData.length }} 种菜品</view>
+          <view class="cart-price">￥{{ cartPriceTotal }}</view>
         </view>
-        <view class="cart-dish-type">共 {{ cartData.length }} 种菜品</view>
-        <view class="cart-price">￥{{ cartPriceTotal }}</view>
+        <view class="right-btn" @click="goToConfirmOrder">下单</view>
       </view>
-      <view class="right-btn" @click="goToConfirmOrder">下单</view>
     </view>
   </view>
 </template>
@@ -103,7 +110,7 @@ import { getDishListApi } from '@/api/modules/food/dish'
 import { getAttachmentListApi } from '@/api/common/attachment'
 // ts
 import type { DishCategoryItem } from '@/pages/foodMenu/types'
-import type { DishItem } from '@/api/modules/food/dish/types'
+import type { DishGroupItem, DishItem } from '@/api/modules/food/dish/types'
 
 // 跳转"订单管理"页面
 const goToFoodOrder = () => {
@@ -136,15 +143,15 @@ const goToConfirmOrder = () => {
     return
   }
   const tempArr: FoodOrderDishItem[] = []
-  cartData.value.forEach((item) => {
-    tempArr.push({
-      id: item.id,
-      name: item.name,
-      categoryId: item.categoryId,
-      price: item.price,
-      num: item.cartNum
-    })
-  })
+  // cartData.value.forEach((item) => {
+  //   tempArr.push({
+  //     id: item.id,
+  //     name: item.name,
+  //     categoryId: item.categoryId,
+  //     price: item.price,
+  //     num: item.cartNum
+  //   })
+  // })
   uni.navigateTo({
     url: '/views/food/confirmOrder/index',
     success(res) {
@@ -168,38 +175,55 @@ const getDishCategoryList = async () => {
         name: item.name
       })
     })
+    getDishList()
   })
 }
 
-// 菜品列表
-const dishList = ref<DishItem[]>([])
+// 菜品分组列表
+const dishGroupList = ref<DishGroupItem[]>([])
+const dishTotal = ref(0)
 
 // 获取菜品列表
 const getDishList = async () => {
   const tempIdArr: number[] = []
-  getDishListApi().then((response: any) => {
-    dishList.value = []
-    response.forEach((item: any) => {
-      dishList.value.push({
-        id: item.id,
-        name: item.name,
-        attachmentId: item.attachmentId,
-        attachmentUrl: '',
+  const query = {
+    name: '',
+    categoryIds: categoryList.value.map((item) => item.id).join()
+  }
+  getDishListApi(query).then((response) => {
+    dishGroupList.value = []
+    dishTotal.value = response.total
+    response.list.forEach((item) => {
+      dishGroupList.value.push({
         categoryId: item.categoryId,
-        price: item.price,
-        saleNum: 0,
-        cartNum: 0
+        categoryName: item.categoryName,
+        dishList: []
       })
-      tempIdArr.push(item.attachmentId)
+      if (item.dishList.length > 0) {
+        item.dishList.forEach((val) => {
+          dishGroupList.value[dishGroupList.value.length - 1].dishList.push({
+            id: val.id,
+            name: val.name,
+            attachmentId: val.attachmentId,
+            attachmentUrl: '',
+            price: val.price,
+            saleNum: 0,
+            cartNum: 0
+          })
+          tempIdArr.push(val.attachmentId)
+        })
+      }
     })
     // 获取对应的附件
     getAttachmentListApi({ idArr: tempIdArr }).then((res: any[]) => {
       if (res && res.length > 0) {
         res.forEach((item) => {
-          dishList.value.forEach((val) => {
-            if (val.attachmentId === item.id) {
-              val.attachmentUrl = item.url
-            }
+          dishGroupList.value.forEach((val) => {
+            val.dishList.forEach((v) => {
+              if (v.attachmentId === item.id) {
+                v.attachmentUrl = item.url
+              }
+            })
           })
         })
       }
@@ -210,30 +234,30 @@ const getDishList = async () => {
 // 已选菜品数量的总计
 const selectedDishTotal = computed(() => {
   let total = 0
-  dishList.value.forEach((item) => {
-    if (item.cartNum > 0) {
-      total += item.cartNum
-    }
-  })
+  // dishList.value.forEach((item) => {
+  //   if (item.cartNum > 0) {
+  //     total += item.cartNum
+  //   }
+  // })
   return total
 })
 
 // 购物车数据(已选菜品)
 const cartData = computed(() => {
   let tempArr: DishItem[] = []
-  dishList.value.forEach((item) => {
-    if (item.cartNum > 0) {
-      tempArr.push(item)
-    }
-  })
+  // dishList.value.forEach((item) => {
+  //   if (item.cartNum > 0) {
+  //     tempArr.push(item)
+  //   }
+  // })
   return tempArr
 })
 
 // 计算购物车总价
 const cartPriceTotal = computed(() => {
   let total = 0
-  dishList.value.forEach((item) => {
-    total += item.cartNum * item.price
+  dishGroupList.value.forEach((item) => {
+    // total += item.cartNum * item.price
   })
   return total.toFixed(2)
 })
@@ -241,7 +265,6 @@ const cartPriceTotal = computed(() => {
 // 页面加载时获取分类列表
 onLoad(() => {
   getDishCategoryList()
-  getDishList()
 })
 
 onShow(() => {
@@ -366,78 +389,88 @@ onShow(() => {
       }
     }
 
-    .dish-list {
-      .dish-item {
-        display: flex;
-        margin-bottom: 16rpx;
-
-        .dish-img {
-          width: 160rpx;
-          height: 160rpx;
-          text-align: center;
-          line-height: 156rpx;
-          background-color: #666;
-          color: #fff;
-          border-radius: 16rpx;
-          overflow: hidden;
+    .group-list {
+      .group-item {
+        .group-name {
+          color: $textLight;
         }
 
-        .dish-content {
-          flex: 1;
-          padding: 0 20rpx;
-
-          .dish-name {
-            font-weight: bold;
-            color: $textDark;
-          }
-
-          .dish-price {
-            font-size: 28rpx;
-            margin-top: 8rpx;
-            font-size: 32rpx;
-            color: $theme;
-          }
-        }
-
-        .dish-btn-bar {
+        .dish-list {
           margin-top: 8rpx;
-          display: flex;
-          align-items: center;
 
-          .sale-num {
-            flex: 1;
-            font-size: 28rpx;
-            color: $textLight;
-          }
-
-          .cart-box {
+          .dish-item {
             display: flex;
+            margin-bottom: 16rpx;
 
-            .minus-btn {
-              width: 40rpx;
-              height: 40rpx;
-              line-height: 30rpx;
+            .dish-img {
+              width: 160rpx;
+              height: 160rpx;
               text-align: center;
-              color: $textDefault;
-              background-color: #fff;
-              font-size: 46rpx;
-              border-radius: 50%;
-              border: 2rpx solid $theme;
+              line-height: 156rpx;
+              background-color: #666;
+              color: #fff;
+              border-radius: 16rpx;
+              overflow: hidden;
             }
 
-            .cart-num {
-              margin: 0 16rpx;
+            .dish-content {
+              flex: 1;
+              padding: 0 20rpx;
+
+              .dish-name {
+                font-weight: bold;
+                color: $textDark;
+              }
+
+              .dish-price {
+                font-size: 28rpx;
+                margin-top: 8rpx;
+                font-size: 32rpx;
+                color: $theme;
+              }
             }
 
-            .plus-btn {
-              width: 44rpx;
-              height: 44rpx;
-              line-height: 38rpx;
-              text-align: center;
-              color: white;
-              background-color: $theme;
-              font-size: 36rpx;
-              border-radius: 50%;
+            .dish-btn-bar {
+              margin-top: 8rpx;
+              display: flex;
+              align-items: center;
+
+              .sale-num {
+                flex: 1;
+                font-size: 28rpx;
+                color: $textLight;
+              }
+
+              .cart-box {
+                display: flex;
+
+                .minus-btn {
+                  width: 40rpx;
+                  height: 40rpx;
+                  line-height: 30rpx;
+                  text-align: center;
+                  color: $textDefault;
+                  background-color: #fff;
+                  font-size: 46rpx;
+                  border-radius: 50%;
+                  border: 2rpx solid $theme;
+                }
+
+                .cart-num {
+                  margin: 0 16rpx;
+                }
+
+                .plus-btn {
+                  width: 44rpx;
+                  height: 44rpx;
+                  line-height: 38rpx;
+                  text-align: center;
+                  color: white;
+                  background-color: $theme;
+                  font-size: 36rpx;
+                  border-radius: 50%;
+                }
+              }
             }
           }
         }
@@ -447,54 +480,59 @@ onShow(() => {
 }
 
 .footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: 50rpx;
-  padding: 16rpx;
-  background-color: #f0f1e1;
-  margin: 0 24rpx;
-  margin-bottom: 24rpx;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 
-  .left-cart {
+  .footer-content {
     display: flex;
     align-items: center;
-
-    .cart-num {
-      position: relative;
-
-      .cart-icon {
-        width: 70rpx;
-        height: 70rpx;
-        line-height: 68rpx;
-        text-align: center;
-      }
-
-      .dish-num {
-        position: absolute;
-        top: -4rpx;
-        right: -24rpx;
-        color: #fff;
-        background-color: $theme;
-        border-radius: 24rpx;
-        padding: 0 12rpx 2rpx 12rpx;
-      }
-    }
-
-    .cart-dish-type {
-      margin-left: 38rpx;
-    }
-
-    .cart-price {
-      margin-left: 24rpx;
-    }
-  }
-
-  .right-btn {
-    color: #fff;
-    background-color: $theme;
+    justify-content: space-between;
     border-radius: 50rpx;
-    padding: 16rpx 52rpx 20rpx 52rpx;
+    padding: 16rpx;
+    background-color: #f0f1e1;
+    margin: 0 24rpx;
+
+    .left-cart {
+      display: flex;
+      align-items: center;
+
+      .cart-num {
+        position: relative;
+
+        .cart-icon {
+          width: 70rpx;
+          height: 70rpx;
+          line-height: 68rpx;
+          text-align: center;
+        }
+
+        .dish-num {
+          position: absolute;
+          top: -4rpx;
+          right: -24rpx;
+          color: #fff;
+          background-color: $theme;
+          border-radius: 24rpx;
+          padding: 0 12rpx 2rpx 12rpx;
+        }
+      }
+
+      .cart-dish-type {
+        margin-left: 38rpx;
+      }
+
+      .cart-price {
+        margin-left: 24rpx;
+      }
+    }
+
+    .right-btn {
+      color: #fff;
+      background-color: $theme;
+      border-radius: 50rpx;
+      padding: 16rpx 52rpx 20rpx 52rpx;
+    }
   }
 }
 </style>

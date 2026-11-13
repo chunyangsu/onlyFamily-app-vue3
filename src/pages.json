@@ -90,12 +90,12 @@
         "iconPath": "static/images/kitchen.png",
         "selectedIconPath": "static/images/kitchen-active.png"
       },
-      {
-        "pagePath": "pages/transaction/index",
-        "text": "账单",
-        "iconPath": "static/images/ledger.png",
-        "selectedIconPath": "static/images/ledger-active.png"
-      },
+      // {
+      //   "pagePath": "pages/transaction/index",
+      //   "text": "账单",
+      //   "iconPath": "static/images/ledger.png",
+      //   "selectedIconPath": "static/images/ledger-active.png"
+      // },
       {
         "pagePath": "pages/my/index",
         "text": "我的",

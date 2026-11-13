@@ -1,14 +1,15 @@
 import request from '@/api/service'
-import type { DishForm } from '@/api/modules/food/dish/types'
+import type { DishQuery, DishGroupResponse, DishForm } from '@/api/modules/food/dish/types'
 
 /**
  * 获取菜品列表
  * @returns
  */
-export const getDishListApi = () => {
-  return request({
+export const getDishListApi = (query: DishQuery): Promise<DishGroupResponse> => {
+  return request<DishGroupResponse>({
     url: '/api/dish/getList',
-    method: 'GET'
+    method: 'GET',
+    data: query
   })
 }
 
