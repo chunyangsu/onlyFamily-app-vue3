@@ -45,6 +45,12 @@
       }
     },
     {
+      "path": "views/food/orderPlaced/index",
+      "style": {
+        "navigationBarTitleText": "下单成功"
+      }
+    },
+    {
       "path": "views/food/foodOrder/index",
       "style": {
         "navigationBarTitleText": "订单管理"

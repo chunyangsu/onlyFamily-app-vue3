@@ -43,12 +43,9 @@
 </template>
 
 <script setup lang="ts">
-import { getCurrentInstance } from 'vue'
 // api
-import { getDishCategoryListApi } from '@/api/modules/food/category'
 import { createFoodOrderApi } from '@/api/modules/food/foodOrder'
 // ts
-// import type { UploadFile } from '@/uni_modules/wot-ui/components/wd-upload/types'
 import type { FoodOrderFormApi } from '@/api/modules/food/foodOrder/types'
 
 interface FoodOrderDishItem {
@@ -88,12 +85,20 @@ const confirmData = async () => {
       remark: remark.value
     }
     await createFoodOrderApi(tempData)
+    goToOrderPlaced()
   } catch (err) {
     // 接口请求失败
     console.error(err)
   } finally {
     // loading.value = false
   }
+}
+
+// 跳转"下单成功"页面
+const goToOrderPlaced = () => {
+  uni.navigateTo({
+    url: '/views/food/orderPlaced/index'
+  })
 }
 
 // 页面加载时触发
