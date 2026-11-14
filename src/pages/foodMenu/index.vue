@@ -39,23 +39,11 @@
       </view>
       <view class="order-food">
         <!-- 左侧分类 -->
-        <scroll-view
-          class="order-food-left"
-          scroll-y
-          :scroll-top="categoryScrollTop"
-          scroll-with-animation
-          :show-scrollbar="false"
-          @scroll="onCategoryScroll"
-          @touchmove.stop.prevent
-        >
+        <scroll-view class="order-food-left" scroll-y :scroll-top="categoryScrollTop" scroll-with-animation
+          :show-scrollbar="false" @scroll="onCategoryScroll" @touchmove.stop.prevent>
           <view class="category-list">
-            <view
-              v-for="item in categoryList"
-              :id="`dish-category-${item.id}`"
-              :key="item.id"
-              :class="[activedCategory === item.id ? 'active' : '', 'cate-item']"
-              @click="selectCategory(item.id)"
-            >
+            <view v-for="item in categoryList" :id="`dish-category-${item.id}`" :key="item.id"
+              :class="[activedCategory === item.id ? 'active' : '', 'cate-item']" @click="selectCategory(item.id)">
               <view class="cate-name">{{ item.name }}</view>
             </view>
           </view>
@@ -69,25 +57,14 @@
             </view>
             <view class="header-total">共{{ dishTotal }}道菜</view>
           </view>
-          <scroll-view
-            class="dish-scroll"
-            scroll-y
-            :scroll-top="dishScrollTop"
-            :scroll-with-animation="false"
-            :show-scrollbar="false"
-            @scroll="onDishScroll"
-            @touchstart="interruptScroll"
-          >
+          <scroll-view class="dish-scroll" scroll-y :scroll-top="dishScrollTop" :scroll-with-animation="false"
+            :show-scrollbar="false" @scroll="onDishScroll" @touchstart="interruptScroll">
             <view v-if="!dishGroupList.length" class="list-status" @click="retryLoadMenu">
               {{ loading ? '加载中…' : loadError ? '加载失败，点击重试' : '暂无菜品分类' }}
             </view>
             <view v-else class="group-list">
-              <view
-                v-for="item in dishGroupList"
-                :id="`dish-group-${item.categoryId}`"
-                :key="item.categoryId"
-                class="group-item"
-              >
+              <view v-for="item in dishGroupList" :id="`dish-group-${item.categoryId}`" :key="item.categoryId"
+                class="group-item">
                 <view class="group-name">{{ item.categoryName }}</view>
                 <view v-if="!item.dishList.length" class="empty-category">该分类暂无菜品</view>
                 <view class="dish-list">
@@ -103,9 +80,7 @@
                       <view class="dish-btn-bar">
                         <view class="sale-num">销量：{{ val.saleNum }}</view>
                         <view class="cart-box">
-                          <view v-if="val.cartNum > 0" class="minus-btn" @click="val.cartNum--"
-                            >-</view
-                          >
+                          <view v-if="val.cartNum > 0" class="minus-btn" @click="val.cartNum--">-</view>
                           <view v-if="val.cartNum > 0" class="cart-num">{{ val.cartNum }}</view>
                           <view class="plus-btn" @click="val.cartNum++">+</view>
                         </view>
@@ -164,7 +139,7 @@ const goToAddDish = () => {
 interface FoodOrderDishItem {
   id: number // 菜品id
   name: string // 菜品名称
-  categoryId: number // 分类id
+  attachmentUrl: string // 附件url地址
   price: number // 价格
   num: number // 数量
 }
@@ -172,22 +147,22 @@ interface FoodOrderDishItem {
 // 跳转"确认订单"页面
 const goToConfirmOrder = () => {
   if (cartData.value.length === 0) {
-    // uni.showToast({
-    //   title: '请先选择菜品',
-    //   icon: 'none'
-    // })
+    uni.showToast({
+      title: '请先选择菜品',
+      icon: 'none'
+    })
     return
   }
   const tempArr: FoodOrderDishItem[] = []
-  // cartData.value.forEach((item) => {
-  //   tempArr.push({
-  //     id: item.id,
-  //     name: item.name,
-  //     categoryId: item.categoryId,
-  //     price: item.price,
-  //     num: item.cartNum
-  //   })
-  // })
+  cartData.value.forEach((item) => {
+    tempArr.push({
+      id: item.id,
+      name: item.name,
+      attachmentUrl: item.attachmentUrl,
+      price: item.price,
+      num: item.cartNum
+    })
+  })
   uni.navigateTo({
     url: '/views/food/confirmOrder/index',
     success(res) {
@@ -280,8 +255,7 @@ const revealCategory = async (id: number) => {
 
 // 根据列表顶部所在分组更新高亮，容忍小数像素误差
 const syncActiveCategory = (top: number) => {
-  const position =
-    [...groupPositions].reverse().find((item) => item.top <= top + 2) ?? groupPositions[0]
+  const position = [...groupPositions].reverse().find((item) => item.top <= top + 2) ?? groupPositions[0]
   if (!position) return
   if (activedCategory.value === position.id) return
   activedCategory.value = position.id
@@ -326,23 +300,8 @@ const measureLayout = async () => {
     query.selectAll('.cate-item').boundingClientRect()
     query.exec((result) => {
       if (version !== layoutVersion || !pageVisible || disposed) return resolve(false)
-      const [viewport, content, groups, leftViewport, leftContent, categories] = result as [
-        LayoutRect | null,
-        LayoutRect | null,
-        LayoutRect[],
-        LayoutRect | null,
-        LayoutRect | null,
-        LayoutRect[]
-      ]
-      if (
-        !viewport?.height ||
-        !content ||
-        !leftViewport ||
-        !leftContent ||
-        groups.length !== dishGroupList.value.length ||
-        !groups.length ||
-        categories.length !== categoryList.value.length
-      )
+      const [viewport, content, groups, leftViewport, leftContent, categories] = result as [LayoutRect | null, LayoutRect | null, LayoutRect[], LayoutRect | null, LayoutRect | null, LayoutRect[]]
+      if (!viewport?.height || !content || !leftViewport || !leftContent || groups.length !== dishGroupList.value.length || !groups.length || categories.length !== categoryList.value.length)
         return resolve(false)
       categoryViewportHeight = leftViewport.height
       groupPositions = groups.map((rect, index) => ({
@@ -357,10 +316,7 @@ const measureLayout = async () => {
       }))
       tailHeight.value = Math.max(0, Math.ceil(viewport.height - groups[groups.length - 1].height))
       const lastGroup = groupPositions[groupPositions.length - 1]
-      maxDishTop = Math.max(
-        0,
-        lastGroup.top + lastGroup.height + tailHeight.value - viewport.height
-      )
+      maxDishTop = Math.max(0, lastGroup.top + lastGroup.height + tailHeight.value - viewport.height)
       resolve(true)
     })
   })
@@ -443,20 +399,13 @@ const loadMenu = async () => {
   loadError.value = false
   try {
     const categories = (await getDishCategoryListApi()) as DishCategoryItem[]
-    const response = categories.length
-      ? await getDishListApi({ name: '', categoryIds: categories.map((item) => item.id).join() })
-      : { list: [], total: 0 }
+    const response = categories.length ? await getDishListApi({ name: '', categoryIds: categories.map((item) => item.id).join() }) : { list: [], total: 0 }
     if (disposed) return
     const groups = new Map(response.list.map((item) => [item.categoryId, item]))
-    const previousDishes = new Map(
-      dishGroupList.value.flatMap((item) => item.dishList).map((item) => [item.id, item])
-    )
+    const previousDishes = new Map(dishGroupList.value.flatMap((item) => item.dishList).map((item) => [item.id, item]))
     const activeId = activedCategory.value
     const previous = groupPositions.find((item) => item.id === activeId)
-    const offset =
-      previous && categories.some((item) => item.id === activeId)
-        ? Math.max(0, actualDishTop - previous.top)
-        : 0
+    const offset = previous && categories.some((item) => item.id === activeId) ? Math.max(0, actualDishTop - previous.top) : 0
     interruptScroll()
     const version = scrollVersion
     categoryList.value = categories.map((item) => ({ id: item.id, name: item.name }))
@@ -465,18 +414,13 @@ const loadMenu = async () => {
       categoryName: item.name,
       dishList: (groups.get(item.id)?.dishList ?? []).map((dish) => ({
         ...dish,
-        attachmentUrl:
-          previousDishes.get(dish.id)?.attachmentId === dish.attachmentId
-            ? (previousDishes.get(dish.id)?.attachmentUrl ?? '')
-            : '',
+        attachmentUrl: previousDishes.get(dish.id)?.attachmentId === dish.attachmentId ? (previousDishes.get(dish.id)?.attachmentUrl ?? '') : '',
         saleNum: dish.saleNum ?? 0,
         cartNum: previousDishes.get(dish.id)?.cartNum ?? 0
       }))
     }))
     dishTotal.value = response.total
-    activedCategory.value = categories.some((item) => item.id === activeId)
-      ? activeId
-      : (categories[0]?.id ?? null)
+    activedCategory.value = categories.some((item) => item.id === activeId) ? activeId : (categories[0]?.id ?? null)
     groupPositions = []
     categoryPositions = []
     tailHeight.value = 0
@@ -487,12 +431,8 @@ const loadMenu = async () => {
       dishScrollTop.value = 0
       categoryScrollTop.value = 0
     } else if ((await measureLayout()) && version === scrollVersion) {
-      const position =
-        groupPositions.find((item) => item.id === activedCategory.value) ?? groupPositions[0]
-      await scrollToPosition(
-        position.top + Math.min(offset, Math.max(0, position.height - 3)),
-        false
-      )
+      const position = groupPositions.find((item) => item.id === activedCategory.value) ?? groupPositions[0]
+      await scrollToPosition(position.top + Math.min(offset, Math.max(0, position.height - 3)), false)
       void revealCategory(position.id)
     }
     // 图片独立回填，加载失败不影响菜品浏览
@@ -529,22 +469,30 @@ const retryLoadMenu = () => {
 // 已选菜品数量的总计
 const selectedDishTotal = computed(() => {
   let total = 0
-  // dishList.value.forEach((item) => {
-  //   if (item.cartNum > 0) {
-  //     total += item.cartNum
-  //   }
-  // })
+  dishGroupList.value.forEach((item) => {
+    if (item.dishList.length > 0) {
+      item.dishList.forEach((val) => {
+        if (val.cartNum > 0) {
+          total += val.cartNum
+        }
+      })
+    }
+  })
   return total
 })
 
 // 购物车数据(已选菜品)
 const cartData = computed(() => {
   let tempArr: DishItem[] = []
-  // dishList.value.forEach((item) => {
-  //   if (item.cartNum > 0) {
-  //     tempArr.push(item)
-  //   }
-  // })
+  dishGroupList.value.forEach((item) => {
+    if (item.dishList.length > 0) {
+      item.dishList.forEach((val) => {
+        if (val.cartNum > 0) {
+          tempArr.push(val)
+        }
+      })
+    }
+  })
   return tempArr
 })
 
@@ -552,7 +500,13 @@ const cartData = computed(() => {
 const cartPriceTotal = computed(() => {
   let total = 0
   dishGroupList.value.forEach((item) => {
-    // total += item.cartNum * item.price
+    if (item.dishList.length > 0) {
+      item.dishList.forEach((val) => {
+        if (val.cartNum > 0) {
+          total += val.cartNum * val.price
+        }
+      })
+    }
   })
   return total.toFixed(2)
 })

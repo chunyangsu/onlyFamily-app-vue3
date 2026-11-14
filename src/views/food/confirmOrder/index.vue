@@ -1,28 +1,43 @@
 <template>
-  <view class="container">
+  <view class="su-container confirm-order">
     <view class="main">
       <!-- 订单列表 -->
-      <view class="order-list">
-        <view v-for="(item, index) in orderList" :key="index" class="order-item">
-          <view class="order-img">11</view>
-          <view class="order-content">
-            <view class="order-name">{{ item.name }}</view>
-            <view class="price-num">
-              <view class="order-price">￥ {{ item.price }}</view>
-              <view class="order-num">×{{ item.num }}</view>
+      <view class="card-item">
+        <SuCard :title="'已选菜品（' + orderList.length + '）'">
+          <view class="order-list">
+            <view v-for="(item, index) in orderList" :key="index" class="order-item">
+              <view class="order-img">
+                <SuImage :src="item.attachmentUrl"></SuImage>
+              </view>
+              <view class="order-content">
+                <view class="order-name">{{ item.name }}</view>
+                <view class="price-num">
+                  <view class="order-price">￥{{ item.price }}</view>
+                  <view class="order-num">×{{ item.num }}</view>
+                </view>
+              </view>
             </view>
           </view>
-        </view>
+        </SuCard>
       </view>
       <!-- 订单备注 -->
-      <view class="order-remark">
-        <view>订单备注</view>
-        <wd-textarea v-model="remark" placeholder="请输入" />
+      <view class="card-item">
+        <SuCard title="订单备注">
+          <view class="order-remark">
+            <SuInput v-model="remark" type="textarea" placeholder="请输入备注" />
+          </view>
+        </SuCard>
       </view>
     </view>
     <!-- 底部按钮 -->
     <view class="footer">
-      <wd-button type="success" @click="confirmData">确认下单</wd-button>
+      <view class="footer-content">
+        <view class="footer-left">
+          <view class="total-label">合计：</view>
+          <view class="total-price">￥ {{ totalPrice }}</view>
+        </view>
+        <view class="footer-right" @click="confirmData">确认下单</view>
+      </view>
     </view>
   </view>
 </template>
@@ -39,8 +54,8 @@ import type { FoodOrderFormApi } from '@/api/modules/food/foodOrder/types'
 interface FoodOrderDishItem {
   id: number // 菜品id
   name: string // 菜品名称
-  categoryId: number // 分类id
-  price: string // 价格
+  attachmentUrl: string // 附件url地址
+  price: number // 价格
   num: number // 数量
 }
 
@@ -48,6 +63,15 @@ interface FoodOrderDishItem {
 const orderList = ref<FoodOrderDishItem[]>([])
 
 const remark = ref('')
+
+// 合计总价
+const totalPrice = computed(() => {
+  let total = 0
+  orderList.value.forEach((item) => {
+    total += item.num * item.price
+  })
+  return total.toFixed(2)
+})
 
 // 确认下单
 const confirmData = async () => {
@@ -63,8 +87,7 @@ const confirmData = async () => {
       })),
       remark: remark.value
     }
-    const response = await createFoodOrderApi(tempData)
-    console.log(response)
+    await createFoodOrderApi(tempData)
   } catch (err) {
     // 接口请求失败
     console.error(err)
@@ -89,7 +112,7 @@ onLoad(() => {
 </script>
 
 <style lang="scss" scoped>
-.container {
+.confirm-order {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -97,56 +120,102 @@ onLoad(() => {
 
   .main {
     flex: 1;
+    padding: 0 24rpx;
+
+    .card-item {
+      margin-bottom: 24rpx;
+    }
 
     .order-list {
       .order-item {
         display: flex;
-        margin-bottom: 8px;
+        margin-bottom: 16rpx;
 
         .order-img {
-          width: 80px;
-          height: 80px;
+          width: 160rpx;
+          height: 160rpx;
           text-align: center;
-          line-height: 78px;
+          line-height: 156rpx;
           background-color: #666;
           color: #fff;
-          border-radius: 4px;
+          border-radius: 16rpx;
+          overflow: hidden;
         }
 
         .order-content {
           flex: 1;
-          padding: 0 10px;
+          padding: 0 20rpx;
 
           .order-name {
-            height: 50px;
+            color: $textDefault;
+            height: 100rpx;
+            font-size: 30rpx;
+            font-weight: bold;
           }
 
           .price-num {
             display: flex;
             justify-content: space-between;
 
+            .order-price {
+              color: $theme;
+              font-size: 32rpx;
+              font-weight: bold;
+            }
+
             .order-num {
-              color: #666;
+              color: $textLight;
+              font-size: 30rpx;
             }
           }
         }
       }
+
+      .order-item:last-child {
+        margin-bottom: 0;
+      }
     }
 
     .order-remark {
-      margin-top: 20px;
+      // margin-top: 40rpx;
     }
   }
 
   .footer {
     flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    gap: 16rpx;
-    padding: 20rpx 32rpx;
-    padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
-    background: #fff;
-    border-top: 1rpx solid #eee;
+    width: 100%;
+    background-color: #fff;
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24rpx;
+
+      .footer-left {
+        display: flex;
+        align-items: center;
+
+        .total-label {
+          color: $textDefault;
+          font-size: 30rpx;
+          font-weight: bold;
+        }
+
+        .total-price {
+          color: $theme;
+          font-size: 40rpx;
+          font-weight: bold;
+        }
+      }
+
+      .footer-right {
+        color: #fff;
+        background-color: $theme;
+        border-radius: 50rpx;
+        padding: 16rpx 52rpx 20rpx 52rpx;
+      }
+    }
   }
 }
 </style>
