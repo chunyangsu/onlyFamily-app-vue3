@@ -7,7 +7,7 @@
           <view class="order-list">
             <view v-for="(item, index) in orderList" :key="index" class="order-item">
               <view class="order-img">
-                <SuImage :src="item.attachmentUrl"></SuImage>
+                <SuImage :src="item.mainImageUrl"></SuImage>
               </view>
               <view class="order-content">
                 <view class="order-name">{{ item.name }}</view>
@@ -51,7 +51,7 @@ import type { FoodOrderFormApi } from '@/api/modules/food/foodOrder/types'
 interface FoodOrderDishItem {
   id: number // 菜品id
   name: string // 菜品名称
-  attachmentUrl: string // 附件url地址
+  mainImageUrl: string // 菜品主图url地址
   price: number // 价格
   num: number // 数量
 }

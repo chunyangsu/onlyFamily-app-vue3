@@ -18,9 +18,8 @@ export interface DishGroupItem {
 export interface DishItem {
   id: number
   name: string // 名称
-  attachmentId: number // 附件id(菜品主图)
-  attachmentUrl: string // 附件url地址
-  // categoryId: number // 分类id
+  mainImageId: number // 菜品主图id
+  mainImageUrl: string // 菜品主图url地址
   price: number // 价格
   saleNum: number // 销量
   cartNum: number // 购物车数量(临时暂存)
@@ -29,7 +28,7 @@ export interface DishItem {
 // 菜品表单
 export interface DishForm {
   name: string // 名称
-  attachmentId: number // 附件id(菜品主图)
+  mainImageId: number // 菜品主图id
   categoryId: number // 分类id
   introduction: string // 介绍
   makeProcess: string // 制作过程

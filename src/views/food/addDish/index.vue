@@ -58,7 +58,7 @@ import type { DishForm } from '@/api/modules/food/dish/types'
 // 表单数据
 const formData = ref<DishForm>({
   name: '',
-  attachmentId: 0,
+  mainImageId: 0,
   categoryId: 0,
   introduction: '',
   makeProcess: '',
@@ -114,7 +114,7 @@ const saveData = async () => {
     // loading.value = true
     const tempData: DishForm = {
       name: formData.value.name,
-      attachmentId: attachmentList.value[0],
+      mainImageId: attachmentList.value[0],
       categoryId: Number(categoryArr.value[0]),
       introduction: formData.value.introduction,
       makeProcess: formData.value.makeProcess,

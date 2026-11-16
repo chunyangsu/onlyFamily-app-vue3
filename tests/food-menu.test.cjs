@@ -34,7 +34,7 @@ const compiled = ts.transpileModule(
     `
 exports.api = {
   loadMenu, selectCategory, onDishScroll, onCategoryScroll, interruptScroll, refreshLayout,
-  measureLayout, retryLoadMenu,
+  measureLayout, retryLoadMenu, goToConfirmOrder,
   get state() {
     return {
       active: activedCategory.value, categories: categoryList.value, groups: dishGroupList.value,
@@ -61,12 +61,12 @@ function defaultData() {
         {
           categoryId: 90,
           categoryName: '汤品',
-          dishList: [{ id: 2, name: '汤', attachmentId: 12, price: 5 }]
+          dishList: [{ id: 2, name: '汤', mainImageId: 12, mainImageUrl: 'soup.jpg', price: 5 }]
         },
         {
           categoryId: 8,
           categoryName: '荤菜',
-          dishList: [{ id: 1, name: '肉', attachmentId: 11, price: 10 }]
+          dishList: [{ id: 1, name: '肉', mainImageId: 11, mainImageUrl: 'meat.jpg', price: 10 }]
         }
       ]
     }
@@ -77,7 +77,7 @@ function defaultData() {
 function createPage(data = defaultData()) {
   const hooks = {}
   const timers = new Map()
-  const calls = { categories: 0, dishes: [], attachments: 0 }
+  const calls = { categories: 0, dishes: [], navigation: [], events: [] }
   let clock = 0
   let timerId = 0
   let viewportHeight = 400
@@ -104,17 +104,6 @@ function createPage(data = defaultData()) {
             return data.response
           }
         }
-      if (name === '@/api/common/attachment')
-        return {
-          async getAttachmentListApi() {
-            calls.attachments++
-            if (data.imageFail) throw new Error('image offline')
-            return [
-              { id: 11, url: 'meat.jpg' },
-              { id: 12, url: 'soup.jpg' }
-            ]
-          }
-        }
       throw new Error(`Unexpected import: ${name}`)
     },
     ref: (value) => ({ value }),
@@ -136,6 +125,16 @@ function createPage(data = defaultData()) {
     },
     console: { warn() {} },
     uni: {
+      navigateTo(options) {
+        calls.navigation.push(options.url)
+        options.success?.({
+          eventChannel: {
+            emit(name, data) {
+              calls.events.push({ name, data })
+            }
+          }
+        })
+      },
       onWindowResize: (callback) => {
         hooks.resize = callback
       },
@@ -222,7 +221,7 @@ function createPage(data = defaultData()) {
   }
 }
 
-test('首次仅加载一次，按分类排序并保留空分类、回填图片', async () => {
+test('首次仅加载一次，按分类排序并保留空分类，直接使用列表主图', async () => {
   const page = createPage()
   await page.enter()
   const state = page.api.state
@@ -231,10 +230,42 @@ test('首次仅加载一次，按分类排序并保留空分类、回填图片',
   assert.equal(page.calls.dishes[0].categoryIds, '8,25,90')
   assert.equal(state.groups.map((group) => group.categoryId).join(), '8,25,90')
   assert.equal(state.groups[1].dishList.length, 0)
-  assert.equal(state.groups[0].dishList[0].attachmentUrl, 'meat.jpg')
+  assert.equal(state.groups[0].dishList[0].mainImageUrl, 'meat.jpg')
+  assert.equal(state.groups[2].dishList[0].mainImageUrl, 'soup.jpg')
   assert.equal(state.active, 8)
   assert.equal(state.total, 2)
   assert.equal(state.tail, 300)
+})
+
+test('刷新采用最新主图地址，不被同主图ID的旧缓存覆盖，同时保留选购数量', async () => {
+  const page = createPage()
+  await page.enter()
+  page.api.state.groups[0].dishList[0].cartNum = 3
+  const dish = page.data.response.list[1].dishList[0]
+  dish.mainImageUrl = 'meat.jpg?signature=new'
+  await page.api.loadMenu()
+  assert.equal(page.api.state.groups[0].dishList[0].mainImageUrl, dish.mainImageUrl)
+  assert.equal(page.api.state.groups[0].dishList[0].cartNum, 3)
+  dish.mainImageUrl = ''
+  await page.api.loadMenu()
+  assert.equal(page.api.state.groups[0].dishList[0].mainImageUrl, '')
+  assert.equal(page.api.state.error, false)
+})
+
+test('下单携带列表主图，确认订单页使用相同字段展示', async () => {
+  const page = createPage()
+  await page.enter()
+  page.api.state.groups[0].dishList[0].cartNum = 2
+  page.api.goToConfirmOrder()
+  assert.equal(page.calls.navigation[0], '/views/food/confirmOrder/index')
+  assert.equal(page.calls.events[0].name, 'cartData')
+  assert.equal(page.calls.events[0].data.length, 1)
+  const dish = page.calls.events[0].data[0]
+  assert.equal(dish.mainImageUrl, 'meat.jpg')
+  assert.equal(dish.num, 2)
+  const confirmation = readFileSync(resolve(__dirname, '../src/views/food/confirmOrder/index.vue'), 'utf8')
+  assert.match(confirmation, /:src="item\.mainImageUrl"/)
+  assert.doesNotMatch(confirmation, /attachmentUrl/)
 })
 
 test('上下滚动联动高亮，支持顶部回弹和像素容差', async () => {
@@ -365,7 +396,7 @@ test('测量期间点击或手势操作，不被过期恢复任务覆盖', async
   assert.equal(page.api.state.top, top)
 })
 
-test('零分类不请求菜品，加载失败可重试，图片失败不清空菜单', async () => {
+test('零分类不请求菜品，加载失败可重试', async () => {
   const empty = createPage({ categories: [], response: { list: [], total: 0 } })
   await empty.enter()
   assert.equal(empty.calls.dishes.length, 0)
@@ -375,7 +406,6 @@ test('零分类不请求菜品，加载失败可重试，图片失败不清空�
   await failed.enter()
   assert.equal(failed.api.state.error, true)
   failed.data.fail = false
-  failed.data.imageFail = true
   failed.api.retryLoadMenu()
   await failed.flush()
   assert.equal(failed.api.state.error, false)

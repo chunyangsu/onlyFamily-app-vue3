@@ -71,7 +71,7 @@
                   <view v-for="val in item.dishList" :key="val.id" class="dish-item">
                     <!-- 主图 -->
                     <view class="dish-img">
-                      <SuImage :src="val.attachmentUrl"></SuImage>
+                      <SuImage :src="val.mainImageUrl"></SuImage>
                     </view>
                     <!-- 详情信息 -->
                     <view class="dish-content">
@@ -118,7 +118,6 @@
 // api
 import { getDishCategoryListApi } from '@/api/modules/food/category'
 import { getDishListApi } from '@/api/modules/food/dish'
-import { getAttachmentListApi } from '@/api/common/attachment'
 // ts
 import type { DishCategoryItem } from '@/pages/foodMenu/types'
 import type { DishGroupItem, DishItem } from '@/api/modules/food/dish/types'
@@ -139,7 +138,7 @@ const goToAddDish = () => {
 interface FoodOrderDishItem {
   id: number // 菜品id
   name: string // 菜品名称
-  attachmentUrl: string // 附件url地址
+  mainImageUrl: string // 菜品主图url地址
   price: number // 价格
   num: number // 数量
 }
@@ -158,7 +157,7 @@ const goToConfirmOrder = () => {
     tempArr.push({
       id: item.id,
       name: item.name,
-      attachmentUrl: item.attachmentUrl,
+      mainImageUrl: item.mainImageUrl,
       price: item.price,
       num: item.cartNum
     })
@@ -414,7 +413,6 @@ const loadMenu = async () => {
       categoryName: item.name,
       dishList: (groups.get(item.id)?.dishList ?? []).map((dish) => ({
         ...dish,
-        attachmentUrl: previousDishes.get(dish.id)?.attachmentId === dish.attachmentId ? (previousDishes.get(dish.id)?.attachmentUrl ?? '') : '',
         saleNum: dish.saleNum ?? 0,
         cartNum: previousDishes.get(dish.id)?.cartNum ?? 0
       }))
@@ -434,24 +432,6 @@ const loadMenu = async () => {
       const position = groupPositions.find((item) => item.id === activedCategory.value) ?? groupPositions[0]
       await scrollToPosition(position.top + Math.min(offset, Math.max(0, position.height - 3)), false)
       void revealCategory(position.id)
-    }
-    // 图片独立回填，加载失败不影响菜品浏览
-    const dishes = dishGroupList.value.flatMap((item) => item.dishList)
-    const attachmentIds = [...new Set(dishes.map((item) => item.attachmentId).filter(Boolean))]
-    if (attachmentIds.length) {
-      try {
-        const attachments = (await getAttachmentListApi({ idArr: attachmentIds })) as {
-          id: number
-          url: string
-        }[]
-        if (disposed) return
-        const urls = new Map(attachments.map((item) => [item.id, item.url]))
-        dishes.forEach((item) => {
-          item.attachmentUrl = urls.get(item.attachmentId) ?? item.attachmentUrl
-        })
-      } catch (error) {
-        console.warn('菜品图片加载失败', error)
-      }
     }
   } catch (error) {
     if (!disposed) loadError.value = true
