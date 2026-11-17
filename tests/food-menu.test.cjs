@@ -27,6 +27,8 @@ test('小程序禁止整页滚动，固定页面并为购物车保留底部空�
   assert.match(css, /\.footer\s*\{[^}]*flex-shrink: 0/)
   assert.match(css, /\.dish-scroll\s*\{[^}]*overflow: hidden/)
   assert.match(page, /@touchmove\.stop\.prevent/)
+  assert.match(page, /refresher-enabled\s+:refresher-triggered="refreshing"/)
+  assert.match(page, /@refresherrefresh="onMenuRefresh"/)
   assert.doesNotMatch(page, /H5|@wheel|--window-|uni-scroll-view|overscroll-behavior/)
 })
 const compiled = ts.transpileModule(
@@ -34,13 +36,13 @@ const compiled = ts.transpileModule(
     `
 exports.api = {
   loadMenu, selectCategory, onDishScroll, onCategoryScroll, interruptScroll, refreshLayout,
-  measureLayout, retryLoadMenu, goToConfirmOrder,
+  measureLayout, retryLoadMenu, goToConfirmOrder, onMenuRefresh, goToAddDish,
   get state() {
     return {
       active: activedCategory.value, categories: categoryList.value, groups: dishGroupList.value,
       total: dishTotal.value, tail: tailHeight.value, top: dishScrollTop.value,
       leftTop: categoryScrollTop.value, target: scrollTarget, loading: loading.value,
-      error: loadError.value, positions: groupPositions
+      error: loadError.value, positions: groupPositions, refreshing: refreshing.value
     }
   }
 }`,
@@ -77,7 +79,7 @@ function defaultData() {
 function createPage(data = defaultData()) {
   const hooks = {}
   const timers = new Map()
-  const calls = { categories: 0, dishes: [], navigation: [], events: [] }
+  const calls = { categories: 0, dishes: [], navigation: [], events: [], pageEvents: {} }
   let clock = 0
   let timerId = 0
   let viewportHeight = 400
@@ -93,6 +95,7 @@ function createPage(data = defaultData()) {
         return {
           async getDishCategoryListApi() {
             calls.categories++
+            if (data.waitCategories) await data.waitCategories
             if (data.fail) throw new Error('offline')
             return data.categories
           }
@@ -127,6 +130,7 @@ function createPage(data = defaultData()) {
     uni: {
       navigateTo(options) {
         calls.navigation.push(options.url)
+        calls.pageEvents = options.events ?? {}
         options.success?.({
           eventChannel: {
             emit(name, data) {
@@ -176,7 +180,7 @@ function createPage(data = defaultData()) {
       }
     }
   }
-  for (const name of ['onShow', 'onReady', 'onHide', 'onUnload']) {
+  for (const name of ['onLoad', 'onShow', 'onReady', 'onHide', 'onUnload']) {
     globals[name] = (callback) => {
       hooks[name] = callback
     }
@@ -192,6 +196,7 @@ function createPage(data = defaultData()) {
       for (let index = 0; index < 20; index++) await Promise.resolve()
     },
     async enter() {
+      hooks.onLoad()
       hooks.onShow()
       hooks.onReady()
       await this.flush()
@@ -235,6 +240,192 @@ test('首次仅加载一次，按分类排序并保留空分类，直接使用�
   assert.equal(state.active, 8)
   assert.equal(state.total, 2)
   assert.equal(state.tail, 300)
+})
+
+test('返回页面只恢复布局，不重复请求，保留选购数量和滚动位置', async () => {
+  const page = createPage()
+  await page.enter()
+  page.api.state.groups[0].dishList[0].cartNum = 3
+  page.scroll(530)
+  for (let index = 0; index < 2; index++) {
+    page.hooks.onHide()
+    page.hooks.onShow()
+    await page.flush()
+  }
+  assert.equal(page.calls.categories, 1)
+  assert.equal(page.calls.dishes.length, 1)
+  assert.equal(page.api.state.groups[0].dishList[0].cartNum, 3)
+  assert.equal(page.api.state.active, 25)
+  assert.equal(page.api.state.top, 530)
+})
+
+// 运行真实添加页保存脚本，模拟页面事件通道和返回时序
+function createAddDishPage(menu, { fail = false } = {}) {
+  const addSource = readFileSync(resolve(__dirname, '../src/views/food/addDish/index.vue'), 'utf8')
+    .match(/<script setup[^>]*>([\s\S]*?)<\/script>/)[1]
+  const script = ts.transpileModule(addSource + '\nexports.api = { saveData };', {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 }
+  }).outputText
+  const calls = { saves: 0, back: 0, notifications: 0 }
+  const module = { exports: {} }
+  vm.runInNewContext(script, {
+    module,
+    exports: module.exports,
+    require(name) {
+      if (name === '@/api/modules/food/category') return {}
+      if (name === '@/api/modules/food/dish') return {
+        async createDishApi() {
+          calls.saves++
+          if (fail) throw new Error('save failed')
+        }
+      }
+      throw new Error(`Unexpected import: ${name}`)
+    },
+    ref: value => ({ value }),
+    computed: get => ({ get value() { return get() } }),
+    getCurrentInstance: () => ({ proxy: {
+      getOpenerEventChannel: () => ({ emit(name) {
+        calls.notifications++
+        menu.calls.pageEvents[name]?.()
+        // 通知发出时菜单仍隐藏，不应提前发请求
+        assert.equal(menu.calls.categories, 1)
+      } })
+    } }),
+    onLoad() {},
+    console: { error() {} },
+    uni: { navigateBack(options) {
+      assert.equal(options.delta, 1)
+      calls.back++
+      menu.hooks.onShow()
+    } }
+  })
+  return { calls, api: module.exports.api }
+}
+
+test('添加成功后返回并自动刷新一次，普通返回和保存失败不刷新', async () => {
+  const page = createPage()
+  await page.enter()
+  page.api.goToAddDish()
+  assert.equal(page.calls.navigation[0], '/views/food/addDish/index')
+  page.hooks.onHide()
+  const failed = createAddDishPage(page, { fail: true })
+  await failed.api.saveData()
+  assert.equal(failed.calls.notifications, 0)
+  assert.equal(failed.calls.back, 0)
+  page.hooks.onShow()
+  await page.flush()
+  assert.equal(page.calls.categories, 1)
+
+  page.api.state.groups[0].dishList[0].cartNum = 3
+  page.api.goToAddDish()
+  page.hooks.onHide()
+  page.data.response.list[1].dishList.push({ id: 3, name: '新菜', mainImageUrl: 'new.jpg', price: 12 })
+  page.data.response.total = 3
+  const success = createAddDishPage(page)
+  await success.api.saveData()
+  await page.flush()
+  assert.equal(success.calls.notifications, 1)
+  assert.equal(success.calls.back, 1)
+  assert.equal(page.calls.categories, 2)
+  assert.equal(page.calls.dishes.length, 2)
+  assert.equal(page.api.state.groups[0].dishList.length, 2)
+  assert.equal(page.api.state.groups[0].dishList[0].cartNum, 3)
+  page.hooks.onHide()
+  page.hooks.onShow()
+  await page.flush()
+  assert.equal(page.calls.categories, 2)
+})
+
+test('添加成功返回遇到旧请求时，旧请求结束后补一次刷新', async () => {
+  const page = createPage()
+  await page.enter()
+  let release
+  page.data.waitCategories = new Promise(resolve => { release = resolve })
+  const pending = page.api.loadMenu()
+  page.api.goToAddDish()
+  page.hooks.onHide()
+  page.calls.pageEvents.dishCreated()
+  page.hooks.onShow()
+  assert.equal(page.calls.categories, 2)
+  release()
+  await pending
+  await page.flush()
+  assert.equal(page.calls.categories, 3)
+  assert.equal(page.calls.dishes.length, 3)
+  assert.equal(page.api.state.loading, false)
+})
+
+test('下拉刷新重新请求分类及菜品，保留数量和定位，重复触发不重复请求', async () => {
+  const page = createPage()
+  await page.enter()
+  assert.equal(page.api.state.refreshing, false)
+  page.api.state.groups[0].dishList[0].cartNum = 3
+  page.scroll(530)
+  page.data.response.list[1].dishList[0].mainImageUrl = 'new-meat.jpg'
+  const pending = page.api.onMenuRefresh()
+  assert.equal(page.api.state.refreshing, true)
+  await page.api.onMenuRefresh()
+  await pending
+  assert.equal(page.calls.categories, 2)
+  assert.equal(page.calls.dishes.length, 2)
+  assert.equal(page.api.state.groups[0].dishList[0].mainImageUrl, 'new-meat.jpg')
+  assert.equal(page.api.state.groups[0].dishList[0].cartNum, 3)
+  assert.equal(page.api.state.active, 25)
+  assert.equal(page.api.state.top, 530)
+  assert.equal(page.api.state.refreshing, false)
+})
+
+test('刷新失败保留旧列表并结束动画，再次下拉可恢复', async () => {
+  const page = createPage()
+  await page.enter()
+  page.data.fail = true
+  await page.api.onMenuRefresh()
+  assert.equal(page.api.state.error, true)
+  assert.equal(page.api.state.refreshing, false)
+  assert.equal(page.api.state.groups.length, 3)
+  page.data.fail = false
+  await page.api.onMenuRefresh()
+  assert.equal(page.api.state.error, false)
+  assert.equal(page.api.state.refreshing, false)
+  assert.equal(page.calls.categories, 3)
+  assert.equal(page.calls.dishes.length, 2)
+})
+
+test('首次请求未完成时下拉不叠加请求，刷新动画正确结束', async () => {
+  let release
+  const waitCategories = new Promise(resolve => { release = resolve })
+  const page = createPage({ ...defaultData(), waitCategories })
+  await page.enter()
+  assert.equal(page.api.state.loading, true)
+  assert.equal(page.api.state.refreshing, false)
+  await page.api.onMenuRefresh()
+  assert.equal(page.api.state.refreshing, false)
+  assert.equal(page.calls.categories, 1)
+  release()
+  await page.flush()
+  assert.equal(page.calls.dishes.length, 1)
+  assert.equal(page.api.state.loading, false)
+})
+
+test('空分类及首次失败返回时不自动重试，但可手动下拉加载', async () => {
+  for (const data of [
+    { categories: [], response: { list: [], total: 0 } },
+    { ...defaultData(), fail: true }
+  ]) {
+    const page = createPage(data)
+    await page.enter()
+    page.hooks.onHide()
+    page.hooks.onShow()
+    await page.flush()
+    assert.equal(page.calls.categories, 1)
+    Object.assign(page.data, defaultData(), { fail: false })
+    await page.api.onMenuRefresh()
+    assert.equal(page.calls.categories, 2)
+    assert.equal(page.calls.dishes.length, 1)
+    assert.equal(page.api.state.groups.length, 3)
+    assert.equal(page.api.state.error, false)
+    assert.equal(page.api.state.refreshing, false)
+  }
 })
 
 test('刷新采用最新主图地址，不被同主图ID的旧缓存覆盖，同时保留选购数量', async () => {
@@ -438,8 +629,10 @@ test('页面隐藏或卸载时清理动画和监听', async () => {
   assert.equal(page.hooks.resize, undefined)
 })
 
-test('页面脚本通过 TypeScript 语义检查（不依赖旧版 vue-tsc 启动器）', () => {
-  const virtualFile = resolve(__dirname, '../src/pages/foodMenu/__food_menu_check__.ts')
+for (const pageFile of ['src/pages/foodMenu/index.vue', 'src/views/food/addDish/index.vue']) {
+test(`${pageFile} 脚本通过 TypeScript 语义检查（不依赖旧版 vue-tsc 启动器）`, () => {
+  const virtualFile = resolve(__dirname, '..', pageFile.replace('index.vue', '__page_check__.ts'))
+  const pageSource = readFileSync(resolve(__dirname, '..', pageFile), 'utf8').match(/<script setup[^>]*>([\s\S]*?)<\/script>/)[1]
   const config = ts.getParsedCommandLineOfConfigFile(
     resolve(__dirname, '../tsconfig.json'),
     {
@@ -451,7 +644,7 @@ test('页面脚本通过 TypeScript 语义检查（不依赖旧版 vue-tsc 启�
   const host = ts.createCompilerHost(config.options)
   const readFile = host.readFile.bind(host)
   const fileExists = host.fileExists.bind(host)
-  host.readFile = (file) => (resolve(file) === virtualFile ? source : readFile(file))
+  host.readFile = (file) => (resolve(file) === virtualFile ? pageSource : readFile(file))
   host.fileExists = (file) => resolve(file) === virtualFile || fileExists(file)
   const program = ts.createProgram(
     [...config.fileNames.filter((file) => !file.endsWith('.vue')), virtualFile],
@@ -471,3 +664,4 @@ test('页面脚本通过 TypeScript 语义检查（不依赖旧版 vue-tsc 启�
     })
   )
 })
+}

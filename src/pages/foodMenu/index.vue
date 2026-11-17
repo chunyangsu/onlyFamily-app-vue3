@@ -58,7 +58,8 @@
             <view class="header-total">共{{ dishTotal }}道菜</view>
           </view>
           <scroll-view class="dish-scroll" scroll-y :scroll-top="dishScrollTop" :scroll-with-animation="false"
-            :show-scrollbar="false" @scroll="onDishScroll" @touchstart="interruptScroll">
+            :show-scrollbar="false" refresher-enabled :refresher-triggered="refreshing"
+            @refresherrefresh="onMenuRefresh" @scroll="onDishScroll" @touchstart="interruptScroll">
             <view v-if="!dishGroupList.length" class="list-status" @click="retryLoadMenu">
               {{ loading ? '加载中…' : loadError ? '加载失败，点击重试' : '暂无菜品分类' }}
             </view>
@@ -131,7 +132,12 @@ const goToFoodOrder = () => {
 // 跳转"添加菜品"页面
 const goToAddDish = () => {
   uni.navigateTo({
-    url: '/views/food/addDish/index'
+    url: '/views/food/addDish/index',
+    events: {
+      dishCreated: () => {
+        menuReloadPending = true
+      }
+    }
   })
 }
 
@@ -181,6 +187,8 @@ const dishTotal = ref(0)
 // 首次加载及失败提示
 const loading = ref(false)
 const loadError = ref(false)
+// 下拉刷新状态与首次加载分离，避免首次请求显示下拉动画
+const refreshing = ref(false)
 // 左右列表的滚动指令
 const categoryScrollTop = ref(0)
 const dishScrollTop = ref(0)
@@ -225,6 +233,8 @@ let animationTimer: ReturnType<typeof setTimeout> | undefined
 let pageReady = false
 let pageVisible = false
 let disposed = false
+// 添加成功后等待页面重新显示，再刷新列表
+let menuReloadPending = false
 
 // 清除定位状态，恢复滚动高亮联动
 const clearScrollTarget = () => {
@@ -437,13 +447,36 @@ const loadMenu = async () => {
     if (!disposed) loadError.value = true
     console.warn('菜单加载失败', error)
   } finally {
-    if (!disposed) loading.value = false
+    if (!disposed) {
+      loading.value = false
+      reloadMenuIfNeeded()
+    }
   }
+}
+
+// 若返回时旧请求尚未结束，保留标记，待旧请求结束后补一次刷新
+const reloadMenuIfNeeded = () => {
+  if (!menuReloadPending || !pageVisible || loading.value || disposed) return
+  menuReloadPending = false
+  void loadMenu()
 }
 
 // 空页面加载失败时允许点击重试
 const retryLoadMenu = () => {
   if (loadError.value) void loadMenu()
+}
+
+// 复用原有重载逻辑，成功或失败后都结束下拉刷新动画
+const onMenuRefresh = async () => {
+  if (refreshing.value || disposed) return
+  refreshing.value = true
+  try {
+    // 先同步触发状态，已有请求进行中时也能正确收起刷新动画
+    await nextTick()
+    await loadMenu()
+  } finally {
+    refreshing.value = false
+  }
 }
 
 // 已选菜品数量的总计
@@ -491,11 +524,16 @@ const cartPriceTotal = computed(() => {
   return total.toFixed(2)
 })
 
-// 每次进入统一加载，避免 onLoad 与 onShow 重复请求
+// 页面实例首次加载时请求，切换 tab 或从其他页面返回不重复请求
+onLoad(() => {
+  void loadMenu()
+})
+
+// 普通返回只恢复布局；添加成功返回时刷新一次
 onShow(() => {
   pageVisible = true
-  void loadMenu()
-  if (pageReady) void refreshLayout()
+  reloadMenuIfNeeded()
+  if (pageReady && !loading.value) void refreshLayout()
 })
 
 // 首屏节点就绪后测量，兼容接口提前返回

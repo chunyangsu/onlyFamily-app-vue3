@@ -54,6 +54,7 @@ import type { DishCategoryItem } from '@/api/modules/food/category/types'
 import type { DishForm } from '@/api/modules/food/dish/types'
 
 // const formRef = ref()
+const pageProxy = getCurrentInstance()?.proxy as { getOpenerEventChannel?: () => UniApp.EventChannel } | null | undefined
 
 // 表单数据
 const formData = ref<DishForm>({
@@ -120,8 +121,10 @@ const saveData = async () => {
       makeProcess: formData.value.makeProcess,
       price: formData.value.price
     }
-    const response = await createDishApi(tempData)
-    // console.log(response)
+    await createDishApi(tempData)
+    // 仅保存成功时通知来源页，来源页在返回显示后刷新列表
+    const eventChannel = pageProxy?.getOpenerEventChannel?.()
+    eventChannel?.emit('dishCreated')
     // 返回上一页
     uni.navigateBack({
       delta: 1
