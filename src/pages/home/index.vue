@@ -12,18 +12,18 @@
         <!-- 家庭成员 -->
         <view class="family-member">
           <view class="member-item">
-            <SuImage name="卡卡西和凯.jpg"></SuImage>
+            <SuImage name="xfcf.jpg"></SuImage>
           </view>
           <view class="member-item">
-            <SuImage name="雏田.jpg"></SuImage>
+            <SuImage name="xfcf.jpg"></SuImage>
           </view>
           <view class="member-item">
-            <SuImage name="旋风冲锋.jpg"></SuImage>
+            <SuImage name="xfcf.jpg"></SuImage>
           </view>
         </view>
       </view>
       <view class="family-logo">
-        <SuImage name="卡卡西和凯.jpg"></SuImage>
+        <SuImage name="xfcf.jpg"></SuImage>
       </view>
     </view>
     <!-- 今日菜单-模块 -->
@@ -32,7 +32,7 @@
         <view class="food-menu">
           <view class="food-menu-main">
             <view class="left-img">
-              <SuImage name="雏田.jpg"></SuImage>
+              <SuImage name="xfcf.jpg"></SuImage>
             </view>
             <view class="left-content">
               <view class="dish-item">土豆炖牛腩</view>
@@ -79,7 +79,7 @@
         <view class="life">
           <view class="header">
             <view class="user-avatar">
-              <SuImage name="雏田.jpg"></SuImage>
+              <SuImage name="xfcf.jpg"></SuImage>
             </view>
             <view class="header-info">
               <view class="user-name">妈妈</view>

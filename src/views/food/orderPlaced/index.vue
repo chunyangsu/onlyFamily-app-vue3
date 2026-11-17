@@ -1,7 +1,7 @@
 <template>
   <view class="su-container order-placed">
     <view class="bg-img">
-      <SuImage name="order-placed-bg.png"></SuImage>
+      <!-- <SuImage name="order-placed-bg.png"></SuImage> -->
     </view>
     <view class="main">
       <view class="title">下单成功</view>
