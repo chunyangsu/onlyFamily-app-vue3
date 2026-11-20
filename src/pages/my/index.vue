@@ -177,7 +177,7 @@
       </view>
       <!-- 底部 -->
       <view class="footer">
-        <view class="logout">
+        <view class="logout" @click="handleLogout">
           <view class="logout-icon">
             <SuImage name="logout.png"></SuImage>
           </view>
@@ -190,11 +190,14 @@
 
 <script setup lang="ts">
 // 全局属性
+import { useUserStore } from '@/stores/useUserStore'
 // api
 import { createFamilyApi } from '@/api/modules/family'
 // ts
 import type { FamilyForm } from '@/api/modules/family/types'
 // utils
+
+const userStore = useUserStore()
 
 // 新建家庭
 const createFamily = () => {
@@ -203,6 +206,11 @@ const createFamily = () => {
   //   introduction: '昵称是狗窝'
   // }
   // createFamilyApi(params).then((response) => { })
+}
+
+// 退出登录
+const handleLogout = () => {
+  userStore.logout()
 }
 </script>
 

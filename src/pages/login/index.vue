@@ -10,11 +10,12 @@
         </view>
       </view>
       <view class="title">家在一起，生活更美好</view>
-      <view class="btn-area" @click="submitData">
+      <view class="btn-area" @click="handleLogin">
         <view class="btn-icon">
-          <SuImage name="login-phone.png"></SuImage>
+          <!-- <SuImage name="login-phone.png"></SuImage> -->
         </view>
-        <view class="btn-text">手机号一键登录</view>
+        <!-- <view class="btn-text">手机号一键登录</view> -->
+        <view class="btn-text">微信一键登录</view>
       </view>
       <view class="agree">
         <view class="check-box">
@@ -29,8 +30,6 @@
 </template>
 
 <script setup lang="ts">
-import { z } from 'zod'
-import { zodAdapter } from '@wot-ui/ui'
 // 全局属性
 import { useUserStore } from '@/stores/useUserStore'
 // api
@@ -40,8 +39,8 @@ const userStore = useUserStore()
 
 const checked = ref(false)
 
-// 提交
-const submitData = async () => {
+// 登录
+const handleLogin = async () => {
   try {
     if (!checked.value) {
       uni.showToast({
@@ -50,8 +49,6 @@ const submitData = async () => {
       })
       return
     }
-
-    // loading.value = true
     await userStore.login()
 
     uni.showToast({ title: '登录成功', icon: 'success' })
@@ -62,8 +59,6 @@ const submitData = async () => {
   } catch (err) {
     // 接口请求失败
     console.error(err)
-  } finally {
-    // loading.value = false
   }
 }
 
