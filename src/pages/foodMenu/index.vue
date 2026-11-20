@@ -122,6 +122,7 @@ import { getDishListApi } from '@/api/modules/food/dish'
 // ts
 import type { DishCategoryItem } from '@/pages/foodMenu/types'
 import type { DishGroupItem, DishItem } from '@/api/modules/food/dish/types'
+import { decimal } from '@/utils/decimal'
 
 // 跳转"订单管理"页面
 const goToFoodOrder = () => {
@@ -145,7 +146,7 @@ interface FoodOrderDishItem {
   id: number // 菜品id
   name: string // 菜品名称
   mainImageUrl: string // 菜品主图url地址
-  price: number // 价格
+  price: string // 价格
   num: number // 数量
 }
 
@@ -511,17 +512,9 @@ const cartData = computed(() => {
 
 // 计算购物车总价
 const cartPriceTotal = computed(() => {
-  let total = 0
-  dishGroupList.value.forEach((item) => {
-    if (item.dishList.length > 0) {
-      item.dishList.forEach((val) => {
-        if (val.cartNum > 0) {
-          total += val.cartNum * val.price
-        }
-      })
-    }
-  })
-  return total.toFixed(2)
+  // 单价和数量直接组成表达式，全程高精度运算，仅在最终合计时保留两位小数。
+  const expression = cartData.value.map((item) => `(${item.price}) * ${item.cartNum}`).join(' + ')
+  return decimal(expression || '0')
 })
 
 // 页面实例首次加载时请求，切换 tab 或从其他页面返回不重复请求

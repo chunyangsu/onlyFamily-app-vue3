@@ -13,7 +13,7 @@
         </SuFormItem>
       </view>
       <view class="card-item">
-        <SuFormItem title="选择分类" required>
+        <SuFormItem title="菜品分类" required>
           <wd-cell placeholder="请选择" :value="selectedCategoryLabel" is-link @click="show = true" />
           <wd-picker v-model="categoryArr" v-model:visible="show" :columns="categoryList" />
         </SuFormItem>
@@ -29,13 +29,16 @@
         </SuFormItem>
       </view>
       <view class="card-item">
-        <SuFormItem title="价格">
+        <SuFormItem title="价格" required>
           <view class="dish-price">
-            <!-- <view class="price-code">￥</view> -->
-            <view class="price-input">
-              <SuInputNumber v-model="formData.price" />
-            </view>
-            <view class="dish-unit">/ 份</view>
+            <SuInputNumber v-model="formData.price" placeholder="请输入价格">
+              <template #prefix>
+                <view class="money-icon">￥</view>
+              </template>
+              <template #suffix>
+                <view class="dish-unit">/ 份</view>
+              </template>
+            </SuInputNumber>
           </view>
         </SuFormItem>
       </view>
@@ -47,13 +50,12 @@
 
 <script setup lang="ts">
 // api
-import { getDishCategoryListApi, createDishCategoryApi } from '@/api/modules/food/category'
+import { getDishCategoryListApi } from '@/api/modules/food/category'
 import { createDishApi } from '@/api/modules/food/dish'
 // ts
 import type { DishCategoryItem } from '@/api/modules/food/category/types'
 import type { DishForm } from '@/api/modules/food/dish/types'
 
-// const formRef = ref()
 const pageProxy = getCurrentInstance()?.proxy as { getOpenerEventChannel?: () => UniApp.EventChannel } | null | undefined
 
 // 表单数据
@@ -63,20 +65,12 @@ const formData = ref<DishForm>({
   categoryId: 0,
   introduction: '',
   makeProcess: '',
-  price: undefined
+  price: ''
 })
 
 const attachmentList = ref<number[]>([])
-const categoryArr = ref<string[]>([])
+const categoryArr = ref<string[]>(['1'])
 const categoryList = ref<DishCategoryItem[]>([])
-
-// 表单校验
-// const schema = zodAdapter(
-//   z.object({
-//     name: z.string(),
-//     categoryId: z.number()
-//   })
-// )
 
 const show = ref(false)
 
@@ -110,9 +104,23 @@ const selectedCategoryLabel = computed(() => {
 const saveData = async () => {
   try {
     // 表单校验
-    // const { valid } = await formRef.value?.validate()
-    // if (!valid) return
-    // loading.value = true
+    if (attachmentList.value.length === 0) {
+      uni.showToast({ title: '菜品主图不能为空', icon: 'none' })
+      return
+    }
+    if (formData.value.name.trim() === '') {
+      uni.showToast({ title: '菜品名称不能为空', icon: 'none' })
+      return
+    }
+    if (categoryArr.value.length === 0) {
+      uni.showToast({ title: '菜品分类不能为空', icon: 'none' })
+      return
+    }
+    if (formData.value.price.trim() === '') {
+      uni.showToast({ title: '价格不能为空', icon: 'none' })
+      return
+    }
+
     const tempData: DishForm = {
       name: formData.value.name,
       mainImageId: attachmentList.value[0],
@@ -122,23 +130,25 @@ const saveData = async () => {
       price: formData.value.price
     }
     await createDishApi(tempData)
-    // 仅保存成功时通知来源页，来源页在返回显示后刷新列表
-    const eventChannel = pageProxy?.getOpenerEventChannel?.()
-    eventChannel?.emit('dishCreated')
-    // 返回上一页
-    uni.navigateBack({
-      delta: 1
+    uni.showToast({
+      title: '添加成功',
+      icon: 'success'
     })
+
+    setTimeout(() => {
+      // 仅保存成功时通知来源页，来源页在返回显示后刷新列表
+      const eventChannel = pageProxy?.getOpenerEventChannel?.()
+      eventChannel?.emit('dishCreated')
+      // 返回上一页
+      uni.navigateBack({
+        delta: 1
+      })
+    }, 1000)
   } catch (err) {
     // 接口请求失败
     console.error(err)
-  } finally {
-    // loading.value = false
   }
 }
-
-// 发布菜品
-// const publishDish = () => { }
 
 // 页面加载时触发
 onLoad(() => {
@@ -150,8 +160,6 @@ onLoad(() => {
 .add-dish {
   display: flex;
   flex-direction: column;
-  // align-items: center;
-  // justify-content: center;
   padding: 0 24rpx;
   padding-bottom: 160rpx;
 
@@ -161,15 +169,21 @@ onLoad(() => {
     }
 
     .dish-price {
-      // border: 2rpx solid #e8e5da;
-      // border-radius: 12rpx;
-      // overflow: hidden;
-      display: flex;
-      align-items: center;
+      .money-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 64rpx;
+        height: 100%;
+        background-color: #e7e7e7;
+        font-size: 32rpx;
+      }
 
-      .price-input {
-        flex: 1;
-        margin: 0 12rpx;
+      .dish-unit {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        padding-right: 24rpx;
       }
     }
   }

@@ -47,12 +47,14 @@
 import { createFoodOrderApi } from '@/api/modules/food/foodOrder'
 // ts
 import type { FoodOrderFormApi } from '@/api/modules/food/foodOrder/types'
+// utils
+import { decimal } from '@/utils/decimal'
 
 interface FoodOrderDishItem {
   id: number // 菜品id
   name: string // 菜品名称
   mainImageUrl: string // 菜品主图url地址
-  price: number // 价格
+  price: string // 价格
   num: number // 数量
 }
 
@@ -63,11 +65,9 @@ const remark = ref('')
 
 // 合计总价
 const totalPrice = computed(() => {
-  let total = 0
-  orderList.value.forEach((item) => {
-    total += item.num * item.price
-  })
-  return total.toFixed(2)
+  // 单价和数量直接参与高精度运算，仅在最终合计时保留两位小数。
+  const expression = orderList.value.map((item) => `(${item.price}) * ${item.num}`).join(' + ')
+  return decimal(expression || '0')
 })
 
 // 确认下单

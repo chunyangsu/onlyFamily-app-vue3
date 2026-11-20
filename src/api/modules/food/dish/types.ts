@@ -20,7 +20,7 @@ export interface DishItem {
   name: string // 名称
   mainImageId: number // 菜品主图id
   mainImageUrl: string // 菜品主图url地址
-  price: number // 价格
+  price: string // 价格
   saleNum: number // 销量
   cartNum: number // 购物车数量(临时暂存)
 }
@@ -32,5 +32,5 @@ export interface DishForm {
   categoryId: number // 分类id
   introduction: string // 介绍
   makeProcess: string // 制作过程
-  price: number | undefined // 价格
+  price: string // 价格
 }

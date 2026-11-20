@@ -6,6 +6,13 @@ const vm = require('node:vm')
 const ts = require('typescript')
 const sass = require('sass')
 
+// 加载真实的高精度工具，确保购物车测试不会用浮点数实现替代它。
+const decimalModule = { exports: {} }
+vm.runInNewContext(ts.transpileModule(
+  readFileSync(resolve(__dirname, '../src/utils/decimal.ts'), 'utf8'),
+  { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020, esModuleInterop: true } }
+).outputText, { module: decimalModule, exports: decimalModule.exports, require })
+
 // 直接测试页面脚本，不向业务组件暴露测试接口
 const filename = resolve(__dirname, '../src/pages/foodMenu/index.vue')
 const source = readFileSync(filename, 'utf8').match(/<script setup[^>]*>([\s\S]*?)<\/script>/)[1]
@@ -42,7 +49,8 @@ exports.api = {
       active: activedCategory.value, categories: categoryList.value, groups: dishGroupList.value,
       total: dishTotal.value, tail: tailHeight.value, top: dishScrollTop.value,
       leftTop: categoryScrollTop.value, target: scrollTarget, loading: loading.value,
-      error: loadError.value, positions: groupPositions, refreshing: refreshing.value
+      error: loadError.value, positions: groupPositions, refreshing: refreshing.value,
+      cartPriceTotal: cartPriceTotal.value
     }
   }
 }`,
@@ -91,6 +99,7 @@ function createPage(data = defaultData()) {
     module,
     exports: module.exports,
     require(name) {
+      if (name === '@/utils/decimal') return decimalModule.exports
       if (name === '@/api/modules/food/category')
         return {
           async getDishCategoryListApi() {
@@ -240,6 +249,32 @@ test('首次仅加载一次，按分类排序并保留空分类，直接使用�
   assert.equal(state.active, 8)
   assert.equal(state.total, 2)
   assert.equal(state.tail, 300)
+})
+
+test('购物车总价使用高精度运算，支持空购物车、数量变化和大金额', async () => {
+  const page = createPage()
+  await page.enter()
+  assert.equal(page.api.state.cartPriceTotal, '0.00')
+  const first = page.api.state.groups[0].dishList[0]
+  const second = page.api.state.groups[2].dishList[0]
+  first.price = '0.10'
+  first.cartNum = 3
+  second.price = '0.20'
+  second.cartNum = 1
+  assert.equal(page.api.state.cartPriceTotal, '0.50')
+
+  first.price = '9007199254740993.01'
+  first.cartNum = 1
+  assert.equal(page.api.state.cartPriceTotal, '9007199254740993.21')
+
+  // 先汇总再四舍五入，不能逐项舍入。
+  first.price = '0.005'
+  second.price = '0.005'
+  assert.equal(page.api.state.cartPriceTotal, '0.01')
+  second.cartNum = 0
+  assert.equal(page.api.state.cartPriceTotal, '0.01')
+  first.cartNum = 0
+  assert.equal(page.api.state.cartPriceTotal, '0.00')
 })
 
 test('返回页面只恢复布局，不重复请求，保留选购数量和滚动位置', async () => {
@@ -630,14 +665,13 @@ test('页面隐藏或卸载时清理动画和监听', async () => {
 })
 
 for (const pageFile of ['src/pages/foodMenu/index.vue', 'src/views/food/addDish/index.vue']) {
-test(`${pageFile} 脚本通过 TypeScript 语义检查（不依赖旧版 vue-tsc 启动器）`, () => {
+test(`${pageFile} 脚本通过 TypeScript 语义检查`, () => {
   const virtualFile = resolve(__dirname, '..', pageFile.replace('index.vue', '__page_check__.ts'))
   const pageSource = readFileSync(resolve(__dirname, '..', pageFile), 'utf8').match(/<script setup[^>]*>([\s\S]*?)<\/script>/)[1]
   const config = ts.getParsedCommandLineOfConfigFile(
     resolve(__dirname, '../tsconfig.json'),
     {
-      noEmit: true,
-      ignoreDeprecations: '5.0'
+      noEmit: true
     },
     { ...ts.sys, onUnRecoverableConfigFileDiagnostic() {} }
   )
