@@ -9,6 +9,7 @@ import { getToken, setToken, removeToken, getUserInfo, setUserInfo, removeUserIn
 interface UserInfo {
   id: number
   name: string
+  nickname: string
   familyId: number // 所属家庭
 }
 
@@ -19,6 +20,7 @@ export const useUserStore = defineStore('user', () => {
   const userInfo = ref<UserInfo>({
     id: 0,
     name: '',
+    nickname: '',
     familyId: 0
   })
 
@@ -46,6 +48,7 @@ export const useUserStore = defineStore('user', () => {
     userInfo.value = {
       id: response.userInfo.id,
       name: response.userInfo.name,
+      nickname: response.userInfo.nickname,
       familyId: 1
     }
     setToken(token.value)
@@ -69,6 +72,7 @@ export const useUserStore = defineStore('user', () => {
     userInfo.value = {
       id: 0,
       name: '',
+      nickname: '',
       familyId: 0
     }
   }

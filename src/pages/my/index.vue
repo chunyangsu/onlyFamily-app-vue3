@@ -1,7 +1,7 @@
 <template>
   <view class="su-container my-container">
     <view class="bg-img">
-      <!-- <SuImage name="my-bg.png"></SuImage> -->
+      <!-- <SuImage name="my-bg.webp"></SuImage> -->
     </view>
     <view class="content">
       <view class="card-item">
@@ -9,15 +9,15 @@
           <view class="user-profile">
             <view class="avatar-area">
               <view class="avatar-icon">
-                <SuImage name="avatar.png" />
+                <SuImage name="avatar.webp" />
               </view>
             </view>
             <view class="user-info">
-              <view class="nickname">青春尽情挥霍</view>
-              <view class="mobile">手机号：13057160969</view>
+              <view class="nickname">{{ userStore.userInfo.nickname }}</view>
+              <!-- <view class="mobile">手机号：13057160969</view> -->
             </view>
             <view class="setting-btn">
-              <SuImage name="my-setting.png" />
+              <SuImage name="my-setting.webp" />
             </view>
           </view>
         </SuCard>
@@ -28,7 +28,7 @@
           <view class="family">
             <view class="f-header">
               <view class="f-icon">
-                <SuImage name="family-home.png" />
+                <SuImage name="family-home.webp" />
               </view>
               <view class="f-content">
                 <view class="f-name">爱的小家</view>
@@ -45,26 +45,26 @@
               <view class="nav-item">
                 <view class="nav-icon">
                   <view class="h-42rpx m-t-6rpx">
-                    <SuImage name="family-members.png" />
+                    <SuImage name="family-members.webp" />
                   </view>
                 </view>
                 <view class="nav-name">成员管理</view>
               </view>
               <view class="nav-item">
                 <view class="nav-icon">
-                  <SuImage name="family-invite.png" />
+                  <SuImage name="family-invite.webp" />
                 </view>
                 <view class="nav-name">邀请成员</view>
               </view>
               <view class="nav-item" @click="createFamily">
                 <view class="nav-icon">
-                  <SuImage name="family-create.png" />
+                  <SuImage name="family-create.webp" />
                 </view>
                 <view class="nav-name">创建家庭</view>
               </view>
               <view class="nav-item">
                 <view class="nav-icon">
-                  <SuImage name="family-switch.png" />
+                  <SuImage name="family-switch.webp" />
                 </view>
                 <view class="nav-name">我的家庭</view>
               </view>
@@ -79,7 +79,7 @@
             <view class="list-item">
               <view class="item-left">
                 <view class="item-icon w-48rpx h-48rpx">
-                  <SuImage name="chef-hat.png" />
+                  <SuImage name="chef-hat.webp" />
                 </view>
               </view>
               <view class="item-name">我的菜谱</view>
@@ -90,7 +90,7 @@
             <view class="list-item">
               <view class="item-left">
                 <view class="item-icon w-50rpx h-44rpx">
-                  <SuImage name="favorite.png" />
+                  <SuImage name="favorite.webp" />
                 </view>
               </view>
               <view class="item-name">我的收藏</view>
@@ -101,7 +101,7 @@
             <view class="list-item">
               <view class="item-left">
                 <view class="item-icon w-48rpx h-48rpx">
-                  <SuImage name="order.png" />
+                  <SuImage name="order.webp" />
                 </view>
               </view>
               <view class="item-name">我的订单</view>
@@ -120,7 +120,7 @@
             <view class="list-item">
               <view class="item-left">
                 <view class="item-icon w-48rpx h-48rpx">
-                  <SuImage name="notification.png" />
+                  <SuImage name="notification.webp" />
                 </view>
               </view>
               <view class="item-name">消息通知</view>
@@ -131,7 +131,7 @@
             <view class="list-item">
               <view class="item-left">
                 <view class="item-icon w-48rpx h-54rpx">
-                  <SuImage name="security.png" />
+                  <SuImage name="security.webp" />
                 </view>
               </view>
               <view class="item-name">隐私与账号安全</view>
@@ -142,7 +142,7 @@
             <view class="list-item">
               <view class="item-left">
                 <view class="item-icon w-48rpx h-48rpx">
-                  <SuImage name="policy.png" />
+                  <SuImage name="policy.webp" />
                 </view>
               </view>
               <view class="item-name">用户服务协议与隐私政策</view>
@@ -153,7 +153,7 @@
             <view class="list-item">
               <view class="item-left">
                 <view class="item-icon w-52rpx h-48rpx">
-                  <SuImage name="feedback.png" />
+                  <SuImage name="feedback.webp" />
                 </view>
               </view>
               <view class="item-name">意见反馈</view>
@@ -164,7 +164,7 @@
             <view class="list-item">
               <view class="item-left">
                 <view class="item-icon w-48rpx h-48rpx">
-                  <SuImage name="about.png" />
+                  <SuImage name="about.webp" />
                 </view>
               </view>
               <view class="item-name">关于 OnlyFamily</view>
@@ -179,7 +179,7 @@
       <view class="footer">
         <view class="logout" @click="handleLogout">
           <view class="logout-icon">
-            <SuImage name="logout.png" />
+            <SuImage name="logout.webp" />
           </view>
           <view class="logout-text">退出登录</view>
         </view>
@@ -192,9 +192,9 @@
 // 全局属性
 import { useUserStore } from '@/stores/useUserStore'
 // api
-import { createFamilyApi } from '@/api/modules/family'
+// import { createFamilyApi } from '@/api/modules/family'
 // ts
-import type { FamilyForm } from '@/api/modules/family/types'
+// import type { FamilyForm } from '@/api/modules/family/types'
 // utils
 
 const userStore = useUserStore()

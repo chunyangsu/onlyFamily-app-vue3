@@ -7,41 +7,42 @@
         <view class="family-title">早上好！欢迎回家！</view>
         <view class="family-name">
           <view>我们的小家</view>
-          <view class="m-l-8rpx"><wd-icon name="caret-down" size="26px" color="#feae39"></wd-icon></view>
+          <view class="m-l-8rpx"><wd-icon name="caret-down" size="26px" color="#feae39" /></view>
         </view>
         <!-- 家庭成员 -->
         <view class="family-member">
           <view class="member-item">
-            <SuImage name="xfcf.jpg"></SuImage>
+            <SuImage name="logo.webp" />
           </view>
           <view class="member-item">
-            <SuImage name="xfcf.jpg"></SuImage>
+            <SuImage name="logo.webp" />
           </view>
           <view class="member-item">
-            <SuImage name="xfcf.jpg"></SuImage>
+            <SuImage name="logo.webp" />
           </view>
         </view>
       </view>
       <view class="family-logo">
-        <SuImage name="xfcf.jpg"></SuImage>
+        <SuImage name="logo.webp" />
       </view>
     </view>
     <!-- 今日菜单-模块 -->
     <view class="card-item">
-      <SuCard title="今日菜单" icon="cutlery" show-more>
+      <SuCard title="今日菜单推荐" icon="cutlery">
         <view class="food-menu">
           <view class="food-menu-main">
             <view class="left-img">
-              <SuImage name="xfcf.jpg"></SuImage>
+              <view v-for="item in dishList" :key="item.id" class="food-img-item">
+                <SuImage :src="item.mainImageUrl" />
+              </view>
             </view>
-            <view class="left-content">
-              <view class="dish-item">土豆炖牛腩</view>
-              <view class="dish-item">青椒土豆丝</view>
-              <view class="dish-item">番茄鸡蛋汤</view>
-              <view class="dish-item">米饭</view>
+            <view class="right-content">
+              <view v-for="item in dishList" :key="item.id" class="dish-item">
+                {{ item.name }}
+              </view>
             </view>
           </view>
-          <view class="add-btn" @click="goToFoodMenu">继续点餐</view>
+          <view class="add-btn" @click="goToFoodMenu">前往点餐</view>
           <!-- <view class="food-footer">
           <view>午餐/晚餐</view>
           <view>3人用餐</view>
@@ -96,7 +97,7 @@
 <script setup lang="ts">
 // 全局属性
 // api
-// import { getUserListApi } from '@/api/modules/user'
+import { getDishListApi } from '@/api/modules/food/dish'
 // ts
 // utils
 import { moneyFormat } from '@/utils/money'
@@ -114,6 +115,38 @@ const goToTransaction = () => {
     url: '/pages/transaction/index'
   })
 }
+
+// 菜品列表字段
+export interface DishItem {
+  id: number
+  name: string // 名称
+  mainImageId: number // 菜品主图id
+  mainImageUrl: string // 菜品主图url地址
+}
+const dishList = ref<DishItem[]>([])
+
+// 获取菜品列表
+const getDishList = async () => {
+  const query = {
+    name: ''
+  }
+  const response = await getDishListApi(query)
+  dishList.value = []
+  if (response.list.length > 0) {
+    response.list.forEach((item) => {
+      dishList.value.push({
+        id: item.id,
+        name: item.name,
+        mainImageId: item.mainImageId,
+        mainImageUrl: item.mainImageUrl
+      })
+    })
+  }
+}
+
+onLoad(() => {
+  getDishList()
+})
 </script>
 
 <style lang="scss" scoped>
@@ -158,7 +191,7 @@ const goToTransaction = () => {
           line-height: 76rpx;
           text-align: center;
           border-radius: 50%;
-          background-color: #ccc;
+          background-color: #fff;
           margin-right: 12rpx;
           overflow: hidden;
         }
@@ -172,7 +205,7 @@ const goToTransaction = () => {
       text-align: center;
       margin-top: 24rpx;
       border-radius: 50%;
-      background-color: #ccc;
+      background-color: #fff;
       overflow: hidden;
     }
   }
@@ -183,16 +216,20 @@ const goToTransaction = () => {
       display: flex;
 
       .left-img {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8rpx;
         width: 300rpx;
         height: 300rpx;
-        line-height: 298rpx;
-        text-align: center;
-        border-radius: 12rpx;
-        background-color: #ccc;
-        overflow: hidden;
+        .food-img-item {
+          flex: 0 0 calc(50% - 4rpx);
+          text-align: center;
+          border-radius: 12rpx;
+          overflow: hidden;
+        }
       }
 
-      .left-content {
+      .right-content {
         flex: 1;
         margin-left: 24rpx;
 
@@ -282,7 +319,7 @@ const goToTransaction = () => {
         line-height: 76rpx;
         text-align: center;
         border-radius: 50%;
-        background-color: #ccc;
+        background-color: #fff;
         overflow: hidden;
       }
 

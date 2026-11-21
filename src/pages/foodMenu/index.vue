@@ -4,7 +4,7 @@
       <!-- 搜索栏 -->
       <view class="search-bar">
         <view class="search-icon">
-          <wd-icon name="search-line" size="24px"></wd-icon>
+          <wd-icon name="search-line" size="24px" />
         </view>
         <view class="search-input">
           <input type="text" placeholder="搜索菜品名称" />
@@ -14,36 +14,34 @@
       <view class="top-nav">
         <view class="nav-item" @click="goToFoodOrder">
           <view class="nav-icon">
-            <SuImage name="random-meal.png"></SuImage>
+            <SuImage name="random-meal.webp" />
           </view>
           <view class="nav-name">随机套餐</view>
         </view>
         <view class="nav-item" @click="goToFoodOrder">
           <view class="nav-icon">
-            <SuImage name="favorites.png"></SuImage>
+            <SuImage name="favorites.webp" />
           </view>
           <view class="nav-name">我的收藏</view>
         </view>
         <view class="nav-item" @click="goToFoodOrder">
           <view class="nav-icon">
-            <SuImage name="order-manage.png"></SuImage>
+            <SuImage name="order-manage.webp" />
           </view>
           <view class="nav-name">订单管理</view>
         </view>
         <view class="nav-item" @click="goToAddDish">
           <view class="nav-icon">
-            <SuImage name="add-dish.png"></SuImage>
+            <SuImage name="add-dish.webp" />
           </view>
           <view class="nav-name">添加菜品</view>
         </view>
       </view>
       <view class="order-food">
         <!-- 左侧分类 -->
-        <scroll-view class="order-food-left" scroll-y :scroll-top="categoryScrollTop" scroll-with-animation
-          :show-scrollbar="false" @scroll="onCategoryScroll" @touchmove.stop.prevent>
+        <scroll-view class="order-food-left" scroll-y :scroll-top="categoryScrollTop" scroll-with-animation :show-scrollbar="false" @scroll="onCategoryScroll" @touchmove.stop.prevent>
           <view class="category-list">
-            <view v-for="item in categoryList" :id="`dish-category-${item.id}`" :key="item.id"
-              :class="[activedCategory === item.id ? 'active' : '', 'cate-item']" @click="selectCategory(item.id)">
+            <view v-for="item in categoryList" :id="`dish-category-${item.id}`" :key="item.id" :class="[activedCategory === item.id ? 'active' : '', 'cate-item']" @click="selectCategory(item.id)">
               <view class="cate-name">{{ item.name }}</view>
             </view>
           </view>
@@ -52,27 +50,35 @@
         <view class="order-food-right">
           <view class="food-content-header">
             <view class="header-title">
-              <view class="title-border"></view>
+              <view class="title-border" />
               <view class="title-text">全部菜品</view>
             </view>
             <view class="header-total">共{{ dishTotal }}道菜</view>
           </view>
-          <scroll-view class="dish-scroll" scroll-y :scroll-top="dishScrollTop" :scroll-with-animation="false"
-            :show-scrollbar="false" refresher-enabled :refresher-triggered="refreshing"
-            @refresherrefresh="onMenuRefresh" @scroll="onDishScroll" @touchstart="interruptScroll">
+          <scroll-view
+            class="dish-scroll"
+            scroll-y
+            :scroll-top="dishScrollTop"
+            :scroll-with-animation="false"
+            :show-scrollbar="false"
+            refresher-enabled
+            :refresher-triggered="refreshing"
+            @refresherrefresh="onMenuRefresh"
+            @scroll="onDishScroll"
+            @touchstart="interruptScroll"
+          >
             <view v-if="!dishGroupList.length" class="list-status" @click="retryLoadMenu">
               {{ loading ? '加载中…' : loadError ? '加载失败，点击重试' : '暂无菜品分类' }}
             </view>
             <view v-else class="group-list">
-              <view v-for="item in dishGroupList" :id="`dish-group-${item.categoryId}`" :key="item.categoryId"
-                class="group-item">
+              <view v-for="item in dishGroupList" :id="`dish-group-${item.categoryId}`" :key="item.categoryId" class="group-item">
                 <view class="group-name">{{ item.categoryName }}</view>
                 <view v-if="!item.dishList.length" class="empty-category">该分类暂无菜品</view>
                 <view class="dish-list">
                   <view v-for="val in item.dishList" :key="val.id" class="dish-item">
                     <!-- 主图 -->
                     <view class="dish-img">
-                      <SuImage :src="val.mainImageUrl"></SuImage>
+                      <SuImage :src="val.mainImageUrl" />
                     </view>
                     <!-- 详情信息 -->
                     <view class="dish-content">
@@ -102,7 +108,7 @@
         <view class="left-cart">
           <view class="cart-num">
             <view class="cart-icon">
-              <SuImage name="cart.png"></SuImage>
+              <SuImage name="cart.webp" />
             </view>
             <view class="dish-num">{{ selectedDishTotal }}</view>
           </view>
@@ -118,7 +124,7 @@
 <script setup lang="ts">
 // api
 import { getDishCategoryListApi } from '@/api/modules/food/category'
-import { getDishListApi } from '@/api/modules/food/dish'
+import { getDishGroupListApi } from '@/api/modules/food/dish'
 // ts
 import type { DishCategoryItem } from '@/pages/foodMenu/types'
 import type { DishGroupItem, DishItem } from '@/api/modules/food/dish/types'
@@ -409,7 +415,7 @@ const loadMenu = async () => {
   loadError.value = false
   try {
     const categories = (await getDishCategoryListApi()) as DishCategoryItem[]
-    const response = categories.length ? await getDishListApi({ name: '', categoryIds: categories.map((item) => item.id).join() }) : { list: [], total: 0 }
+    const response = categories.length ? await getDishGroupListApi({ name: '', categoryIds: categories.map((item) => item.id).join() }) : { list: [], total: 0 }
     if (disposed) return
     const groups = new Map(response.list.map((item) => [item.categoryId, item]))
     const previousDishes = new Map(dishGroupList.value.flatMap((item) => item.dishList).map((item) => [item.id, item]))

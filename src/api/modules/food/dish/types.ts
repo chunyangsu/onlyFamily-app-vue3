@@ -1,4 +1,4 @@
-export interface DishQuery {
+export interface DishGroupQuery {
   name: string // 菜品名称
   categoryIds: string // 所属分类
 }
@@ -14,6 +14,16 @@ export interface DishGroupItem {
   categoryName: string
   dishList: DishItem[]
 }
+
+export interface DishQuery {
+  name: string // 菜品名称
+}
+
+export interface DishListResponse {
+  list: DishItem[]
+  total: number
+}
+
 // 菜品列表字段
 export interface DishItem {
   id: number

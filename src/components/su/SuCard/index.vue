@@ -3,20 +3,20 @@
     <view v-if="!props.hideHeader" class="header">
       <view class="header-left">
         <view v-if="props.icon !== ''" class="card-icon">
-          <SuImage :name="props.icon + '.png'"></SuImage>
+          <SuImage :name="props.icon + '.webp'" />
         </view>
-        <view v-else class="card-border"></view>
+        <view v-else class="card-border" />
         <view class="card-title">{{ title }}</view>
       </view>
       <view v-if="props.showMore" class="header-right">
         <view class="view-more">查看更多</view>
         <view class="view-icon">
-          <wd-icon name="right" size="28rpx"></wd-icon>
+          <wd-icon name="right" size="28rpx" />
         </view>
       </view>
     </view>
     <view class="main">
-      <slot></slot>
+      <slot />
     </view>
   </view>
 </template>
@@ -97,7 +97,8 @@ const props = withDefaults(defineProps<Props>(), {
       color: $textLight;
       align-items: center;
 
-      .view-more {}
+      .view-more {
+      }
 
       .view-icon {
         display: flex;
@@ -107,7 +108,8 @@ const props = withDefaults(defineProps<Props>(), {
     }
   }
 
-  .main {}
+  .main {
+  }
 }
 
 .show-border {

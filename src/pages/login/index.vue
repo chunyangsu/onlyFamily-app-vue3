@@ -1,12 +1,12 @@
 <template>
   <view class="su-container login">
     <view class="bg-img">
-      <SuImage name="logo.webp" />
+      <!-- <SuImage name="logo.webp" /> -->
     </view>
     <view class="content">
       <view class="logo-area">
         <view class="logo">
-          <!-- <SuImage name="logo.png" /> -->
+          <SuImage name="logo.webp" />
         </view>
       </view>
       <view class="title">家在一起，生活更美好</view>

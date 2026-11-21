@@ -1,13 +1,25 @@
 import request from '@/api/service'
-import type { DishQuery, DishGroupResponse, DishForm } from '@/api/modules/food/dish/types'
+import type { DishQuery, DishGroupQuery, DishListResponse, DishGroupResponse, DishForm } from '@/api/modules/food/dish/types'
 
 /**
  * 获取菜品列表
  * @returns
  */
-export const getDishListApi = (query: DishQuery): Promise<DishGroupResponse> => {
-  return request<DishGroupResponse>({
+export const getDishListApi = (query: DishQuery): Promise<DishListResponse> => {
+  return request<DishListResponse>({
     url: '/api/dish/getList',
+    method: 'GET',
+    data: query
+  })
+}
+
+/**
+ * 获取菜品列表(按菜品分类分组)
+ * @returns
+ */
+export const getDishGroupListApi = (query: DishGroupQuery): Promise<DishGroupResponse> => {
+  return request<DishGroupResponse>({
+    url: '/api/dish/getList/byGroup',
     method: 'GET',
     data: query
   })
