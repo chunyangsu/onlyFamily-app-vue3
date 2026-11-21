@@ -33,10 +33,10 @@ const goBack = () => {
   })
 }
 
-// 查看订单(todo：后续要跳转订单详情页)
+// 查看订单
 const viewOrder = () => {
   uni.navigateTo({
-    url: '/views/food/foodOrder/index'
+    url: `/views/food/orderDetail/index?id=${encodeURIComponent(formData.value.orderId)}`
   })
 }
 

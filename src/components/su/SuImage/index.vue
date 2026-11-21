@@ -24,6 +24,8 @@ interface Props {
   width?: string // 宽度
   height?: string // 高度
   module?: string // 所属业务模块
+  access?: 'private' | 'public' // 权限：私有、公有
+  source?: 'local' | 'oss' // 来源
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -33,7 +35,9 @@ const props = withDefaults(defineProps<Props>(), {
   type: '',
   width: '100%',
   height: '100%',
-  module: ''
+  module: '',
+  access: 'private',
+  source: 'oss'
 })
 
 const localSrc = ref('')
@@ -50,7 +54,13 @@ watchEffect(() => {
     localSrc.value = props.src
   } else if (props.name !== '') {
     // 图片名称
-    localSrc.value = getImageUrl(props.name)
+    if (props.source === 'oss') {
+      // 阿里云OSS
+      localSrc.value = 'https://only-family-static.oss-cn-shanghai.aliyuncs.com/' + props.name
+    } else {
+      // 本地
+      localSrc.value = getImageUrl(props.name)
+    }
   } else if (props.type === 'avatar') {
     // 头像
     // getAvatar()

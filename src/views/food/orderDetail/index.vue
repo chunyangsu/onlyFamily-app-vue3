@@ -110,8 +110,8 @@ const formData = ref<FormData>({
 })
 
 // 获取食物订单详情
-const getDetail = async () => {
-  getFoodOrderDetailApi(3).then((response: any) => {
+const getDetail = async (id: number) => {
+  getFoodOrderDetailApi(id).then((response: any) => {
     formData.value = {
       id: response.id,
       code: response.code,
@@ -144,8 +144,10 @@ const totalPrice = computed(() => {
 })
 
 // 页面加载时触发
-onLoad(() => {
-  getDetail()
+onLoad((options) => {
+  if (options?.id && Number(options?.id) > 0) {
+    getDetail(options.id)
+  }
 })
 </script>
 

@@ -2,12 +2,6 @@
   "pages": [
     // 名字叫不叫index无所谓，位置在第一个，就是首页
     {
-      "path": "views/food/orderDetail/index",
-      "style": {
-        "navigationBarTitleText": "订单详情"
-      }
-    },
-    {
       "path": "pages/login/index",
       "style": {
         "navigationBarTitleText": "登录"
@@ -61,6 +55,12 @@
       "path": "views/food/foodOrder/index",
       "style": {
         "navigationBarTitleText": "订单管理"
+      }
+    },
+    {
+      "path": "views/food/orderDetail/index",
+      "style": {
+        "navigationBarTitleText": "订单详情"
       }
     }
   ],

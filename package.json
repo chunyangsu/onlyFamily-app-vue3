@@ -35,7 +35,8 @@
     "build:quickapp-webview-huawei": "uni build -p quickapp-webview-huawei",
     "build:quickapp-webview-union": "uni build -p quickapp-webview-union",
     "type-check": "vue-tsc --noEmit",
-    "lint:eslint": "eslint --fix ./src"
+    "lint:eslint": "eslint --fix ./src",
+    "images:webp": "node scripts/convertImages.mjs"
   },
   "dependencies": {
     "@dcloudio/uni-app": "3.0.0-4080420251103001",
@@ -83,6 +84,7 @@
     "miniprogram-api-typings": "^5.2.1",
     "prettier": "^3.9.5",
     "sass": "^1.98.0",
+    "sharp": "^0.35.5",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.61.1",
     "unocss": "^66.7.5",

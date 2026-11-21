@@ -1,12 +1,12 @@
 <template>
   <view class="su-container login">
     <view class="bg-img">
-      <!-- <SuImage name="login-bg.png"></SuImage> -->
+      <SuImage name="logo.webp" />
     </view>
     <view class="content">
       <view class="logo-area">
         <view class="logo">
-          <SuImage name="logo.png"></SuImage>
+          <!-- <SuImage name="logo.png" /> -->
         </view>
       </view>
       <view class="title">家在一起，生活更美好</view>
@@ -19,7 +19,7 @@
       </view>
       <view class="agree">
         <view class="check-box">
-          <wd-checkbox v-model="checked" checked-color="#feae39"></wd-checkbox>
+          <wd-checkbox v-model="checked" checked-color="#feae39" />
         </view>
         <view class="text">我已阅读并同意</view>
         <view class="agreement">《用户服务协议》</view>
