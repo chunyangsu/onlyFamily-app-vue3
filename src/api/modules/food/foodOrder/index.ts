@@ -24,3 +24,14 @@ export function createFoodOrderApi(data: FoodOrderFormApi) {
     data: data
   })
 }
+
+/**
+ * 获取食物订单详情
+ * @returns
+ */
+export const getFoodOrderDetailApi = (id: number) => {
+  return request({
+    url: '/api/foodOrder/getDetail/' + id,
+    method: 'GET'
+  })
+}

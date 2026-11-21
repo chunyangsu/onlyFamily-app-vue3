@@ -7,7 +7,7 @@
           <view class="order-list">
             <view v-for="(item, index) in orderList" :key="index" class="order-item">
               <view class="order-img">
-                <SuImage :src="item.mainImageUrl"></SuImage>
+                <SuImage :src="item.mainImageUrl" />
               </view>
               <view class="order-content">
                 <view class="order-name">{{ item.name }}</view>
@@ -73,10 +73,6 @@ const totalPrice = computed(() => {
 // 确认下单
 const confirmData = async () => {
   try {
-    // 表单校验
-    // const { valid } = await formRef.value?.validate()
-    // if (!valid) return
-    // loading.value = true
     const tempData: FoodOrderFormApi = {
       dishArr: orderList.value.map((item) => ({
         id: item.id,
@@ -84,20 +80,18 @@ const confirmData = async () => {
       })),
       remark: remark.value
     }
-    await createFoodOrderApi(tempData)
-    goToOrderPlaced()
+    const response: any = await createFoodOrderApi(tempData)
+    goToOrderPlaced(response.id)
   } catch (err) {
     // 接口请求失败
     console.error(err)
-  } finally {
-    // loading.value = false
   }
 }
 
 // 跳转"下单成功"页面
-const goToOrderPlaced = () => {
-  uni.navigateTo({
-    url: '/views/food/orderPlaced/index'
+const goToOrderPlaced = (id: number) => {
+  uni.redirectTo({
+    url: `/views/food/orderPlaced/index?orderId=${encodeURIComponent(id)}`
   })
 }
 

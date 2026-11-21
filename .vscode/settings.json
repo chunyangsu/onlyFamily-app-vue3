@@ -11,6 +11,12 @@
 
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[vue]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "always"
+    }
+  },
   "editor.codeActionsOnSave": {
     // "source.fixAll": "explicit", Prettier插件升级到12.1.0版本后，source.fixAll这种通配的写法失效，需要指定明确的格式化配置文件
     "source.fixAll.eslint": "explicit",

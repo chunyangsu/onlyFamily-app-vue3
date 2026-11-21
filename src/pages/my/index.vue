@@ -9,7 +9,7 @@
           <view class="user-profile">
             <view class="avatar-area">
               <view class="avatar-icon">
-                <SuImage name="avatar.png"></SuImage>
+                <SuImage name="avatar.png" />
               </view>
             </view>
             <view class="user-info">
@@ -17,7 +17,7 @@
               <view class="mobile">手机号：13057160969</view>
             </view>
             <view class="setting-btn">
-              <SuImage name="my-setting.png"></SuImage>
+              <SuImage name="my-setting.png" />
             </view>
           </view>
         </SuCard>
@@ -28,7 +28,7 @@
           <view class="family">
             <view class="f-header">
               <view class="f-icon">
-                <SuImage name="family-home.png"></SuImage>
+                <SuImage name="family-home.png" />
               </view>
               <view class="f-content">
                 <view class="f-name">爱的小家</view>
@@ -37,7 +37,7 @@
               <view class="f-edit">
                 <view class="f-role">管理员</view>
                 <view class="f-arrow">
-                  <wd-icon name="right" size="32rpx"></wd-icon>
+                  <wd-icon name="right" size="32rpx" />
                 </view>
               </view>
             </view>
@@ -45,26 +45,26 @@
               <view class="nav-item">
                 <view class="nav-icon">
                   <view class="h-42rpx m-t-6rpx">
-                    <SuImage name="family-members.png"></SuImage>
+                    <SuImage name="family-members.png" />
                   </view>
                 </view>
                 <view class="nav-name">成员管理</view>
               </view>
               <view class="nav-item">
                 <view class="nav-icon">
-                  <SuImage name="family-invite.png"></SuImage>
+                  <SuImage name="family-invite.png" />
                 </view>
                 <view class="nav-name">邀请成员</view>
               </view>
               <view class="nav-item" @click="createFamily">
                 <view class="nav-icon">
-                  <SuImage name="family-create.png"></SuImage>
+                  <SuImage name="family-create.png" />
                 </view>
                 <view class="nav-name">创建家庭</view>
               </view>
               <view class="nav-item">
                 <view class="nav-icon">
-                  <SuImage name="family-switch.png"></SuImage>
+                  <SuImage name="family-switch.png" />
                 </view>
                 <view class="nav-name">我的家庭</view>
               </view>
@@ -79,34 +79,34 @@
             <view class="list-item">
               <view class="item-left">
                 <view class="item-icon w-48rpx h-48rpx">
-                  <SuImage name="chef-hat.png"></SuImage>
+                  <SuImage name="chef-hat.png" />
                 </view>
               </view>
               <view class="item-name">我的菜谱</view>
               <view class="item-arrow">
-                <wd-icon name="right" size="28rpx"></wd-icon>
+                <wd-icon name="right" size="28rpx" />
               </view>
             </view>
             <view class="list-item">
               <view class="item-left">
                 <view class="item-icon w-50rpx h-44rpx">
-                  <SuImage name="favorite.png"></SuImage>
+                  <SuImage name="favorite.png" />
                 </view>
               </view>
               <view class="item-name">我的收藏</view>
               <view class="item-arrow">
-                <wd-icon name="right" size="28rpx"></wd-icon>
+                <wd-icon name="right" size="28rpx" />
               </view>
             </view>
             <view class="list-item">
               <view class="item-left">
                 <view class="item-icon w-48rpx h-48rpx">
-                  <SuImage name="order.png"></SuImage>
+                  <SuImage name="order.png" />
                 </view>
               </view>
               <view class="item-name">我的订单</view>
               <view class="item-arrow">
-                <wd-icon name="right" size="28rpx"></wd-icon>
+                <wd-icon name="right" size="28rpx" />
               </view>
             </view>
           </view>
@@ -120,56 +120,56 @@
             <view class="list-item">
               <view class="item-left">
                 <view class="item-icon w-48rpx h-48rpx">
-                  <SuImage name="notification.png"></SuImage>
+                  <SuImage name="notification.png" />
                 </view>
               </view>
               <view class="item-name">消息通知</view>
               <view class="item-arrow">
-                <wd-icon name="right" size="28rpx"></wd-icon>
+                <wd-icon name="right" size="28rpx" />
               </view>
             </view>
             <view class="list-item">
               <view class="item-left">
                 <view class="item-icon w-48rpx h-54rpx">
-                  <SuImage name="security.png"></SuImage>
+                  <SuImage name="security.png" />
                 </view>
               </view>
               <view class="item-name">隐私与账号安全</view>
               <view class="item-arrow">
-                <wd-icon name="right" size="28rpx"></wd-icon>
+                <wd-icon name="right" size="28rpx" />
               </view>
             </view>
             <view class="list-item">
               <view class="item-left">
                 <view class="item-icon w-48rpx h-48rpx">
-                  <SuImage name="policy.png"></SuImage>
+                  <SuImage name="policy.png" />
                 </view>
               </view>
               <view class="item-name">用户服务协议与隐私政策</view>
               <view class="item-arrow">
-                <wd-icon name="right" size="28rpx"></wd-icon>
+                <wd-icon name="right" size="28rpx" />
               </view>
             </view>
             <view class="list-item">
               <view class="item-left">
                 <view class="item-icon w-52rpx h-48rpx">
-                  <SuImage name="feedback.png"></SuImage>
+                  <SuImage name="feedback.png" />
                 </view>
               </view>
               <view class="item-name">意见反馈</view>
               <view class="item-arrow">
-                <wd-icon name="right" size="28rpx"></wd-icon>
+                <wd-icon name="right" size="28rpx" />
               </view>
             </view>
             <view class="list-item">
               <view class="item-left">
                 <view class="item-icon w-48rpx h-48rpx">
-                  <SuImage name="about.png"></SuImage>
+                  <SuImage name="about.png" />
                 </view>
               </view>
               <view class="item-name">关于 OnlyFamily</view>
               <view class="item-arrow">
-                <wd-icon name="right" size="28rpx"></wd-icon>
+                <wd-icon name="right" size="28rpx" />
               </view>
             </view>
           </view>
@@ -179,7 +179,7 @@
       <view class="footer">
         <view class="logout" @click="handleLogout">
           <view class="logout-icon">
-            <SuImage name="logout.png"></SuImage>
+            <SuImage name="logout.png" />
           </view>
           <view class="logout-text">退出登录</view>
         </view>
@@ -353,10 +353,12 @@ const handleLogout = () => {
   }
 
   // 我的管理
-  .manage {}
+  .manage {
+  }
 
   // 其他设置
-  .setting {}
+  .setting {
+  }
 
   // 列表行(通用)
   .list-item {

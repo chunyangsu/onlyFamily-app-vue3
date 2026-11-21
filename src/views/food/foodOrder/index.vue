@@ -5,7 +5,7 @@
       <view class="tab-item">我的订单</view>
     </view>
     <view class="order-list">
-      <view v-for="item in orderList" class="order-item">
+      <view v-for="item in orderList" :key="item.id" class="order-item">
         <view class="order-header">
           <view class="user-info">
             <view class="user-avatar">头像</view>
@@ -17,7 +17,7 @@
         <view class="dish-list">
           <view v-for="(val, index) in item.dishArr" :key="index" class="dish-item">
             <view class="dish-img">
-              <SuImage :src="val.mainImageUrl"></SuImage>
+              <SuImage :src="val.mainImageUrl" />
             </view>
             <view class="dish-content">
               <view class="dish-name">{{ val.name }}</view>
