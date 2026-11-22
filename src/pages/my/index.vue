@@ -1,7 +1,7 @@
 <template>
   <view class="su-container my-container">
     <view class="bg-img">
-      <!-- <SuImage name="my-bg.webp"></SuImage> -->
+      <!-- <SuImage name="my-bg.webp" /> -->
     </view>
     <view class="content">
       <view class="card-item">

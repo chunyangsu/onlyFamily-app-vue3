@@ -1,7 +1,7 @@
 <template>
   <view class="su-container login">
     <view class="bg-img">
-      <!-- <SuImage name="logo.webp" /> -->
+      <SuImage name="login-bg.webp" />
     </view>
     <view class="content">
       <view class="logo-area">

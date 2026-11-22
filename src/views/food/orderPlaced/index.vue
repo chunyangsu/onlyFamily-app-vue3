@@ -1,7 +1,7 @@
 <template>
   <view class="su-container order-placed">
     <view class="bg-img">
-      <!-- <SuImage name="order-placed-bg.png"></SuImage> -->
+      <SuImage name="order-placed-bg.png" />
     </view>
     <view class="main">
       <view class="title">下单成功</view>
@@ -51,7 +51,7 @@ onShareAppMessage(() => {
   return {
     title: '有人下单啦，快来看看！',
     path: `/views/food/orderDetail/index?id=${encodeURIComponent(formData.value.orderId)}`,
-    imageUrl: 'https://你的图片地址/order-share.png'
+    imageUrl: 'https://only-family-static.oss-cn-shanghai.aliyuncs.com/food-order-share.webp'
   }
 })
 </script>

@@ -1,27 +1,6 @@
-export interface DishGroupQuery {
-  name: string // 菜品名称
-  categoryIds: string // 所属分类
-}
-
-export interface DishGroupResponse {
-  list: DishGroupItem[]
-  total: number
-}
-
-// 菜品分组列表字段
-export interface DishGroupItem {
-  categoryId: number
-  categoryName: string
-  dishList: DishItem[]
-}
-
+// 菜品查询参数
 export interface DishQuery {
   name: string // 菜品名称
-}
-
-export interface DishListResponse {
-  list: DishItem[]
-  total: number
 }
 
 // 菜品列表字段
@@ -33,6 +12,19 @@ export interface DishItem {
   price: string // 价格
   saleNum: number // 销量
   cartNum: number // 购物车数量(临时暂存)
+}
+
+// 菜品分组查询参数
+export interface DishGroupQuery {
+  name: string // 菜品名称
+  categoryIds: string // 所属分类
+}
+
+// 菜品分组列表字段
+export interface DishGroupItem {
+  categoryId: number
+  categoryName: string
+  dishList: DishItem[]
 }
 
 // 菜品表单
