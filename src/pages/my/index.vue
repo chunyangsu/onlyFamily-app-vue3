@@ -252,7 +252,7 @@ const createFamily = () => {
     .user-info {
       flex: 1;
       margin-left: 24rpx;
-      margin-top: 16rpx;
+      // margin-top: 16rpx;
 
       .nickname {
         color: $textDefault;
