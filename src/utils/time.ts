@@ -35,3 +35,29 @@ export function parseTime(time: any, cFormat: any) {
   })
   return time_str
 }
+
+/**
+ * 获取当天日期
+ * 示例：2026.10.28
+ */
+export const getCurrentDate = (): string => {
+  const date = new Date()
+
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}.${month}.${day}`
+}
+
+/**
+ * 获取当天星期
+ * 示例：星期四
+ */
+export const getCurrentWeekday = (): string => {
+  const date = new Date()
+  const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
+  const weekday = weekdays[date.getDay()]
+
+  return `${weekday}`
+}

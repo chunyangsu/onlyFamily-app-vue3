@@ -16,7 +16,7 @@
               <view class="nickname">{{ userStore.userInfo.nickname }}</view>
               <!-- <view class="mobile">手机号：13057160969</view> -->
             </view>
-            <view class="setting-btn">
+            <view class="setting-btn" @click="goToPersonalProfile">
               <SuImage name="my-setting.webp" />
             </view>
           </view>
@@ -112,7 +112,6 @@
           </view>
         </SuCard>
       </view>
-
       <!-- 其他设置 -->
       <view class="card-item">
         <SuCard title="其他设置">
@@ -175,15 +174,6 @@
           </view>
         </SuCard>
       </view>
-      <!-- 底部 -->
-      <view class="footer">
-        <view class="logout" @click="handleLogout">
-          <view class="logout-icon">
-            <SuImage name="logout.webp" />
-          </view>
-          <view class="logout-text">退出登录</view>
-        </view>
-      </view>
     </view>
   </view>
 </template>
@@ -199,6 +189,13 @@ import { useUserStore } from '@/stores/useUserStore'
 
 const userStore = useUserStore()
 
+// 跳转"个人资料"页面
+const goToPersonalProfile = () => {
+  uni.navigateTo({
+    url: '/views/my/personalProfile/index'
+  })
+}
+
 // 新建家庭
 const createFamily = () => {
   // const params: FamilyForm = {
@@ -206,11 +203,6 @@ const createFamily = () => {
   //   introduction: '昵称是狗窝'
   // }
   // createFamilyApi(params).then((response) => { })
-}
-
-// 退出登录
-const handleLogout = () => {
-  userStore.logout()
 }
 </script>
 
@@ -388,28 +380,6 @@ const handleLogout = () => {
     .item-arrow {
       display: flex;
       color: $textLight;
-    }
-  }
-
-  .footer {
-    .logout {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: #e8eddf;
-      padding: 18rpx 0;
-      border-radius: 50rpx;
-
-      .logout-icon {
-        width: 36rpx;
-        height: 34rpx;
-      }
-
-      .logout-text {
-        color: $sub;
-        font-size: 32rpx;
-        margin-left: 12rpx;
-      }
     }
   }
 }

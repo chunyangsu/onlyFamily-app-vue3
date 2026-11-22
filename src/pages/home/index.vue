@@ -3,7 +3,7 @@
     <!-- 家庭信息-模块 -->
     <view class="family">
       <view class="family-content">
-        <view class="family-date">2026.10.28 星期四</view>
+        <view class="family-date">{{ getCurrentDate() + ' · ' + getCurrentWeekday() }}</view>
         <view class="family-title">早上好！欢迎回家！</view>
         <view class="family-name">
           <view>我们的小家</view>
@@ -43,10 +43,6 @@
             </view>
           </view>
           <view class="add-btn" @click="goToFoodMenu">前往点餐</view>
-          <!-- <view class="food-footer">
-          <view>午餐/晚餐</view>
-          <view>3人用餐</view>
-        </view> -->
         </view>
       </SuCard>
     </view>
@@ -101,6 +97,7 @@ import { getDishListApi } from '@/api/modules/food/dish'
 // ts
 // utils
 import { moneyFormat } from '@/utils/money'
+import { getCurrentDate, getCurrentWeekday } from '@/utils/time'
 
 // 跳转"厨房"页面
 const goToFoodMenu = () => {
