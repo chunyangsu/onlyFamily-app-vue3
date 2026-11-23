@@ -8,7 +8,10 @@
         <SuCard hide-header>
           <view class="user-profile">
             <view class="avatar-area">
-              <view class="avatar-icon">
+              <view v-if="userStore.userInfo.avatarId > 0" class="w-100% h-100%">
+                <SuImage :src="userStore.userInfo.avatarUrl" />
+              </view>
+              <view v-else class="avatar-icon">
                 <SuImage name="avatar.webp" />
               </view>
             </view>

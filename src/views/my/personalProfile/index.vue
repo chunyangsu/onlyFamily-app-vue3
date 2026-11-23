@@ -9,7 +9,9 @@
             <view class="item-right">
               <view class="right-value">
                 <view class="avatar-area">
-                  <SuImage v-if="userStore.userInfo.avatarId > 0" class="avatar-icon" :src="userStore.userInfo.avatarUrl" />
+                  <view v-if="userStore.userInfo.avatarId > 0" class="w-100% h-100%">
+                    <SuImage :src="userStore.userInfo.avatarUrl" />
+                  </view>
                   <view v-else class="avatar-icon">
                     <SuImage name="avatar.webp" />
                   </view>

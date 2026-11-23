@@ -49,10 +49,10 @@ export const useUserStore = defineStore('user', () => {
     token.value = response.token
     userInfo.value = {
       id: response.userInfo.id,
-      nickname: response.userInfo.nickname,
-      avatarId: 0,
-      avatarUrl: '',
-      familyId: 1
+      familyId: response.userInfo.familyId,
+      avatarId: response.userInfo.avatarId,
+      avatarUrl: response.userInfo.avatarUrl,
+      nickname: response.userInfo.nickname
     }
     setToken(token.value)
     setUserInfo(userInfo.value)
