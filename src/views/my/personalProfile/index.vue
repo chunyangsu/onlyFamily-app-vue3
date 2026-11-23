@@ -23,7 +23,7 @@
             </view>
           </view>
           <!-- 昵称 -->
-          <view class="row-item">
+          <view class="row-item" @click="updateNickname">
             <view class="item-left">昵称</view>
             <view class="item-right">
               <view class="right-value">{{ userStore.userInfo.nickname }}</view>
@@ -74,24 +74,36 @@
         <view class="logout-text">退出登录</view>
       </view>
     </view>
-    <!-- 更换头像：三种来源共用附件上传和头像绑定 -->
+    <!-- 更换头像操作面板：用微信头像、从相册选择、拍照 -->
     <wd-action-sheet v-model="showAvatarSheet" title="更换头像" cancel-text="取消" :safe-area-inset-bottom="true">
       <view class="avatar-actions">
-        <button class="avatar-action avatar-action--wechat" hover-class="avatar-action--pressed" :disabled="avatarBusy" open-type="chooseAvatar" @chooseavatar="handleChooseAvatar">
-          使用微信头像
-        </button>
+        <button class="avatar-action avatar-action--wechat" hover-class="avatar-action--pressed" :disabled="avatarBusy" open-type="chooseAvatar" @chooseavatar="handleChooseAvatar">用微信头像</button>
         <button class="avatar-action" hover-class="avatar-action--pressed" :disabled="avatarBusy" @click="chooseAvatarImage('album')">从相册选择</button>
         <button class="avatar-action" hover-class="avatar-action--pressed" :disabled="avatarBusy" @click="chooseAvatarImage('camera')">拍照</button>
       </view>
     </wd-action-sheet>
+    <!-- 修改昵称弹窗 -->
+    <wd-dialog selector="nickname">
+      <view class="nickname-content">
+        <SuInput v-model="nicknameDraft" placeholder="请输入昵称" />
+        <view class="nickname-tip">点击输入框，可选择微信昵称或手动输入</view>
+      </view>
+      <template #actions="{ confirm, cancel }">
+        <view class="nickname-actions">
+          <wd-button plain :disabled="nicknameBusy" @click="cancel">取消</wd-button>
+          <wd-button :loading="nicknameBusy" :disabled="nicknameBusy" @click="confirm">确定</wd-button>
+        </view>
+      </template>
+    </wd-dialog>
   </view>
 </template>
 
 <script setup lang="ts">
+import { useDialog } from '@wot-ui/ui'
 // 全局属性
 import { useUserStore } from '@/stores/useUserStore'
 // api
-import { updateUserAvatarApi } from '@/api/modules/user'
+import { updateUserAvatarApi, updateUserNicknameApi } from '@/api/modules/user'
 // ts
 // utils
 import { getUploadErrorMessage, uploadAttachment } from '@/utils/upload'
@@ -104,6 +116,39 @@ const userStore = useUserStore()
 // 显示更换头像的操作层
 const showAvatarSheet = ref(false)
 const avatarBusy = ref(false)
+const nicknameDialog = useDialog('nickname')
+const nicknameDraft = ref('')
+const nicknameBusy = ref(false)
+
+const saveNickname = async () => {
+  if (nicknameBusy.value) return false
+  const nickname = nicknameDraft.value.trim()
+  if (!nickname) {
+    uni.showToast({ title: '请输入昵称', icon: 'none' })
+    return false
+  }
+  const { id: userId, familyId } = userStore.userInfo
+  const token = userStore.token
+  nicknameBusy.value = true
+  try {
+    const result = await updateUserNicknameApi({ nickname })
+    if (userStore.userInfo.id !== userId || userStore.userInfo.familyId !== familyId || userStore.token !== token) return true
+    userStore.updateUserNickname(result)
+    uni.showToast({ title: '昵称已更新', icon: 'success' })
+    return true
+  } catch (error) {
+    uni.showToast({ title: getUploadErrorMessage(error, '修改昵称失败，请重试'), icon: 'none' })
+    return false
+  } finally {
+    nicknameBusy.value = false
+  }
+}
+
+const updateNickname = () => {
+  if (nicknameBusy.value) return
+  nicknameDraft.value = userStore.userInfo.nickname || ''
+  nicknameDialog.confirm({ title: '修改昵称', beforeConfirm: saveNickname }).catch(() => {})
+}
 
 // 更新头像
 const updateAvatar = () => {
@@ -266,6 +311,23 @@ const handleLogout = () => {
         margin-left: 12rpx;
       }
     }
+  }
+
+  .nickname-content {
+    padding: 8rpx 40rpx 24rpx;
+    text-align: left;
+  }
+
+  .nickname-tip {
+    margin-top: 16rpx;
+    color: $textLight;
+    font-size: 24rpx;
+  }
+
+  .nickname-actions {
+    display: flex;
+    justify-content: space-evenly;
+    padding: 0 24rpx 32rpx;
   }
 
   // 更换头像的操作面板

@@ -18,3 +18,16 @@ export interface UserAvatarResponse {
   avatarId: number
   avatarUrl: string
 }
+
+/**
+ * 用户昵称
+ */
+// 请求参数
+export interface UserNicknameRequest {
+  nickname: string
+}
+
+// 返回数据
+export interface UserNicknameResponse {
+  nickname: string
+}

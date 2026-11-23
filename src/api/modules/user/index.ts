@@ -1,5 +1,5 @@
 import request from '@/api/service'
-import type { LoginForm, UserAvatarRequest, UserAvatarResponse } from '@/api/modules/user/types'
+import type { LoginForm, UserAvatarRequest, UserAvatarResponse, UserNicknameRequest, UserNicknameResponse } from '@/api/modules/user/types'
 
 /**
  * 登录
@@ -31,6 +31,18 @@ export const getUserListApi = () => {
 export const updateUserAvatarApi = (data: UserAvatarRequest): Promise<UserAvatarResponse> => {
   return request<UserAvatarResponse>({
     url: '/api/user/updateAvatar',
+    method: 'PUT',
+    data: data
+  })
+}
+
+/**
+ * 更新用户昵称
+ * @returns
+ */
+export const updateUserNicknameApi = (data: UserNicknameRequest): Promise<UserNicknameResponse> => {
+  return request<UserNicknameResponse>({
+    url: '/api/user/updateNickname',
     method: 'PUT',
     data: data
   })

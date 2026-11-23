@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 // api
 import { loginApi } from '@/api/modules/user'
 // ts
-import type { LoginForm, UserAvatarResponse } from '@/api/modules/user/types'
+import type { LoginForm, UserAvatarResponse, UserNicknameResponse } from '@/api/modules/user/types'
 // utils
 import { getToken, setToken, removeToken, getUserInfo, setUserInfo, removeUserInfo } from '@/utils/user'
 
@@ -68,6 +68,14 @@ export const useUserStore = defineStore('user', () => {
     userInfo.value = tempUserInfo
   }
 
+  // 保存成功后同步昵称，保留头像等其他用户信息
+  const updateUserNickname = (data: UserNicknameResponse) => {
+    if (!data.nickname?.trim()) throw new Error('昵称更新响应数据异常')
+    const tempUserInfo = { ...userInfo.value, nickname: data.nickname }
+    setUserInfo(tempUserInfo)
+    userInfo.value = tempUserInfo
+  }
+
   // 退出登录
   const logout = () => {
     resetUserStore()
@@ -120,5 +128,5 @@ export const useUserStore = defineStore('user', () => {
     // }
   }
 
-  return { token, userInfo, login, logout, initUserStore, updateUserAvatar }
+  return { token, userInfo, login, logout, initUserStore, updateUserAvatar, updateUserNickname }
 })

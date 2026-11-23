@@ -249,6 +249,7 @@ function createAvatar({ cancel = false, fail = false, bindError, bind, size = 10
   }
   const api = load(setup('src/views/my/personalProfile/index.vue') + '\nexports.api = { chooseAvatarImage, handleChooseAvatar, avatarBusy };', {
     require(name) {
+      if (name === '@wot-ui/ui') return { useDialog: () => ({}) }
       if (name === '@/stores/useUserStore') return { useUserStore: () => pageStore }
       if (name === '@/api/modules/user')
         return {
