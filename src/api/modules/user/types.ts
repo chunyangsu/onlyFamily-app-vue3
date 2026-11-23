@@ -4,3 +4,17 @@ export interface LoginForm {
   // mobile: string // 手机号
   // password: string // 密码
 }
+
+/**
+ * 用户头像
+ */
+// 请求参数
+export interface UserAvatarRequest {
+  avatarId: number
+}
+
+// 返回数据
+export interface UserAvatarResponse {
+  avatarId: number
+  avatarUrl: string
+}

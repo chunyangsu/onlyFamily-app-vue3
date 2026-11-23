@@ -2,14 +2,15 @@ import { defineStore } from 'pinia'
 // api
 import { loginApi } from '@/api/modules/user'
 // ts
-import type { LoginForm } from '@/api/modules/user/types'
+import type { LoginForm, UserAvatarResponse } from '@/api/modules/user/types'
 // utils
 import { getToken, setToken, removeToken, getUserInfo, setUserInfo, removeUserInfo } from '@/utils/user'
 
 interface UserInfo {
   id: number
-  name: string
   nickname: string
+  avatarId: number
+  avatarUrl: string
   familyId: number // 所属家庭
 }
 
@@ -19,8 +20,9 @@ export const useUserStore = defineStore('user', () => {
   // 用户信息
   const userInfo = ref<UserInfo>({
     id: 0,
-    name: '',
     nickname: '',
+    avatarId: 0,
+    avatarUrl: '',
     familyId: 0
   })
 
@@ -47,12 +49,23 @@ export const useUserStore = defineStore('user', () => {
     token.value = response.token
     userInfo.value = {
       id: response.userInfo.id,
-      name: response.userInfo.name,
       nickname: response.userInfo.nickname,
+      avatarId: 0,
+      avatarUrl: '',
       familyId: 1
     }
     setToken(token.value)
     setUserInfo(userInfo.value)
+  }
+
+  // 绑定成功后同步头像，保留其他用户信息
+  const updateUserAvatar = (data: UserAvatarResponse) => {
+    if (!Number.isInteger(data.avatarId) || data.avatarId <= 0 || !data.avatarUrl?.trim()) {
+      throw new Error('头像更新响应数据异常')
+    }
+    const tempUserInfo = { ...userInfo.value, avatarId: data.avatarId, avatarUrl: data.avatarUrl }
+    setUserInfo(tempUserInfo)
+    userInfo.value = tempUserInfo
   }
 
   // 退出登录
@@ -71,8 +84,9 @@ export const useUserStore = defineStore('user', () => {
     token.value = ''
     userInfo.value = {
       id: 0,
-      name: '',
       nickname: '',
+      avatarId: 0,
+      avatarUrl: '',
       familyId: 0
     }
   }
@@ -106,5 +120,5 @@ export const useUserStore = defineStore('user', () => {
     // }
   }
 
-  return { token, userInfo, login, logout, initUserStore }
+  return { token, userInfo, login, logout, initUserStore, updateUserAvatar }
 })

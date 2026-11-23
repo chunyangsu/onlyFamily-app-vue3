@@ -2,7 +2,8 @@
  * OSS 上传凭证请求参数
  */
 export interface UploadPolicyRequest {
-  module: 'avatar' | 'dish' // 所属业务模块，用于限制对象存储路径
+  module: 'user' | 'family' | 'food' // 所属业务模块，用于限制对象存储路径
+  moduleType: 'avatar' | 'dish' // 模块类型
 }
 
 /**

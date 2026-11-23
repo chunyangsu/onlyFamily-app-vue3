@@ -27,8 +27,8 @@ const request = <T>(options: UniApp.RequestOptions): Promise<T> => {
         ...options.header,
         // 身份认证：如果存在token，则自动添加到请求头
         Authorization: token ? `Bearer ${token}` : '',
-        'user-id': userInfo.id, // 用户id
-        'family-id': userInfo.familyId || 0 // 所属家庭id
+        'user-id': userInfo?.id || 0, // 用户id
+        'family-id': userInfo?.familyId || 0 // 所属家庭id
       },
       // 请求成功
       success: (response) => {
@@ -57,6 +57,8 @@ const request = <T>(options: UniApp.RequestOptions): Promise<T> => {
             // 身份凭证无效或过期
             handleUnauthorized()
           }
+          const error = typeof data === 'object' && data ? data : { msg: `请求失败，HTTP ${statusCode}` }
+          reject({ ...error, statusCode })
         }
       },
       // 请求失败

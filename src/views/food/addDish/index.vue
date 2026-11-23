@@ -4,7 +4,7 @@
     <view class="main">
       <view class="card-item">
         <SuFormItem title="菜品主图" required>
-          <SuUpload v-model="attachmentList" module="dish" accept="image" />
+          <SuUpload v-model="attachmentList" module="food" moduleType="dish" accept="image" />
         </SuFormItem>
       </view>
       <view class="card-item">
