@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia'
 // api
 import { loginApi } from '@/api/modules/user'
+import { getFamilyDetailApi } from '@/api/modules/family'
 // ts
 import type { LoginForm, UserAvatarResponse, UserNicknameResponse } from '@/api/modules/user/types'
+import type { FamilyAvatarResponse } from '@/api/modules/family/types'
 // utils
-import { getToken, setToken, removeToken, getUserInfo, setUserInfo, removeUserInfo } from '@/utils/user'
+import { getToken, setToken, removeToken, getUserInfo, setUserInfo, removeUserInfo, setFamilyInfo, removeFamilyInfo } from '@/utils/user'
 
 interface UserInfo {
   id: number
@@ -12,6 +14,13 @@ interface UserInfo {
   avatarId: number
   avatarUrl: string
   familyId: number // 所属家庭
+}
+
+interface FamilyInfo {
+  id: number
+  name: string
+  avatarId: number
+  avatarUrl: string
 }
 
 export const useUserStore = defineStore('user', () => {
@@ -24,6 +33,13 @@ export const useUserStore = defineStore('user', () => {
     avatarId: 0,
     avatarUrl: '',
     familyId: 0
+  })
+  // 当前家庭信息
+  const familyInfo = ref<FamilyInfo>({
+    id: 0,
+    name: '',
+    avatarId: 0,
+    avatarUrl: ''
   })
 
   // 登录
@@ -49,6 +65,7 @@ export const useUserStore = defineStore('user', () => {
     token.value = response.token
     userInfo.value = {
       id: response.userInfo.id,
+      // 查询到用户有且仅有一个所属家庭时，会自动返回家庭id
       familyId: response.userInfo.familyId,
       avatarId: response.userInfo.avatarId,
       avatarUrl: response.userInfo.avatarUrl,
@@ -56,6 +73,21 @@ export const useUserStore = defineStore('user', () => {
     }
     setToken(token.value)
     setUserInfo(userInfo.value)
+    if (userInfo.value.familyId > 0) {
+      getFamilyDetail(userInfo.value.familyId)
+    }
+  }
+
+  // 获取当前家庭详情
+  const getFamilyDetail = async (id: number) => {
+    const response = await getFamilyDetailApi(id)
+    familyInfo.value = {
+      id: response.id,
+      name: response.name,
+      avatarId: response.avatarId,
+      avatarUrl: response.avatarUrl
+    }
+    setFamilyInfo(familyInfo.value)
   }
 
   // 绑定成功后同步头像，保留其他用户信息
@@ -76,6 +108,16 @@ export const useUserStore = defineStore('user', () => {
     userInfo.value = tempUserInfo
   }
 
+  // 绑定成功后同步家庭头像，保留家庭名称等信息
+  const updateFamilyAvatar = (data: FamilyAvatarResponse) => {
+    if (!Number.isInteger(data.avatarId) || data.avatarId <= 0 || !data.avatarUrl?.trim()) {
+      throw new Error('家庭头像更新响应数据异常')
+    }
+    const tempFamilyInfo = { ...familyInfo.value, avatarId: data.avatarId, avatarUrl: data.avatarUrl }
+    setFamilyInfo(tempFamilyInfo)
+    familyInfo.value = tempFamilyInfo
+  }
+
   // 退出登录
   const logout = () => {
     resetUserStore()
@@ -88,6 +130,7 @@ export const useUserStore = defineStore('user', () => {
   const resetUserStore = () => {
     removeToken()
     removeUserInfo()
+    removeFamilyInfo()
 
     token.value = ''
     userInfo.value = {
@@ -96,6 +139,12 @@ export const useUserStore = defineStore('user', () => {
       avatarId: 0,
       avatarUrl: '',
       familyId: 0
+    }
+    familyInfo.value = {
+      id: 0,
+      name: '',
+      avatarId: 0,
+      avatarUrl: ''
     }
   }
 
@@ -128,5 +177,5 @@ export const useUserStore = defineStore('user', () => {
     // }
   }
 
-  return { token, userInfo, login, logout, initUserStore, updateUserAvatar, updateUserNickname }
+  return { token, userInfo, familyInfo, login, logout, initUserStore, updateUserAvatar, updateUserNickname, updateFamilyAvatar }
 })

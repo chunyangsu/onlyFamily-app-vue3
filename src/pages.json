@@ -22,18 +22,6 @@
       }
     },
     {
-      "path": "pages/transaction/index",
-      "style": {
-        "navigationBarTitleText": "账单"
-      }
-    },
-    {
-      "path": "pages/my/index",
-      "style": {
-        "navigationBarTitleText": "我的"
-      }
-    },
-    {
       "path": "views/food/addDish/index",
       "style": {
         "navigationBarTitleText": "添加菜品"
@@ -64,9 +52,27 @@
       }
     },
     {
+      "path": "pages/transaction/index",
+      "style": {
+        "navigationBarTitleText": "账单"
+      }
+    },
+    {
+      "path": "pages/my/index",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
+    },
+    {
       "path": "views/my/personalProfile/index",
       "style": {
         "navigationBarTitleText": "个人资料"
+      }
+    },
+    {
+      "path": "views/my/familyManage/index",
+      "style": {
+        "navigationBarTitleText": "家庭管理"
       }
     }
   ],

@@ -37,7 +37,7 @@
                 <view class="f-name">爱的小家</view>
                 <view class="member-num">成员：3人</view>
               </view>
-              <view class="f-edit">
+              <view class="f-edit" @click="goToFamilyManage">
                 <view class="f-role">管理员</view>
                 <view class="f-arrow">
                   <wd-icon name="right" size="32rpx" />
@@ -196,6 +196,13 @@ const userStore = useUserStore()
 const goToPersonalProfile = () => {
   uni.navigateTo({
     url: '/views/my/personalProfile/index'
+  })
+}
+
+// 跳转"家庭管理"页面
+const goToFamilyManage = () => {
+  uni.navigateTo({
+    url: '/views/my/familyManage/index'
   })
 }
 

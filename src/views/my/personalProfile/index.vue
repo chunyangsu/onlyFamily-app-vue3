@@ -86,7 +86,6 @@
     <wd-dialog selector="nickname">
       <view class="nickname-content">
         <SuInput v-model="nicknameDraft" placeholder="请输入昵称" />
-        <view class="nickname-tip">点击输入框，可选择微信昵称或手动输入</view>
       </view>
       <template #actions="{ confirm, cancel }">
         <view class="nickname-actions">
@@ -316,12 +315,6 @@ const handleLogout = () => {
   .nickname-content {
     padding: 8rpx 40rpx 24rpx;
     text-align: left;
-  }
-
-  .nickname-tip {
-    margin-top: 16rpx;
-    color: $textLight;
-    font-size: 24rpx;
   }
 
   .nickname-actions {
