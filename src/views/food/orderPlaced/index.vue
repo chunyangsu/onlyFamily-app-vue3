@@ -50,7 +50,7 @@ onLoad((options) => {
 // 配置微信分享
 onShareAppMessage(() => {
   return {
-    title: '有人下单啦，快来看看！',
+    title: '有人点餐啦，快来看看！',
     path: `/views/food/orderDetail/index?id=${encodeURIComponent(formData.value.orderId)}`,
     imageUrl: 'https://only-family-static.oss-cn-shanghai.aliyuncs.com/food-order-share.webp'
   }

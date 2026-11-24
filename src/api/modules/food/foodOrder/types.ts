@@ -11,10 +11,27 @@ export interface FoodOrderDishItemApi {
 }
 
 // 食物订单列表字段
-export interface FoodOrderItemApi {
+export interface FoodOrderItem {
+  id: number // 订单id
+  code: string // 订单编号
+  progress: string // 订单进度
+  remark: string // 订单备注
+  dishArr: DishItem[]
+  createUser: CreateUser // 创建人信息
+  createTime: string // 创建时间
+}
+
+export interface CreateUser {
   id: number
-  // name: string // 名称
-  // price: string // 价格
-  // saleNum: number // 销量
-  // cartNum: number // 购物车数量(临时暂存)
+  nickname: string
+  avatarId: number
+  avatarUrl: string
+}
+
+export interface DishItem {
+  id: number // 菜品id
+  name: string // 菜品名称
+  mainImageUrl: string // 菜品主图
+  price: string // 价格
+  num: number // 数量
 }

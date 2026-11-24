@@ -20,8 +20,11 @@
           <view class="order-info-row m-t-8rpx">
             <view class="order-info-label">下单用户：</view>
             <view class="order-info-value user-info">
-              <view class="user-avatar">头像</view>
-              <view class="user-name">{{ formData.creator }}</view>
+              <view class="user-avatar">
+                <SuImage v-if="formData.createUser.avatarId > 0" :src="formData.createUser.avatarUrl" />
+                <SuImage v-else name="avatar.webp" />
+              </view>
+              <view class="user-name">{{ formData.createUser.nickname }}</view>
             </view>
           </view>
         </view>
@@ -74,52 +77,41 @@
 // api
 import { getFoodOrderDetailApi } from '@/api/modules/food/foodOrder'
 // ts
-// import type { FoodOrderFormApi } from '@/api/modules/food/foodOrder/types'
+import type { FoodOrderItem } from '@/api/modules/food/foodOrder/types'
 // utils
 import { parseTime } from '@/utils/time'
 import { decimal } from '@/utils/decimal'
 
-interface FormData {
-  id: number // 订单id
-  code: string // 订单编号
-  progress: string // 订单进度
-  remark: string // 订单备注
-  dishArr: DishItem[]
-  createId: number // 创建人id
-  creator: string // 创建人
-  createTime: string // 创建时间
-}
-
-interface DishItem {
-  id: number // 菜品id
-  name: string // 菜品名称
-  mainImageUrl: string // 菜品主图
-  price: string // 价格
-  num: number // 数量
-}
-
-const formData = ref<FormData>({
+const formData = ref<FoodOrderItem>({
   id: 0,
   code: '',
   progress: '',
   remark: '',
   dishArr: [],
-  createId: 0,
-  creator: '',
+  createUser: {
+    id: 0,
+    nickname: '',
+    avatarId: 0,
+    avatarUrl: ''
+  },
   createTime: ''
 })
 
 // 获取食物订单详情
 const getDetail = async (id: number) => {
-  getFoodOrderDetailApi(id).then((response: any) => {
+  getFoodOrderDetailApi(id).then((response) => {
     formData.value = {
       id: response.id,
       code: response.code,
       progress: response.progress,
       remark: response.remark,
       dishArr: [],
-      createId: response.createId,
-      creator: response.creator,
+      createUser: {
+        id: response.createUser.id,
+        nickname: response.createUser.nickname,
+        avatarId: response.createUser.avatarId,
+        avatarUrl: response.createUser.avatarUrl
+      },
       createTime: parseTime(response.createTime, '{y}-{m}-{d} {h}:{i}:{s}')
     }
     if (response.dishArr && response.dishArr.length > 0) {
@@ -180,13 +172,10 @@ onLoad((options) => {
 
         .user-avatar {
           width: 80rpx;
-          line-height: 80rpx;
-          display: flex;
-          justify-content: center;
-          align-items: center;
+          height: 80rpx;
           border-radius: 50%;
+          background-color: $subBg;
           overflow: hidden;
-          background-color: #f6f2ec;
         }
 
         .user-name {

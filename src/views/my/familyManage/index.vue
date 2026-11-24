@@ -4,7 +4,7 @@
       <view class="card-item">
         <view class="basic-info">
           <!-- 头像 -->
-          <view class="row-item" @click="updateAvatar">
+          <view class="row-item" @click="handleChooseAvatar">
             <view class="item-left">头像</view>
             <view class="item-right">
               <view class="right-value">
@@ -44,13 +44,6 @@
         <view class="logout-text">退出家庭</view>
       </view>
     </view> -->
-    <!-- 更换头像操作面板：从相册选择、拍照 -->
-    <wd-action-sheet v-model="showAvatarSheet" title="更换头像" cancel-text="取消" :safe-area-inset-bottom="true">
-      <view class="avatar-actions">
-        <button class="avatar-action" hover-class="avatar-action--pressed" :disabled="avatarBusy" @click="chooseAvatarImage('album')">从相册选择</button>
-        <button class="avatar-action" hover-class="avatar-action--pressed" :disabled="avatarBusy" @click="chooseAvatarImage('camera')">拍照</button>
-      </view>
-    </wd-action-sheet>
     <!-- 修改名称弹窗 -->
     <!-- <wd-dialog selector="nickname">
       <view class="nickname-content">
@@ -76,13 +69,7 @@ import { updateFamilyAvatarApi } from '@/api/modules/family'
 // utils
 import { getUploadErrorMessage, uploadAttachment } from '@/utils/upload'
 
-interface AvatarMediaResult {
-  tempFiles: { tempFilePath: string; size: number }[]
-}
-
 const userStore = useUserStore()
-// 显示更换头像的操作层
-const showAvatarSheet = ref(false)
 const avatarBusy = ref(false)
 // const nicknameDialog = useDialog('nickname')
 // const nicknameDraft = ref('')
@@ -118,12 +105,6 @@ const updateName = () => {
   //   nicknameDialog.confirm({ title: '修改昵称', beforeConfirm: saveNickname }).catch(() => {})
 }
 
-// 更新头像
-const updateAvatar = () => {
-  if (avatarBusy.value) return
-  showAvatarSheet.value = true
-}
-
 const uploadAvatarFile = async (filePath: string, size: number) => {
   if (size > 5 * 1024 * 1024) throw new Error('头像图片不能超过 5 MB')
   const { id: userId, familyId } = userStore.userInfo
@@ -148,16 +129,17 @@ const showAvatarError = (error: unknown) => {
   if (!/cancel/i.test(message)) uni.showToast({ title: message, icon: 'none' })
 }
 
-const chooseAvatarImage = async (source: 'album' | 'camera') => {
+// 选择家庭头像
+const handleChooseAvatar = async () => {
   if (avatarBusy.value) return
   avatarBusy.value = true
-  showAvatarSheet.value = false
   try {
-    const result = await new Promise<AvatarMediaResult>((resolve, reject) => {
+    // 原生图片选择仅提供相册和拍照，不包含微信头像
+    const result = await new Promise<{ tempFiles: { tempFilePath: string; size: number }[] }>((resolve, reject) => {
       uni.chooseMedia({
         count: 1,
         mediaType: ['image'],
-        sourceType: [source],
+        sourceType: ['album', 'camera'],
         success: resolve,
         fail: reject
       })
@@ -171,10 +153,10 @@ const chooseAvatarImage = async (source: 'album' | 'camera') => {
   }
 }
 
-// 退出登录
-const handleLogout = () => {
-  userStore.logout()
-}
+// 退出家庭
+// const handleLogout = () => {
+//   userStore.logout()
+// }
 </script>
 
 <style lang="scss" scoped>
@@ -255,45 +237,6 @@ const handleLogout = () => {
         color: $sub;
         font-size: 32rpx;
         margin-left: 12rpx;
-      }
-    }
-  }
-
-  // 更换头像的操作面板
-  .avatar-actions {
-    padding: 0 24rpx;
-
-    .avatar-action {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      min-height: 112rpx;
-      margin: 0;
-      padding: 24rpx;
-      box-sizing: border-box;
-      border: 0;
-      border-radius: 0;
-      background-color: #fff;
-      color: $textDefault;
-      font-size: 32rpx;
-      font-weight: normal;
-      line-height: 1.5;
-
-      &::after {
-        border: 0;
-      }
-
-      & + .avatar-action {
-        border-top: 2rpx solid $line;
-      }
-
-      &--wechat {
-        color: $sub;
-      }
-
-      &--pressed {
-        background-color: $subBg;
       }
     }
   }

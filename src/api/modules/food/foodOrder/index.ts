@@ -1,12 +1,12 @@
 import request from '@/api/service'
-import type { FoodOrderFormApi } from '@/api/modules/food/foodOrder/types'
+import type { FoodOrderFormApi, FoodOrderItem } from '@/api/modules/food/foodOrder/types'
 
 /**
  * 获取食物订单列表
  * @returns
  */
-export const getFoodOrderListApi = () => {
-  return request({
+export const getFoodOrderListApi = (): Promise<FoodOrderItem[]> => {
+  return request<FoodOrderItem[]>({
     url: '/api/foodOrder/getList',
     method: 'GET'
   })
@@ -29,8 +29,8 @@ export function createFoodOrderApi(data: FoodOrderFormApi) {
  * 获取食物订单详情
  * @returns
  */
-export const getFoodOrderDetailApi = (id: number) => {
-  return request({
+export const getFoodOrderDetailApi = (id: number): Promise<FoodOrderItem> => {
+  return request<FoodOrderItem>({
     url: '/api/foodOrder/getDetail/' + id,
     method: 'GET'
   })

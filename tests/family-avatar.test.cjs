@@ -13,8 +13,8 @@ function load(source, globals) {
   return module.exports
 }
 
-function fixture({ cancel, size = 100, upload, bind, uploadError, bindError } = {}) {
-  const calls = { uploads: [], bindings: [], caches: [], sources: [], toasts: [], loading: [] }
+function fixture({ size = 100, source = 'album', cancel = false, empty = false, fileError, upload, bind, uploadError, bindError } = {}) {
+  const calls = { uploads: [], bindings: [], caches: [], files: [], toasts: [], loading: [] }
   const store = load(read('src/stores/useUserStore.ts'), {
     require(name) {
       if (name === 'pinia') return { defineStore: (_id, setup) => setup }
@@ -36,7 +36,7 @@ function fixture({ cancel, size = 100, upload, bind, uploadError, bindError } = 
     updateFamilyAvatar: store.updateFamilyAvatar
   }
   const script = read('src/views/my/familyManage/index.vue').match(/<script setup lang="ts">([\s\S]*?)<\/script>/)[1]
-  const api = load(script + '\nexports.api = { updateAvatar, chooseAvatarImage, avatarBusy, showAvatarSheet };', {
+  const api = load(script + '\nexports.api = { handleChooseAvatar, avatarBusy };', {
     require(name) {
       if (name === '@/stores/useUserStore') return { useUserStore: () => pageStore }
       if (name === '@/api/modules/family')
@@ -60,9 +60,13 @@ function fixture({ cancel, size = 100, upload, bind, uploadError, bindError } = 
     },
     uni: {
       chooseMedia(options) {
-        calls.sources.push(options.sourceType[0])
+        assert.equal(options.count, 1)
+        assert.deepEqual(Array.from(options.mediaType), ['image'])
+        assert.deepEqual(Array.from(options.sourceType), ['album', 'camera'])
+        calls.files.push(`wxfile://${source}`)
         if (cancel) options.fail({ errMsg: 'chooseMedia:fail cancel' })
-        else options.success({ tempFiles: [{ tempFilePath: 'wxfile://image', size }] })
+        else if (fileError) options.fail(fileError)
+        else options.success({ tempFiles: empty ? [] : [{ tempFilePath: `wxfile://${source}`, size }] })
       },
       showLoading: (value) => calls.loading.push(value.title),
       hideLoading: () => calls.loading.push('hide'),
@@ -72,40 +76,58 @@ function fixture({ cancel, size = 100, upload, bind, uploadError, bindError } = 
   return { api, store, calls }
 }
 
-test('点击头像打开操作层，相册和拍照均通过 family/avatar 上传绑定，成功同步家庭缓存', async () => {
-  const { api, store, calls } = fixture()
-  api.updateAvatar()
-  assert.equal(api.showAvatarSheet.value, true)
-  await api.chooseAvatarImage('album')
-  await api.chooseAvatarImage('camera')
-  assert.deepEqual(calls.sources, ['album', 'camera'])
-  assert.ok(calls.uploads.every((item) => item.module === 'family' && item.moduleType === 'avatar'))
-  assert.equal(calls.bindings.length, 2)
-  assert.ok(calls.bindings.every((item) => item.avatarId === 42))
-  assert.equal(store.familyInfo.value.avatarUrl, 'new.jpg')
-  assert.deepEqual(calls.caches[1], { id: 2, name: '家庭', avatarId: 42, avatarUrl: 'new.jpg' })
-  assert.equal(store.userInfo.value.avatarId, 9)
-  assert.equal(api.avatarBusy.value, false)
-  assert.deepEqual(calls.toasts, ['家庭头像已更新', '家庭头像已更新'])
+test('头像行直接调用原生图片选择，仅提供相册和拍照，不提供微信头像', () => {
+  const page = read('src/views/my/familyManage/index.vue')
+  assert.match(page, /<view class="row-item" @click="handleChooseAvatar">/)
+  assert.doesNotMatch(page, /wd-action-sheet|showAvatarSheet|avatar-actions|open-type="chooseAvatar"|@chooseavatar|avatar-row/)
+})
+
+test('相册和拍照图片通过 family/avatar 上传绑定并同步家庭缓存', async () => {
+  for (const source of ['album', 'camera']) {
+    const { api, store, calls } = fixture({ source })
+    await api.handleChooseAvatar()
+    assert.deepEqual(calls.files, [`wxfile://${source}`])
+    assert.deepEqual(calls.uploads.map((item) => item.filePath), calls.files)
+    assert.ok(calls.uploads.every((item) => item.module === 'family' && item.moduleType === 'avatar'))
+    assert.equal(calls.bindings.length, 1)
+    assert.ok(calls.bindings.every((item) => item.avatarId === 42))
+    assert.equal(store.familyInfo.value.avatarUrl, 'new.jpg')
+    assert.deepEqual(calls.caches[0], { id: 2, name: '家庭', avatarId: 42, avatarUrl: 'new.jpg' })
+    assert.equal(store.userInfo.value.avatarId, 9)
+    assert.equal(api.avatarBusy.value, false)
+    assert.deepEqual(calls.toasts, ['家庭头像已更新'])
+  }
 })
 
 test('取消选择不上传、不报错，超过 5 MB 不上传', async () => {
-  const cancelled = fixture({ cancel: true })
-  await cancelled.api.chooseAvatarImage('album')
-  assert.equal(cancelled.calls.uploads.length, 0)
-  assert.equal(cancelled.calls.toasts.length, 0)
-  assert.equal(cancelled.api.avatarBusy.value, false)
+  for (const config of [{ cancel: true }, { empty: true }]) {
+    const cancelled = fixture(config)
+    await cancelled.api.handleChooseAvatar()
+    assert.equal(cancelled.calls.uploads.length, 0)
+    assert.equal(cancelled.calls.toasts.length, 0)
+    assert.equal(cancelled.api.avatarBusy.value, false)
+  }
   const large = fixture({ size: 5 * 1024 * 1024 + 1 })
-  await large.api.chooseAvatarImage('camera')
+  await large.api.handleChooseAvatar()
   assert.equal(large.calls.uploads.length, 0)
   assert.equal(large.api.avatarBusy.value, false)
   assert.match(large.calls.toasts[0], /5 MB/)
 })
 
+test('图片选择失败时不上传、不修改头像，并恢复可操作状态', async () => {
+  const { api, store, calls } = fixture({ fileError: new Error('读取失败') })
+  await api.handleChooseAvatar()
+  assert.equal(calls.uploads.length, 0)
+  assert.equal(calls.caches.length, 0)
+  assert.equal(store.familyInfo.value.avatarId, 7)
+  assert.equal(api.avatarBusy.value, false)
+  assert.deepEqual(calls.toasts, ['读取失败'])
+})
+
 test('上传、绑定失败或响应异常时保留旧家庭头像，恢复忙碌状态和 loading', async () => {
   for (const config of [{ uploadError: new Error('upload failed') }, { bindError: new Error('bind failed') }, { bind: async () => ({ avatarId: 0, avatarUrl: '' }) }]) {
     const { api, store, calls } = fixture(config)
-    await api.chooseAvatarImage('album')
+    await api.handleChooseAvatar()
     assert.equal(store.familyInfo.value.avatarId, 7)
     assert.equal(calls.caches.length, 0)
     assert.equal(calls.loading.at(-1), 'hide')
@@ -122,12 +144,11 @@ test('绑定成功前不更新 Store 或缓存，且阻止重复选择', async (
         complete = resolve
       })
   })
-  const pending = api.chooseAvatarImage('album')
+  const pending = api.handleChooseAvatar()
   await new Promise(setImmediate)
-  await api.chooseAvatarImage('camera')
-  api.updateAvatar()
-  assert.equal(calls.sources.length, 1)
-  assert.equal(api.showAvatarSheet.value, false)
+  await api.handleChooseAvatar()
+  assert.equal(calls.files.length, 1)
+  assert.equal(calls.bindings.length, 1)
   assert.equal(store.familyInfo.value.avatarId, 7)
   assert.equal(calls.caches.length, 0)
   complete({ avatarId: 42, avatarUrl: 'new.jpg' })
@@ -146,7 +167,7 @@ test('上传后或绑定后切换用户、家庭或凭证，不把旧响应写�
             complete = resolve
           })
       })
-      const pending = api.chooseAvatarImage('album')
+      const pending = api.handleChooseAvatar()
       await new Promise(setImmediate)
       if (field === 'user') store.userInfo.value.id = 8
       if (field === 'family') store.userInfo.value.familyId = 8

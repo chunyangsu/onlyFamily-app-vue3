@@ -8,8 +8,11 @@
       <view v-for="item in orderList" :key="item.id" class="order-item">
         <view class="order-header">
           <view class="user-info">
-            <view class="user-avatar">头像</view>
-            <view class="user-name">{{ item.creator }}</view>
+            <view class="user-avatar">
+              <SuImage v-if="item.createUser.avatarId > 0" :src="item.createUser.avatarUrl" />
+              <SuImage v-else name="avatar.webp" />
+            </view>
+            <view class="user-name">{{ item.createUser.nickname }}</view>
           </view>
           <view class="order-time">{{ item.createTime }}</view>
         </view>
@@ -51,49 +54,34 @@
 // api
 import { getFoodOrderListApi } from '@/api/modules/food/foodOrder'
 // ts
-// import type { FoodOrderFormApi } from '@/api/modules/food/foodOrder/types'
+import type { FoodOrderItem } from '@/api/modules/food/foodOrder/types'
 // utils
 import { parseTime } from '@/utils/time'
 
-interface OrderItem {
-  id: number // 订单id
-  code: string // 订单编号
-  progress: string // 订单进度
-  remark: string // 订单备注
-  dishArr: DishItem[]
-  createId: number // 创建人id
-  creator: string // 创建人
-  createTime: string // 创建时间
-}
-
-interface DishItem {
-  id: number // 菜品id
-  name: string // 菜品名称
-  mainImageUrl: string // 菜品主图
-  price: string // 价格
-  num: number // 数量
-}
-
 // 订单列表
-const orderList = ref<OrderItem[]>([])
+const orderList = ref<FoodOrderItem[]>([])
 
 // 获取食物订单列表
 const getFoodOrderList = async () => {
-  getFoodOrderListApi().then((response: any) => {
+  getFoodOrderListApi().then((response) => {
     orderList.value = []
-    response.forEach((item: any) => {
+    response.forEach((item) => {
       orderList.value.push({
         id: item.id,
         code: item.code,
         progress: item.progress,
         remark: item.remark,
         dishArr: [],
-        createId: item.createId,
-        creator: item.creator,
+        createUser: {
+          id: item.createUser.id,
+          nickname: item.createUser.nickname,
+          avatarId: item.createUser.avatarId,
+          avatarUrl: item.createUser.avatarUrl
+        },
         createTime: parseTime(item.createTime, '{y}-{m}-{d} {h}:{i}:{s}')
       })
       if (item.dishArr && item.dishArr.length > 0) {
-        item.dishArr.forEach((val: any) => {
+        item.dishArr.forEach((val) => {
           orderList.value[orderList.value.length - 1].dishArr.push({
             id: val.id,
             name: val.name,
@@ -164,13 +152,10 @@ onLoad(() => {
 
           .user-avatar {
             width: 80rpx;
-            line-height: 80rpx;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            height: 80rpx;
             border-radius: 50%;
+            background-color: $subBg;
             overflow: hidden;
-            background-color: #f6f2ec;
           }
 
           .user-name {

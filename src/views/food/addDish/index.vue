@@ -175,7 +175,7 @@ onLoad(() => {
         justify-content: center;
         width: 64rpx;
         height: 100%;
-        background-color: #e7e7e7;
+        background-color: #f8f8f8;
         font-size: 32rpx;
       }
 
