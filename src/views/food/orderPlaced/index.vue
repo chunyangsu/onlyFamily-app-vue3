@@ -1,7 +1,7 @@
 <template>
   <view class="su-container order-placed">
     <view class="bg-img">
-      <SuImage name="order-placed-bg.png" />
+      <SuImage name="order-placed-bg.webp" />
     </view>
     <view class="main">
       <view class="title">下单成功</view>
@@ -27,9 +27,10 @@ const formData = ref({
 })
 // 返回
 const goBack = () => {
-  // 返回到点餐主页
-  uni.navigateBack({
-    delta: 2
+  // 清空本次选购，再返回厨房 tab 页
+  uni.$emit('foodMenu:resetCart')
+  uni.switchTab({
+    url: '/pages/foodMenu/index'
   })
 }
 

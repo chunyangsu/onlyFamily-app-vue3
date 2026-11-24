@@ -486,6 +486,15 @@ const onMenuRefresh = async () => {
   }
 }
 
+// 清空选购数量，购物车、已选数量和总价会自动重新计算
+const resetCart = () => {
+  dishGroupList.value.forEach((group) => {
+    group.dishList.forEach((dish) => {
+      dish.cartNum = 0
+    })
+  })
+}
+
 // 已选菜品数量的总计
 const selectedDishTotal = computed(() => {
   let total = 0
@@ -525,6 +534,7 @@ const cartPriceTotal = computed(() => {
 
 // 页面实例首次加载时请求，切换 tab 或从其他页面返回不重复请求
 onLoad(() => {
+  uni.$on('foodMenu:resetCart', resetCart)
   void loadMenu()
 })
 
@@ -552,6 +562,7 @@ onHide(() => {
 // 监听屏幕尺寸变化，卸载时释放资源
 uni.onWindowResize(onMenuResize)
 onUnload(() => {
+  uni.$off('foodMenu:resetCart', resetCart)
   disposed = true
   pageVisible = false
   scrollVersion++
