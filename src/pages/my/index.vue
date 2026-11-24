@@ -31,10 +31,11 @@
           <view class="family">
             <view class="f-header">
               <view class="f-icon">
-                <SuImage name="family-home.webp" />
+                <SuImage v-if="userStore.familyInfo.avatarId > 0" :src="userStore.familyInfo.avatarUrl" />
+                <SuImage v-else name="family-home.webp" />
               </view>
               <view class="f-content">
-                <view class="f-name">爱的小家</view>
+                <view class="f-name">{{ userStore.familyInfo.name }}</view>
                 <view class="member-num">成员：3人</view>
               </view>
               <view class="f-edit" @click="goToFamilyManage">
@@ -214,6 +215,10 @@ const createFamily = () => {
   // }
   // createFamilyApi(params).then((response) => { })
 }
+
+onShow(async () => {
+  console.log(userStore.familyInfo)
+})
 </script>
 
 <style lang="scss" scoped>
@@ -289,7 +294,9 @@ const createFamily = () => {
 
       .f-icon {
         width: 90rpx;
-        height: 80rpx;
+        height: 90rpx;
+        border-radius: 12rpx;
+        overflow: hidden;
       }
 
       .f-content {

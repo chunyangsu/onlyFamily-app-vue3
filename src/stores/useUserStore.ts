@@ -6,7 +6,7 @@ import { getFamilyDetailApi } from '@/api/modules/family'
 import type { LoginForm, UserAvatarResponse, UserNicknameResponse } from '@/api/modules/user/types'
 import type { FamilyAvatarResponse } from '@/api/modules/family/types'
 // utils
-import { getToken, setToken, removeToken, getUserInfo, setUserInfo, removeUserInfo, setFamilyInfo, removeFamilyInfo } from '@/utils/user'
+import { getToken, setToken, removeToken, getUserInfo, setUserInfo, removeUserInfo, getFamilyInfo, setFamilyInfo, removeFamilyInfo } from '@/utils/user'
 
 interface UserInfo {
   id: number
@@ -158,11 +158,13 @@ export const useUserStore = defineStore('user', () => {
     token.value = cacheToken
 
     const cacheUserInfo = getUserInfo()
-    if (!cacheUserInfo) {
+    const cacheFamilyInfo = getFamilyInfo()
+    if (!cacheUserInfo || !cacheFamilyInfo) {
       resetUserStore()
       return
     }
     userInfo.value = cacheUserInfo
+    familyInfo.value = cacheFamilyInfo
     // todo:通过后端验证 Token
     // try {
     //   const userInfo = await getUserProfileApi()

@@ -8,11 +8,11 @@
             <view class="item-left">头像</view>
             <view class="item-right">
               <view class="right-value">
-                <view class="avatar-area">
+                <view class="avatar-icon">
                   <view v-if="userStore.familyInfo.avatarId > 0" class="w-100% h-100%">
                     <SuImage :src="userStore.familyInfo.avatarUrl" />
                   </view>
-                  <view v-else class="avatar-icon">
+                  <view v-else class="w-100% h-100%">
                     <SuImage name="family-home.webp" />
                   </view>
                 </view>
@@ -224,19 +224,14 @@ const handleLogout = () => {
     .row-item:first-child {
       border-top: 0;
     }
-    .avatar-area {
+    .avatar-icon {
       width: 70rpx;
       height: 70rpx;
       display: flex;
       justify-content: center;
       align-items: center;
-      border-radius: 50%;
+      border-radius: 12rpx;
       overflow: hidden;
-
-      .avatar-icon {
-        width: 64rpx;
-        height: 70rpx;
-      }
     }
   }
   .footer {

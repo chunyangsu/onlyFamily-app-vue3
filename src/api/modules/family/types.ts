@@ -12,6 +12,14 @@ export interface FamilyDetailResponse {
   avatarUrl: ''
 }
 
+// 家庭成员
+export interface FamilyMemberItem {
+  id: 0
+  nickname: ''
+  avatarId: 0
+  avatarUrl: ''
+}
+
 /**
  * 家庭头像
  */

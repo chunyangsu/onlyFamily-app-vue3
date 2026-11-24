@@ -4,26 +4,31 @@
     <view class="family">
       <view class="family-content">
         <view class="family-date">{{ getCurrentDate() + ' · ' + getCurrentWeekday() }}</view>
-        <view class="family-title">早上好！欢迎回家！</view>
+        <view class="family-title">您好，欢迎回家！</view>
         <view class="family-name">
-          <view>我们的小家</view>
+          <view>{{ userStore.familyInfo.name }}</view>
           <view class="m-l-8rpx"><wd-icon name="caret-down" size="26px" color="#feae39" /></view>
         </view>
         <!-- 家庭成员 -->
         <view class="family-member">
-          <view class="member-item">
-            <SuImage name="logo.webp" />
+          <view v-for="item in familyMemberList" :key="item.id" class="member-item">
+            <view v-if="item.avatarId > 0" class="w-100% h-100%">
+              <SuImage :src="item.avatarUrl" />
+            </view>
+            <view v-else class="avatar-icon">
+              <SuImage name="avatar.webp" />
+            </view>
           </view>
           <view class="member-item">
-            <SuImage name="logo.webp" />
-          </view>
-          <view class="member-item">
-            <SuImage name="logo.webp" />
+            <view class="avatar-icon">
+              <SuImage name="avatar.webp" />
+            </view>
           </view>
         </view>
       </view>
       <view class="family-logo">
-        <SuImage name="logo.webp" />
+        <SuImage v-if="userStore.familyInfo.avatarId > 0" :src="userStore.familyInfo.avatarUrl" />
+        <SuImage v-else name="family-home.webp" />
       </view>
     </view>
     <!-- 今日菜单-模块 -->
@@ -92,12 +97,17 @@
 
 <script setup lang="ts">
 // 全局属性
+import { useUserStore } from '@/stores/useUserStore'
 // api
+import { getFamilyMemberListApi } from '@/api/modules/family'
 import { getDishListApi } from '@/api/modules/food/dish'
 // ts
+import type { FamilyMemberItem } from '@/api/modules/family/types'
 // utils
 import { moneyFormat } from '@/utils/money'
 import { getCurrentDate, getCurrentWeekday } from '@/utils/time'
+
+const userStore = useUserStore()
 
 // 跳转"厨房"页面
 const goToFoodMenu = () => {
@@ -110,6 +120,21 @@ const goToFoodMenu = () => {
 const goToTransaction = () => {
   uni.switchTab({
     url: '/pages/transaction/index'
+  })
+}
+
+const familyMemberList = ref<FamilyMemberItem[]>([])
+// 获取家庭成员列表
+const getFamilyMemberList = async () => {
+  const response = await getFamilyMemberListApi(userStore.familyInfo.id)
+  familyMemberList.value = []
+  response.forEach((item) => {
+    familyMemberList.value.push({
+      id: item.id,
+      nickname: item.nickname,
+      avatarId: item.avatarId,
+      avatarUrl: item.avatarUrl
+    })
   })
 }
 
@@ -143,6 +168,7 @@ const getDishList = async () => {
 
 onLoad(() => {
   getDishList()
+  getFamilyMemberList()
 })
 </script>
 
@@ -185,12 +211,17 @@ onLoad(() => {
         .member-item {
           width: 80rpx;
           height: 80rpx;
-          line-height: 76rpx;
-          text-align: center;
+          display: flex;
+          justify-content: center;
+          align-items: center;
           border-radius: 50%;
-          background-color: #fff;
+          background-color: $subBg;
           margin-right: 12rpx;
           overflow: hidden;
+          .avatar-icon {
+            width: 50rpx;
+            height: 56rpx;
+          }
         }
       }
     }
@@ -201,8 +232,7 @@ onLoad(() => {
       line-height: 246rpx;
       text-align: center;
       margin-top: 24rpx;
-      border-radius: 50%;
-      background-color: #fff;
+      border-radius: 24rpx;
       overflow: hidden;
     }
   }
