@@ -94,6 +94,7 @@
       "^SuUpload$": "@/components/su/SuUpload/index.vue",
       "^SuInput$": "@/components/su/SuInput/index.vue",
       "^SuInputNumber$": "@/components/su/SuInputNumber/index.vue",
+      "^SuSearch$": "@/components/su/SuSearch/index.vue",
       "^SuFormItem$": "@/components/su/SuFormItem/index.vue",
       // wot组件
       "^wd-(.*)": "@wot-ui/ui/components/wd-$1/wd-$1.vue"

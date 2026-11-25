@@ -1,14 +1,12 @@
 <template>
-  <view class="su-input">
+  <view :class="[props.hideBorder ? '' : 'input-border', 'su-input']">
     <!-- 单行文本框 -->
     <view v-if="props.type === 'text'">
-      <wd-input v-model="props.modelValue" type="text" :placeholder="props.placeholder" :clearable="props.clearable"
-        @input="handleInput" />
+      <wd-input v-model="modelValue" type="text" :placeholder="props.placeholder" :clearable="props.clearable" />
     </view>
     <!-- 多行文本框 -->
     <view v-if="props.type === 'textarea'">
-      <wd-textarea v-model="props.modelValue" :placeholder="props.placeholder" :clearable="props.clearable"
-        :maxlength="props.maxLength" :show-word-limit="props.showWordLimit" @input="handleInput" />
+      <wd-textarea v-model="modelValue" :placeholder="props.placeholder" :clearable="props.clearable" :maxlength="props.maxLength" :show-word-limit="props.showWordLimit" />
     </view>
   </view>
 </template>
@@ -32,40 +30,35 @@ defineOptions({
 
 // props属性
 interface Props {
-  modelValue: string // 输入值
   type?: string // input框类型：text | textarea
   placeholder?: string // 占位符
   clearable?: boolean // 是否显示清除按钮
   maxLength?: number // 允许输入的最大字数
   showWordLimit?: boolean // 是否显示字数统计
+  hideBorder?: boolean // 是否隐藏边框
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  modelValue: '',
   type: 'text',
   placeholder: '请输入',
   clearable: false,
   maxLength: -1,
-  showWordLimit: false
+  showWordLimit: false,
+  hideBorder: false
 })
 
-const emit = defineEmits<{
-  'update:modelValue': [value: string]
-}>()
-
-// 在input值改变时触发
-const handleInput = (event: any) => {
-  // console.log(event)
-  emit('update:modelValue', event.value)
-}
+// 自动接收modelValue，并通过update:modelValue同步父组件
+const modelValue = defineModel<string>({ default: '' })
 </script>
 
 <style lang="scss" scoped>
 .su-input {
   // display: flex;
-  border: 2rpx solid #e8e5da;
   border-radius: 12rpx;
   overflow: hidden;
+}
+.input-border {
+  border: 2rpx solid #e8e5da;
 }
 
 :deep(.wd-input) {

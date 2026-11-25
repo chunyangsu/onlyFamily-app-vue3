@@ -89,5 +89,14 @@ export default defineConfig([
         }
       ]
     }
+  },
+
+  // TypeScript 类型命名空间（如 UniApp）由类型检查器校验，避免 no-undef 误报。
+  // 保留普通 JavaScript 文件的 no-undef 检查。
+  {
+    files: ['**/*.{ts,mts,cts,tsx,vue}'],
+    rules: {
+      'no-undef': 'off'
+    }
   }
 ])

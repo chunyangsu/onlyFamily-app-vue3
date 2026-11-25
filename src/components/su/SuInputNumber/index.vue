@@ -3,16 +3,15 @@
     <view class="money-input">
       <!-- 前缀 -->
       <view class="prefix">
-        <slot name="prefix"></slot>
+        <slot name="prefix" />
       </view>
       <!-- 输入框 -->
       <view class="input-area">
-        <wd-input :model-value="inputValue" type="digit" :placeholder="props.placeholder"
-          :align-right="props.alignRight" @input="handleInput" @blur="handleBlur"></wd-input>
+        <wd-input :model-value="inputValue" type="digit" :placeholder="props.placeholder" :align-right="props.alignRight" @input="handleInput" @blur="handleBlur" />
       </view>
       <!-- 后缀 -->
       <view class="suffix">
-        <slot name="suffix"></slot>
+        <slot name="suffix" />
       </view>
     </view>
   </view>
@@ -111,9 +110,11 @@ const inputValue = computed(() => String(modelValue.value ?? ''))
       flex: 1;
     }
 
-    .prefix {}
+    .prefix {
+    }
 
-    .suffix {}
+    .suffix {
+    }
   }
 }
 </style>

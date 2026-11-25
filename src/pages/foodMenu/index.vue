@@ -3,12 +3,7 @@
     <view class="main">
       <!-- 搜索栏 -->
       <view class="search-bar">
-        <view class="search-icon">
-          <wd-icon name="search-line" size="24px" />
-        </view>
-        <view class="search-input">
-          <input type="text" placeholder="搜索菜品名称" />
-        </view>
+        <SuSearch v-model="searchQuery.name" placeholder="菜品名称" @search="searchDish" />
       </view>
       <!-- 顶部菜单栏 -->
       <view class="top-nav">
@@ -180,6 +175,19 @@ const goToConfirmOrder = () => {
     success(res) {
       res.eventChannel.emit('cartData', tempArr)
     }
+  })
+}
+
+const searchQuery = ref({
+  name: ''
+})
+
+// 搜索菜品
+const searchDish = () => {
+  console.log(searchQuery.value.name)
+  uni.showToast({
+    title: '正在开发，敬请期待',
+    icon: 'none'
   })
 }
 
@@ -415,7 +423,7 @@ const loadMenu = async () => {
   loadError.value = false
   try {
     const categories = (await getDishCategoryListApi()) as DishCategoryItem[]
-    const response = categories.length ? await getDishGroupListApi({ name: '', categoryIds: categories.map((item) => item.id).join() }) : { list: [], total: 0 }
+    const response = categories.length ? await getDishGroupListApi({ name: searchQuery.value.name, categoryIds: categories.map((item) => item.id).join() }) : { list: [], total: 0 }
     if (disposed) return
     const groups = new Map(response.list.map((item) => [item.categoryId, item]))
     const previousDishes = new Map(dishGroupList.value.flatMap((item) => item.dishList).map((item) => [item.id, item]))
@@ -597,17 +605,7 @@ onUnload(() => {
 
 .search-bar {
   flex-shrink: 0;
-  display: flex;
-  background-color: #fff;
-  border-radius: 32rpx;
-  border: 2rpx solid $line;
-  padding: 8rpx 16rpx;
   margin: 0 24rpx;
-
-  .search-input {
-    flex: 1;
-    margin-left: 16rpx;
-  }
 }
 
 .top-nav {
