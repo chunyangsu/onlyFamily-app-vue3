@@ -89,6 +89,7 @@
 </template>
 
 <script setup lang="ts">
+import { onLoad, onPullDownRefresh } from '@dcloudio/uni-app'
 // 全局属性
 import { useUserStore } from '@/stores/useUserStore'
 // api
@@ -160,9 +161,22 @@ const getDishList = async () => {
   }
 }
 
-onLoad(() => {
-  getDishList()
-  getFamilyMemberList()
+// 首次进入和下拉刷新共用加载逻辑，两项请求互不影响。
+const loadHomeData = async () => {
+  const results = await Promise.allSettled([getFamilyMemberList(), getDishList()])
+  results.forEach((result) => {
+    if (result.status === 'rejected') console.error('[Home] 加载列表失败:', result.reason)
+  })
+}
+
+onLoad(loadHomeData)
+
+onPullDownRefresh(async () => {
+  try {
+    await loadHomeData()
+  } finally {
+    uni.stopPullDownRefresh()
+  }
 })
 </script>
 
