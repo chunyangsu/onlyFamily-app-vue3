@@ -11,18 +11,11 @@
         </view>
         <!-- 家庭成员 -->
         <view class="family-member">
-          <view v-for="item in familyMemberList" :key="item.id" class="member-item">
-            <view v-if="item.avatarId > 0" class="w-100% h-100%">
-              <SuImage :src="item.avatarUrl" />
-            </view>
-            <view v-else class="avatar-icon">
-              <SuImage name="avatar.webp" />
-            </view>
+          <view v-for="(item, index) in familyMemberList" :key="item.id" class="member-item">
+            <SuAvatar v-if="index < 3" :id="item.avatarId" :src="item.avatarUrl" :expires-at="item.urlExpiresAt" @refresh="Object.assign(item, $event)" />
           </view>
           <view class="member-item">
-            <view class="avatar-icon">
-              <SuImage name="avatar.webp" />
-            </view>
+            <SuAvatar :id="0" />
           </view>
         </view>
       </view>
@@ -133,7 +126,8 @@ const getFamilyMemberList = async () => {
       id: item.id,
       nickname: item.nickname,
       avatarId: item.avatarId,
-      avatarUrl: item.avatarUrl
+      avatarUrl: item.avatarUrl,
+      urlExpiresAt: item.urlExpiresAt
     })
   })
 }
@@ -211,17 +205,7 @@ onLoad(() => {
         .member-item {
           width: 80rpx;
           height: 80rpx;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          border-radius: 50%;
-          background-color: $subBg;
-          margin-right: 12rpx;
-          overflow: hidden;
-          .avatar-icon {
-            width: 50rpx;
-            height: 56rpx;
-          }
+          margin-right: 8rpx;
         }
       }
     }

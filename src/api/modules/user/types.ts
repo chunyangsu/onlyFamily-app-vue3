@@ -1,8 +1,24 @@
-// 登录表单
-export interface LoginForm {
+/**
+ * 登录表单
+ */
+
+// 请求参数
+export interface LoginRequest {
   code: string // 微信登录临时授权凭证
-  // mobile: string // 手机号
-  // password: string // 密码
+}
+// 返回数据
+export interface LoginResponse {
+  token: string
+  userInfo: UserInfo
+}
+
+export interface UserInfo {
+  id: number
+  nickname: string
+  familyId: number // 所属家庭
+  avatarId: number
+  avatarUrl: string
+  urlExpiresAt: number | null // url地址有效期时间
 }
 
 /**
@@ -17,6 +33,7 @@ export interface UserAvatarRequest {
 export interface UserAvatarResponse {
   avatarId: number
   avatarUrl: string
+  urlExpiresAt: number | null // url地址有效期时间
 }
 
 /**

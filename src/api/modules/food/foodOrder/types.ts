@@ -26,6 +26,7 @@ export interface CreateUser {
   nickname: string
   avatarId: number
   avatarUrl: string
+  urlExpiresAt: number | null
 }
 
 export interface DishItem {

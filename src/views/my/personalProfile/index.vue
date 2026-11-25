@@ -9,12 +9,7 @@
             <view class="item-right">
               <view class="right-value">
                 <view class="avatar-area">
-                  <view v-if="userStore.userInfo.avatarId > 0" class="w-100% h-100%">
-                    <SuImage :src="userStore.userInfo.avatarUrl" />
-                  </view>
-                  <view v-else class="avatar-icon">
-                    <SuImage name="avatar.webp" />
-                  </view>
+                  <SuAvatar :id="userStore.userInfo.avatarId" :src="userStore.userInfo.avatarUrl" :expires-at="userStore.userInfo.urlExpiresAt" @refresh="userStore.updateUserAvatar" />
                 </view>
               </view>
               <view class="right-arrow">
@@ -246,17 +241,6 @@ const handleLogout = () => {
     .avatar-area {
       width: 70rpx;
       height: 70rpx;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 50%;
-      overflow: hidden;
-      background-color: $subBg;
-
-      .avatar-icon {
-        width: 64rpx;
-        height: 70rpx;
-      }
     }
   }
   .footer {

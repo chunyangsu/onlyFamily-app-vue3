@@ -3,18 +3,10 @@ import { defineStore } from 'pinia'
 import { loginApi } from '@/api/modules/user'
 import { getFamilyDetailApi } from '@/api/modules/family'
 // ts
-import type { LoginForm, UserAvatarResponse, UserNicknameResponse } from '@/api/modules/user/types'
+import type { LoginRequest, UserInfo, UserAvatarResponse, UserNicknameResponse } from '@/api/modules/user/types'
 import type { FamilyAvatarResponse } from '@/api/modules/family/types'
 // utils
 import { getToken, setToken, removeToken, getUserInfo, setUserInfo, removeUserInfo, getFamilyInfo, setFamilyInfo, removeFamilyInfo } from '@/utils/user'
-
-interface UserInfo {
-  id: number
-  nickname: string
-  avatarId: number
-  avatarUrl: string
-  familyId: number // 所属家庭
-}
 
 interface FamilyInfo {
   id: number
@@ -30,9 +22,10 @@ export const useUserStore = defineStore('user', () => {
   const userInfo = ref<UserInfo>({
     id: 0,
     nickname: '',
+    familyId: 0,
     avatarId: 0,
     avatarUrl: '',
-    familyId: 0
+    urlExpiresAt: 0
   })
   // 当前家庭信息
   const familyInfo = ref<FamilyInfo>({
@@ -53,7 +46,7 @@ export const useUserStore = defineStore('user', () => {
     }
 
     // 2. 调用后端微信登录接口
-    const params: LoginForm = {
+    const params: LoginRequest = {
       code: loginResult.code
     }
     const response = await loginApi(params)
@@ -65,11 +58,12 @@ export const useUserStore = defineStore('user', () => {
     token.value = response.token
     userInfo.value = {
       id: response.userInfo.id,
+      nickname: response.userInfo.nickname,
       // 查询到用户有且仅有一个所属家庭时，会自动返回家庭id
       familyId: response.userInfo.familyId,
       avatarId: response.userInfo.avatarId,
       avatarUrl: response.userInfo.avatarUrl,
-      nickname: response.userInfo.nickname
+      urlExpiresAt: response.userInfo.urlExpiresAt || 0
     }
     setToken(token.value)
     setUserInfo(userInfo.value)
@@ -95,7 +89,7 @@ export const useUserStore = defineStore('user', () => {
     if (!Number.isInteger(data.avatarId) || data.avatarId <= 0 || !data.avatarUrl?.trim()) {
       throw new Error('头像更新响应数据异常')
     }
-    const tempUserInfo = { ...userInfo.value, avatarId: data.avatarId, avatarUrl: data.avatarUrl }
+    const tempUserInfo = { ...userInfo.value, avatarId: data.avatarId, avatarUrl: data.avatarUrl, urlExpiresAt: data.urlExpiresAt }
     setUserInfo(tempUserInfo)
     userInfo.value = tempUserInfo
   }
@@ -136,9 +130,10 @@ export const useUserStore = defineStore('user', () => {
     userInfo.value = {
       id: 0,
       nickname: '',
+      familyId: 0,
       avatarId: 0,
       avatarUrl: '',
-      familyId: 0
+      urlExpiresAt: 0
     }
     familyInfo.value = {
       id: 0,

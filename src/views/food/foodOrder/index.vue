@@ -9,8 +9,7 @@
         <view class="order-header">
           <view class="user-info">
             <view class="user-avatar">
-              <SuImage v-if="item.createUser.avatarId > 0" :src="item.createUser.avatarUrl" />
-              <SuImage v-else name="avatar.webp" />
+              <SuAvatar :id="item.createUser.avatarId" :src="item.createUser.avatarUrl" :expires-at="item.createUser.urlExpiresAt" @refresh="Object.assign(item.createUser, $event)" />
             </view>
             <view class="user-name">{{ item.createUser.nickname }}</view>
           </view>
@@ -76,7 +75,8 @@ const getFoodOrderList = async () => {
           id: item.createUser.id,
           nickname: item.createUser.nickname,
           avatarId: item.createUser.avatarId,
-          avatarUrl: item.createUser.avatarUrl
+          avatarUrl: item.createUser.avatarUrl,
+          urlExpiresAt: item.createUser.urlExpiresAt
         },
         createTime: parseTime(item.createTime, '{y}-{m}-{d} {h}:{i}:{s}')
       })
@@ -153,13 +153,10 @@ onLoad(() => {
           .user-avatar {
             width: 80rpx;
             height: 80rpx;
-            border-radius: 50%;
-            background-color: $subBg;
-            overflow: hidden;
           }
 
           .user-name {
-            margin-left: 32rpx;
+            margin-left: 16rpx;
           }
         }
 

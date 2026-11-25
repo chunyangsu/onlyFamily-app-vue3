@@ -1,11 +1,23 @@
-// 附件
+/**
+ * 附件列表
+ */
 
 export interface AttachmentQuery {
-  // module: string // 业务模块
-  idArr: number[] // 附件ids
+  idArr: number[] // 附件id数组
 }
 
-// 添加附件的请求参数字段
+export interface AttachmentItemResponse {
+  id: number
+  objectKey: string
+  module: string
+  moduleType: string
+  url: string
+  expiresAt: number | null
+}
+
+/**
+ * 添加附件
+ */
 export interface AddAttachmentRequestItem {
   name: string // 附件名称(微信小程序获取不到名称，用作给后端数据库占位)
   module: string // 业务所属模块

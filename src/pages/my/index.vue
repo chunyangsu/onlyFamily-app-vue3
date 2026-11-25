@@ -5,25 +5,20 @@
     </view>
     <view class="content">
       <view class="card-item">
-        <SuCard hide-header>
-          <view class="user-profile">
-            <view class="avatar-area">
-              <view v-if="userStore.userInfo.avatarId > 0" class="w-100% h-100%">
-                <SuImage :src="userStore.userInfo.avatarUrl" />
-              </view>
-              <view v-else class="avatar-icon">
-                <SuImage name="avatar.webp" />
-              </view>
-            </view>
-            <view class="user-info">
-              <view class="nickname">{{ userStore.userInfo.nickname }}</view>
-              <!-- <view class="mobile">手机号：13057160969</view> -->
-            </view>
-            <view class="setting-btn" @click="goToPersonalProfile">
-              <SuImage name="my-setting.webp" />
-            </view>
+        <!-- <SuCard hide-header> -->
+        <view class="user-profile">
+          <view class="avatar-area">
+            <SuAvatar :id="userStore.userInfo.avatarId" :src="userStore.userInfo.avatarUrl" :expires-at="userStore.userInfo.urlExpiresAt" @refresh="userStore.updateUserAvatar" />
           </view>
-        </SuCard>
+          <view class="user-info">
+            <view class="nickname">{{ userStore.userInfo.nickname }}</view>
+            <!-- <view class="mobile">手机号：13057160969</view> -->
+          </view>
+          <view class="setting-btn" @click="goToPersonalProfile">
+            <SuImage name="my-setting.webp" />
+          </view>
+        </view>
+        <!-- </SuCard> -->
       </view>
       <!-- 家庭管理 -->
       <view class="card-item">
@@ -249,25 +244,13 @@ onShow(async () => {
     align-items: center;
 
     .avatar-area {
-      width: 130rpx;
-      height: 130rpx;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: 50%;
-      overflow: hidden;
-      background-color: $subBg;
-
-      .avatar-icon {
-        width: 64rpx;
-        height: 70rpx;
-      }
+      width: 110rpx;
+      height: 110rpx;
     }
 
     .user-info {
       flex: 1;
       margin-left: 24rpx;
-      // margin-top: 16rpx;
 
       .nickname {
         color: $textDefault;

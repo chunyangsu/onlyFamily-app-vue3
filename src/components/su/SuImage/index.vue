@@ -20,7 +20,7 @@ interface Props {
   id?: number // 获取图片的数据id
   src?: string // 图片地址
   name?: string // 图片名称
-  type?: string // 类型：头像avatar
+  type?: string // 类型
   width?: string // 宽度
   height?: string // 高度
   module?: string // 所属业务模块
@@ -61,34 +61,7 @@ watchEffect(() => {
       // 本地
       localSrc.value = getImageUrl(props.name)
     }
-  } else if (props.type === 'avatar') {
-    // 头像
-    // getAvatar()
   }
-  // 图片预览
-  // if (props.preview) {
-  //   previewImageList.value = []
-  //   if (props.previewList.length > 0) {
-  //     // 外部传入预览图片地址
-  //     previewImageList.value = props.previewList
-  //   } else {
-  //     previewImageList.value.push(getImageUrl(`${props.name}`))
-  //   }
-  // }
-  // 头像
-  // avatarWidth.value = props.width !== '' ? props.width : '24px'
-  // avatarHeight.value = props.height !== '' ? props.height : '24px'
-  // if (props.fit !== '') {
-  //   localFit.value = props.fit
-  // } else if (props.type === 'avatar') {
-  //   localFit.value = 'fill'
-  // } else {
-  //   localFit.value = 'contain'
-  // }
-
-  // if (props.fontSize > 0) {
-  //   localfontsize.value = props.fontSize + 'px'
-  // }
 })
 </script>
 

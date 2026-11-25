@@ -1,12 +1,12 @@
 import request from '@/api/service'
-import type { AttachmentQuery, AddAttachmentRequestItem, AddAttachmentResponseItem } from '@/api/common/attachment/types'
+import type { AttachmentQuery, AttachmentItemResponse, AddAttachmentRequestItem, AddAttachmentResponseItem } from '@/api/common/attachment/types'
 
 /**
  * 获取附件列表
  * @returns
  */
-export const getAttachmentListApi = (query: AttachmentQuery): Promise<any[]> => {
-  return request({
+export const getAttachmentListApi = (query: AttachmentQuery): Promise<AttachmentItemResponse[]> => {
+  return request<AttachmentItemResponse[]>({
     url: '/api/attachment/getList',
     method: 'GET',
     data: query

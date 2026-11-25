@@ -6,18 +6,19 @@ export interface FamilyForm {
 
 // 家庭详情
 export interface FamilyDetailResponse {
-  id: 0
-  name: ''
-  avatarId: 0
-  avatarUrl: ''
+  id: number
+  name: string
+  avatarId: number
+  avatarUrl: string
 }
 
 // 家庭成员
 export interface FamilyMemberItem {
-  id: 0
-  nickname: ''
-  avatarId: 0
-  avatarUrl: ''
+  id: number
+  nickname: string
+  avatarId: number
+  avatarUrl: string
+  urlExpiresAt: number | null
 }
 
 /**

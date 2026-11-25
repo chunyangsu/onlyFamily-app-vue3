@@ -1,12 +1,12 @@
 import request from '@/api/service'
-import type { LoginForm, UserAvatarRequest, UserAvatarResponse, UserNicknameRequest, UserNicknameResponse } from '@/api/modules/user/types'
+import type { LoginRequest, LoginResponse, UserAvatarRequest, UserAvatarResponse, UserNicknameRequest, UserNicknameResponse } from '@/api/modules/user/types'
 
 /**
  * 登录
  * @returns
  */
-export const loginApi = (data: LoginForm): Promise<any> => {
-  return request({
+export const loginApi = (data: LoginRequest): Promise<LoginResponse> => {
+  return request<LoginResponse>({
     url: '/api/user/login',
     method: 'POST',
     data: data

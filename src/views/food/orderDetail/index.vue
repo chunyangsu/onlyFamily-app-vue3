@@ -21,8 +21,12 @@
             <view class="order-info-label">下单用户：</view>
             <view class="order-info-value user-info">
               <view class="user-avatar">
-                <SuImage v-if="formData.createUser.avatarId > 0" :src="formData.createUser.avatarUrl" />
-                <SuImage v-else name="avatar.webp" />
+                <SuAvatar
+                  :id="formData.createUser.avatarId"
+                  :src="formData.createUser.avatarUrl"
+                  :expires-at="formData.createUser.urlExpiresAt"
+                  @refresh="Object.assign(formData.createUser, $event)"
+                />
               </view>
               <view class="user-name">{{ formData.createUser.nickname }}</view>
             </view>
@@ -92,7 +96,8 @@ const formData = ref<FoodOrderItem>({
     id: 0,
     nickname: '',
     avatarId: 0,
-    avatarUrl: ''
+    avatarUrl: '',
+    urlExpiresAt: null
   },
   createTime: ''
 })
@@ -110,7 +115,8 @@ const getDetail = async (id: number) => {
         id: response.createUser.id,
         nickname: response.createUser.nickname,
         avatarId: response.createUser.avatarId,
-        avatarUrl: response.createUser.avatarUrl
+        avatarUrl: response.createUser.avatarUrl,
+        urlExpiresAt: response.createUser.urlExpiresAt
       },
       createTime: parseTime(response.createTime, '{y}-{m}-{d} {h}:{i}:{s}')
     }
@@ -173,13 +179,10 @@ onLoad((options) => {
         .user-avatar {
           width: 80rpx;
           height: 80rpx;
-          border-radius: 50%;
-          background-color: $subBg;
-          overflow: hidden;
         }
 
         .user-name {
-          margin-left: 24rpx;
+          margin-left: 16rpx;
         }
       }
     }

@@ -804,7 +804,7 @@ onUnload(() => {
                 .minus-btn {
                   width: 40rpx;
                   height: 40rpx;
-                  line-height: 30rpx;
+                  line-height: 32rpx;
                   text-align: center;
                   color: $textDefault;
                   background-color: #fff;
@@ -820,7 +820,7 @@ onUnload(() => {
                 .plus-btn {
                   width: 44rpx;
                   height: 44rpx;
-                  line-height: 38rpx;
+                  line-height: 40rpx;
                   text-align: center;
                   color: white;
                   background-color: $theme;

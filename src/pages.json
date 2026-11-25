@@ -90,6 +90,7 @@
       "^SuButton$": "@/components/su/SuButton/index.vue",
       "^SuCard$": "@/components/su/SuCard/index.vue",
       "^SuImage$": "@/components/su/SuImage/index.vue",
+      "^SuAvatar$": "@/components/su/SuAvatar/index.vue",
       "^SuUpload$": "@/components/su/SuUpload/index.vue",
       "^SuInput$": "@/components/su/SuInput/index.vue",
       "^SuInputNumber$": "@/components/su/SuInputNumber/index.vue",
