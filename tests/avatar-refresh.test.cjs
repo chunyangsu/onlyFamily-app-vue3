@@ -8,7 +8,7 @@ const vue = require('vue')
 
 const read = (path) => readFileSync(resolve(__dirname, '..', path), 'utf8')
 
-function fixture({ id = 7, src = 'old-url', expiresAt = 360000, load } = {}) {
+function fixture({ id = 7, src = 'old-url', expiresTime = 360000, refreshExpiresTime = false, load } = {}) {
   let now = 0
   let nextId = 0
   let unmount
@@ -16,7 +16,7 @@ function fixture({ id = 7, src = 'old-url', expiresAt = 360000, load } = {}) {
   const calls = []
   const events = []
   const errors = []
-  const props = vue.reactive({ id, src, expiresAt })
+  const props = vue.reactive({ id, src, expiresTime, refreshExpiresTime })
   const source = read('src/components/su/SuAvatar/index.vue').match(/<script setup lang="ts">([\s\S]*?)<\/script>/)[1]
   const script = ts.transpileModule(source + '\nexports.localSrc = localSrc;', {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 }
@@ -39,7 +39,7 @@ function fixture({ id = 7, src = 'old-url', expiresAt = 360000, load } = {}) {
           return {
             async getAttachmentListApi(query) {
               calls.push(JSON.parse(JSON.stringify(query)))
-              return load ? load(query) : [{ id: props.id, url: 'new-url', expiresAt: now + 43200000 }]
+              return load ? load(query) : [{ id: props.id, url: 'new-url', expiresTime: now + 43200000 }]
             }
           }
         throw new Error('Unexpected import: ' + name)
@@ -48,7 +48,7 @@ function fixture({ id = 7, src = 'old-url', expiresAt = 360000, load } = {}) {
       withDefaults: (value) => value,
       defineEmits: () => (event, avatar) => {
         events.push({ event, avatar: JSON.parse(JSON.stringify(avatar)) })
-        Object.assign(props, { id: avatar.avatarId, src: avatar.avatarUrl, expiresAt: avatar.urlExpiresAt })
+        Object.assign(props, { id: avatar.avatarId, src: avatar.avatarUrl, expiresTime: avatar.expiresTime })
       },
       Date: { now: () => now },
       Number,
@@ -87,15 +87,15 @@ function fixture({ id = 7, src = 'old-url', expiresAt = 360000, load } = {}) {
   }
 }
 
-test('到期前 5 分钟调用附件接口，映射 expiresAt 并安排下一轮刷新', async () => {
-  const f = fixture()
+test('到期前 5 分钟调用附件接口，映射 expiresTime 并安排下一轮刷新', async () => {
+  const f = fixture({ refreshExpiresTime: true })
   await f.advance(59999)
   assert.equal(f.calls.length, 0)
   await f.advance(1)
-  assert.deepEqual(f.calls, [{ idArr: [7] }])
+  assert.deepEqual(f.calls, [{ ids: '7' }])
   assert.equal(f.localSrc.value, 'new-url')
-  assert.deepEqual(f.events, [{ event: 'refresh', avatar: { avatarId: 7, avatarUrl: 'new-url', urlExpiresAt: 43260000 } }])
-  assert.equal(f.props.expiresAt, 43260000)
+  assert.deepEqual(f.events, [{ event: 'refresh', avatar: { avatarId: 7, avatarUrl: 'new-url', expiresTime: 43260000 } }])
+  assert.equal(f.props.expiresTime, 43260000)
   assert.equal(f.timers.size, 1)
   assert.equal([...f.timers.values()][0].at, 42960000)
   await f.advance(42900000)
@@ -103,9 +103,9 @@ test('到期前 5 分钟调用附件接口，映射 expiresAt 并安排下一轮
   f.unmount()
 })
 
-test('临期、已过期或缺少有效期时立即刷新', async () => {
-  for (const expiresAt of [300000, 100000, -1, null, 0]) {
-    const f = fixture({ expiresAt })
+test('开启刷新且有效时间临期或已过期时立即刷新', async () => {
+  for (const expiresTime of [300000, 100000]) {
+    const f = fixture({ expiresTime, refreshExpiresTime: true })
     await f.advance(0)
     assert.equal(f.calls.length, 1)
     f.unmount()
@@ -113,13 +113,13 @@ test('临期、已过期或缺少有效期时立即刷新', async () => {
 })
 
 test('默认头像不请求；头像属性变化后替换旧定时器', async () => {
-  const f = fixture({ id: 0, src: '', expiresAt: null })
+  const f = fixture({ id: 0, src: '', expiresTime: null, refreshExpiresTime: true })
   assert.equal(f.timers.size, 0)
-  Object.assign(f.props, { id: 8, src: 'avatar-8', expiresAt: 900000 })
+  Object.assign(f.props, { id: 8, src: 'avatar-8', expiresTime: 900000 })
   await vue.nextTick()
   assert.equal(f.localSrc.value, 'avatar-8')
   assert.equal(f.timers.size, 1)
-  f.props.expiresAt = 1200000
+  f.props.expiresTime = 1200000
   await vue.nextTick()
   assert.equal(f.timers.size, 1)
   assert.equal([...f.timers.values()][0].at, 900000)
@@ -127,7 +127,7 @@ test('默认头像不请求；头像属性变化后替换旧定时器', async ()
 })
 
 test('组件卸载时清理刷新定时器', async () => {
-  const f = fixture()
+  const f = fixture({ refreshExpiresTime: true })
   f.unmount()
   assert.equal(f.timers.size, 0)
   await f.advance(360000)
@@ -137,14 +137,14 @@ test('组件卸载时清理刷新定时器', async () => {
 test('无效响应和请求失败不会自动循环请求', async () => {
   for (const load of [
     async () => [],
-    async () => [{ id: 7, url: '', expiresAt: 43200000 }],
-    async () => [{ id: 7, url: 'url', expiresAt: null }],
-    async () => [{ id: 7, url: 'url', expiresAt: 100000 }],
+    async () => [{ id: 7, url: '', expiresTime: 43200000 }],
+    async () => [{ id: 7, url: 'url', expiresTime: null }],
+    async () => [{ id: 7, url: 'url', expiresTime: 100000 }],
     async () => {
       throw new Error('request failed')
     }
   ]) {
-    const f = fixture({ expiresAt: null, load })
+    const f = fixture({ expiresTime: 300000, refreshExpiresTime: true, load })
     await f.advance(0)
     assert.equal(f.calls.length, 1)
     assert.equal(f.events.length, 0)
@@ -153,17 +153,68 @@ test('无效响应和请求失败不会自动循环请求', async () => {
   }
 })
 
-test('五处用户头像均接入数据回写，当前用户仍由 Store 保存缓存', () => {
+test('默认关闭刷新，只更新展示地址，不安排定时器或请求', async () => {
+  const f = fixture()
+  assert.equal(f.timers.size, 0)
+  Object.assign(f.props, { src: 'updated-url', expiresTime: 900000 })
+  await vue.nextTick()
+  assert.equal(f.localSrc.value, 'updated-url')
+  await f.advance(1000000)
+  assert.equal(f.calls.length, 0)
+  assert.equal(f.events.length, 0)
+  assert.equal(f.timers.size, 0)
+  f.unmount()
+})
+
+test('等待有效过期时间后才开始计时', async () => {
+  for (const expiresTime of [null, 0, -1, NaN, Infinity, '360000']) {
+    const f = fixture({ expiresTime, refreshExpiresTime: true })
+    assert.equal(f.timers.size, 0)
+    await f.advance(0)
+    assert.equal(f.calls.length, 0)
+    f.props.expiresTime = 900000
+    await vue.nextTick()
+    assert.equal(f.timers.size, 1)
+    assert.equal([...f.timers.values()][0].at, 600000)
+    f.unmount()
+  }
+})
+
+test('动态开启时安排计时，关闭时清除计时且不再请求', async () => {
+  const f = fixture()
+  f.props.refreshExpiresTime = true
+  await vue.nextTick()
+  assert.equal(f.timers.size, 1)
+  f.props.refreshExpiresTime = false
+  await vue.nextTick()
+  assert.equal(f.timers.size, 0)
+  await f.advance(60000)
+  assert.equal(f.calls.length, 0)
+  f.unmount()
+})
+
+test('同一头像多个实例中只有开启的实例请求刷新', async () => {
+  const active = fixture({ refreshExpiresTime: true })
+  const displayOnly = fixture()
+  await Promise.all([active.advance(60000), displayOnly.advance(60000)])
+  assert.equal(active.calls.length, 1)
+  assert.equal(displayOnly.calls.length, 0)
+  assert.equal(displayOnly.timers.size, 0)
+  active.unmount()
+  displayOnly.unmount()
+})
+
+test('仅我的页开启刷新，个人资料使用共享 Store，其他页面仅展示', () => {
+  for (const path of ['src/pages/my/index.vue', 'src/views/my/personalProfile/index.vue', 'src/pages/home/index.vue', 'src/views/food/foodOrder/index.vue', 'src/views/food/orderDetail/index.vue']) {
+    assert.match(read(path), /:expires-time="[^"]+\.expiresTime"/)
+  }
   for (const path of ['src/pages/my/index.vue', 'src/views/my/personalProfile/index.vue']) {
     assert.match(read(path), /@refresh="userStore\.updateUserAvatar"/)
   }
-  for (const [path, target] of [
-    ['src/pages/home/index.vue', 'item'],
-    ['src/views/food/foodOrder/index.vue', 'item.createUser'],
-    ['src/views/food/orderDetail/index.vue', 'formData.createUser']
-  ]) {
-    assert.ok(read(path).includes('@refresh="Object.assign(' + target + ', $event)"'))
+  assert.match(read('src/pages/my/index.vue'), /<SuAvatar[^>]*\srefresh-expires-time(?:\s|\/?>)/)
+  for (const path of ['src/views/my/personalProfile/index.vue', 'src/pages/home/index.vue', 'src/views/food/foodOrder/index.vue', 'src/views/food/orderDetail/index.vue']) {
+    assert.doesNotMatch(read(path), /<SuAvatar[^>]*\srefresh-expires-time(?:\s|\/?>)/)
   }
-  assert.match(read('src/stores/useUserStore.ts'), /urlExpiresAt: data\.urlExpiresAt/)
+  assert.match(read('src/stores/useUserStore.ts'), /expiresTime: data\.expiresTime/)
   assert.match(read('src/stores/useUserStore.ts'), /setUserInfo\(tempUserInfo\)/)
 })

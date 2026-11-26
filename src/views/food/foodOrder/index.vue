@@ -9,7 +9,7 @@
         <view class="order-header">
           <view class="user-info">
             <view class="user-avatar">
-              <SuAvatar :id="item.createUser.avatarId" :src="item.createUser.avatarUrl" :expires-at="item.createUser.urlExpiresAt" @refresh="Object.assign(item.createUser, $event)" />
+              <SuAvatar :id="item.createUser.avatarId" :src="item.createUser.avatarUrl" :expires-time="item.createUser.expiresTime" />
             </view>
             <view class="user-name">{{ item.createUser.nickname }}</view>
           </view>
@@ -76,7 +76,7 @@ const getFoodOrderList = async () => {
           nickname: item.createUser.nickname,
           avatarId: item.createUser.avatarId,
           avatarUrl: item.createUser.avatarUrl,
-          urlExpiresAt: item.createUser.urlExpiresAt
+          expiresTime: item.createUser.expiresTime
         },
         createTime: parseTime(item.createTime, '{y}-{m}-{d} {h}:{i}:{s}')
       })

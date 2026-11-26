@@ -26,7 +26,7 @@ export interface CreateUser {
   nickname: string
   avatarId: number
   avatarUrl: string
-  urlExpiresAt: number | null
+  expiresTime: number | null // url地址过期时间
 }
 
 export interface DishItem {

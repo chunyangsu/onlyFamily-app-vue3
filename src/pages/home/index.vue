@@ -12,7 +12,7 @@
         <!-- 家庭成员 -->
         <view class="family-member">
           <view v-for="(item, index) in familyMemberList" :key="item.id" class="member-item">
-            <SuAvatar v-if="index < 3" :id="item.avatarId" :src="item.avatarUrl" :expires-at="item.urlExpiresAt" @refresh="Object.assign(item, $event)" />
+            <SuAvatar v-if="index < 3" :id="item.avatarId" :src="item.avatarUrl" :expires-time="item.expiresTime" />
           </view>
           <view class="member-item">
             <SuAvatar :id="0" />
@@ -128,7 +128,7 @@ const getFamilyMemberList = async () => {
       nickname: item.nickname,
       avatarId: item.avatarId,
       avatarUrl: item.avatarUrl,
-      urlExpiresAt: item.urlExpiresAt
+      expiresTime: item.expiresTime
     })
   })
 }

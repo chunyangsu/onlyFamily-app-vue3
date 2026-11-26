@@ -1,5 +1,5 @@
 import request from '@/api/service'
-import type { FamilyForm, FamilyDetailResponse, FamilyMemberItem, FamilyAvatarRequest, FamilyAvatarResponse } from '@/api/modules/family/types'
+import type { FamilyForm, JoinFamilyRequest, JoinFamilyResponse, FamilyDetailResponse, FamilyMemberItem, FamilyAvatarRequest, FamilyAvatarResponse } from '@/api/modules/family/types'
 
 /**
  * 获取菜品列表
@@ -20,6 +20,19 @@ import type { FamilyForm, FamilyDetailResponse, FamilyMemberItem, FamilyAvatarRe
 export function createFamilyApi(data: FamilyForm) {
   return request({
     url: '/api/family/create',
+    method: 'POST',
+    data: data
+  })
+}
+
+/**
+ * 加入家庭
+ *
+ * @param data
+ */
+export function joinFamilyApi(data: JoinFamilyRequest): Promise<JoinFamilyResponse> {
+  return request<JoinFamilyResponse>({
+    url: '/api/family/join',
     method: 'POST',
     data: data
   })

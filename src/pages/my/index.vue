@@ -8,7 +8,7 @@
         <!-- <SuCard hide-header> -->
         <view class="user-profile">
           <view class="avatar-area">
-            <SuAvatar :id="userStore.userInfo.avatarId" :src="userStore.userInfo.avatarUrl" :expires-at="userStore.userInfo.urlExpiresAt" @refresh="userStore.updateUserAvatar" />
+            <SuAvatar :id="userStore.userInfo.avatarId" :src="userStore.userInfo.avatarUrl" :expires-time="userStore.userInfo.expiresTime" refresh-expires-time @refresh="userStore.updateUserAvatar" />
           </view>
           <view class="user-info">
             <view class="nickname">{{ userStore.userInfo.nickname }}</view>
@@ -49,7 +49,7 @@
                 </view>
                 <view class="nav-name">成员管理</view>
               </view>
-              <view class="nav-item">
+              <view class="nav-item" @click="joinFamily">
                 <view class="nav-icon">
                   <SuImage name="family-invite.webp" />
                 </view>
@@ -181,7 +181,7 @@
 // 全局属性
 import { useUserStore } from '@/stores/useUserStore'
 // api
-// import { createFamilyApi } from '@/api/modules/family'
+import { joinFamilyApi } from '@/api/modules/family'
 // ts
 // import type { FamilyForm } from '@/api/modules/family/types'
 // utils
@@ -199,6 +199,22 @@ const goToPersonalProfile = () => {
 const goToFamilyManage = () => {
   uni.navigateTo({
     url: '/views/my/familyManage/index'
+  })
+}
+
+// 加入家庭
+const joinFamily = () => {
+  const params = {
+    familyId: 1
+  }
+  joinFamilyApi(params).then((response) => {
+    if (response.memberId > 0) {
+      userStore.familyInfo.id = response.familyId
+      uni.showToast({
+        title: '加入成功',
+        icon: 'success'
+      })
+    }
   })
 }
 

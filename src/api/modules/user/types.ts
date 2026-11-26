@@ -18,7 +18,7 @@ export interface UserInfo {
   familyId: number // 所属家庭
   avatarId: number
   avatarUrl: string
-  urlExpiresAt: number | null // url地址有效期时间
+  expiresTime: number | null // url地址过期时间
 }
 
 /**
@@ -33,7 +33,7 @@ export interface UserAvatarRequest {
 export interface UserAvatarResponse {
   avatarId: number
   avatarUrl: string
-  urlExpiresAt: number | null // url地址有效期时间
+  expiresTime: number | null // url地址过期时间
 }
 
 /**

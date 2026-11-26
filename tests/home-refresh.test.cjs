@@ -83,7 +83,7 @@ test('下拉刷新并行重新加载成员和菜品，等待两项完成后停�
   assert.deepEqual(f.calls.members, [2])
   assert.deepEqual(f.calls.dishes, [{ name: '' }])
   assert.equal(f.calls.stop, 0)
-  const member = { id: 1, nickname: '新成员', avatarId: 7, avatarUrl: 'new-avatar', urlExpiresAt: 43200000 }
+  const member = { id: 1, nickname: '新成员', avatarId: 7, avatarUrl: 'new-avatar', expiresTime: 43200000 }
   members.resolve([member])
   await new Promise(setImmediate)
   assert.deepEqual(plain(f.familyMemberList.value), [member])

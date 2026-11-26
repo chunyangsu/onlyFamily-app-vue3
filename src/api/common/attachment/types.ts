@@ -3,7 +3,7 @@
  */
 
 export interface AttachmentQuery {
-  idArr: number[] // 附件id数组
+  ids: string // 附件ids
 }
 
 export interface AttachmentItemResponse {
@@ -12,7 +12,7 @@ export interface AttachmentItemResponse {
   module: string
   moduleType: string
   url: string
-  expiresAt: number | null
+  expiresTime: number | null // url地址过期时间
 }
 
 /**

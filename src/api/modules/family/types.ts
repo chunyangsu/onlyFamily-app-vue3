@@ -4,6 +4,17 @@ export interface FamilyForm {
   introduction: string // 介绍
 }
 
+/**
+ * 加入家庭
+ */
+export interface JoinFamilyRequest {
+  familyId: number
+}
+export interface JoinFamilyResponse {
+  familyId: number
+  memberId: number
+}
+
 // 家庭详情
 export interface FamilyDetailResponse {
   id: number
@@ -18,7 +29,7 @@ export interface FamilyMemberItem {
   nickname: string
   avatarId: number
   avatarUrl: string
-  urlExpiresAt: number | null
+  expiresTime: number | null
 }
 
 /**

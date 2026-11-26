@@ -11,9 +11,9 @@
       </view>
       <view class="title">家在一起，生活更美好</view>
       <view class="btn-area" @click="handleLogin">
-        <view class="btn-icon">
-          <!-- <SuImage name="login-phone.png"></SuImage> -->
-        </view>
+        <!-- <view class="btn-icon">
+          <SuImage name="login-phone.png"></SuImage>
+        </view> -->
         <!-- <view class="btn-text">手机号一键登录</view> -->
         <view class="btn-text">微信一键登录</view>
       </view>

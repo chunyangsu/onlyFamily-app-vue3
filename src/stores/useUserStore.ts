@@ -25,7 +25,7 @@ export const useUserStore = defineStore('user', () => {
     familyId: 0,
     avatarId: 0,
     avatarUrl: '',
-    urlExpiresAt: 0
+    expiresTime: null
   })
   // 当前家庭信息
   const familyInfo = ref<FamilyInfo>({
@@ -63,7 +63,7 @@ export const useUserStore = defineStore('user', () => {
       familyId: response.userInfo.familyId,
       avatarId: response.userInfo.avatarId,
       avatarUrl: response.userInfo.avatarUrl,
-      urlExpiresAt: response.userInfo.urlExpiresAt || 0
+      expiresTime: response.userInfo.expiresTime
     }
     setToken(token.value)
     setUserInfo(userInfo.value)
@@ -89,7 +89,7 @@ export const useUserStore = defineStore('user', () => {
     if (!Number.isInteger(data.avatarId) || data.avatarId <= 0 || !data.avatarUrl?.trim()) {
       throw new Error('头像更新响应数据异常')
     }
-    const tempUserInfo = { ...userInfo.value, avatarId: data.avatarId, avatarUrl: data.avatarUrl, urlExpiresAt: data.urlExpiresAt }
+    const tempUserInfo = { ...userInfo.value, avatarId: data.avatarId, avatarUrl: data.avatarUrl, expiresTime: data.expiresTime }
     setUserInfo(tempUserInfo)
     userInfo.value = tempUserInfo
   }
@@ -133,7 +133,7 @@ export const useUserStore = defineStore('user', () => {
       familyId: 0,
       avatarId: 0,
       avatarUrl: '',
-      urlExpiresAt: 0
+      expiresTime: null
     }
     familyInfo.value = {
       id: 0,

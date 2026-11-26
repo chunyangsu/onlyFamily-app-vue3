@@ -9,7 +9,7 @@
             <view class="item-right">
               <view class="right-value">
                 <view class="avatar-area">
-                  <SuAvatar :id="userStore.userInfo.avatarId" :src="userStore.userInfo.avatarUrl" :expires-at="userStore.userInfo.urlExpiresAt" @refresh="userStore.updateUserAvatar" />
+                  <SuAvatar :id="userStore.userInfo.avatarId" :src="userStore.userInfo.avatarUrl" :expires-time="userStore.userInfo.expiresTime" @refresh="userStore.updateUserAvatar" />
                 </view>
               </view>
               <view class="right-arrow">

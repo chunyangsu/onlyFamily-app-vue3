@@ -27,7 +27,8 @@ import type { UserAvatarResponse } from '@/api/modules/user/types'
 interface Props {
   id?: number // 头像id
   src?: string // 头像url地址
-  expiresAt?: number | null // url地址有效期时间
+  expiresTime?: number | null // url地址过期时间
+  refreshExpiresTime?: boolean // 是否需要刷新url地址过期时间
   width?: string // 宽度
   height?: string // 高度
   // module?: string // 所属业务模块
@@ -36,7 +37,8 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   id: 0,
   src: '',
-  expiresAt: null,
+  expiresTime: null,
+  refreshExpiresTime: false,
   width: '100%',
   height: '100%'
   // module: ''
@@ -58,11 +60,11 @@ const clearRefreshTimer = () => {
   }
 }
 
-// 按接口返回的真实有效期，在到期前 5 分钟刷新，不按固定 12 小时推算。
-const scheduleRefresh = (expiresAt: number | null) => {
+// 按接口返回的真实有效期，在到期前 5 分钟刷新，不按固定 12 小时推算
+const scheduleRefresh = (expiresTime: number | null) => {
   clearRefreshTimer()
-  if (props.id <= 0) return
-  const delay = typeof expiresAt === 'number' && Number.isFinite(expiresAt) ? Math.max(0, expiresAt - Date.now() - refreshBefore) : 0
+  if (!props.refreshExpiresTime || props.id <= 0 || typeof expiresTime !== 'number' || !Number.isFinite(expiresTime) || expiresTime <= 0) return
+  const delay = Math.max(0, expiresTime - Date.now() - refreshBefore)
   timer = setTimeout(() => {
     timer = undefined
     void refreshAvatar()
@@ -71,14 +73,15 @@ const scheduleRefresh = (expiresAt: number | null) => {
 
 // 刷新头像
 const refreshAvatar = async () => {
+  if (!props.refreshExpiresTime || props.id <= 0) return
   try {
-    const list = await getAttachmentListApi({ idArr: [props.id] })
+    const list = await getAttachmentListApi({ ids: props.id.toString() })
     const attachment = list.find((item) => item.id === props.id)
-    if (!attachment?.url || typeof attachment.expiresAt !== 'number' || !Number.isFinite(attachment.expiresAt) || attachment.expiresAt <= Date.now() + refreshBefore) return
+    if (!attachment?.url || typeof attachment.expiresTime !== 'number' || !Number.isFinite(attachment.expiresTime) || attachment.expiresTime <= Date.now() + refreshBefore) return
 
     localSrc.value = attachment.url
-    emit('refresh', { avatarId: props.id, avatarUrl: attachment.url, urlExpiresAt: attachment.expiresAt })
-    scheduleRefresh(attachment.expiresAt)
+    emit('refresh', { avatarId: props.id, avatarUrl: attachment.url, expiresTime: attachment.expiresTime })
+    scheduleRefresh(attachment.expiresTime)
   } catch (error) {
     // 本阶段只实现正常续签，接口失败不自动重试。
     console.error('[SuAvatar] 刷新头像地址失败:', error)
@@ -86,10 +89,10 @@ const refreshAvatar = async () => {
 }
 
 watch(
-  () => [props.id, props.src, props.expiresAt] as const,
+  () => [props.id, props.src, props.expiresTime, props.refreshExpiresTime] as const,
   () => {
     localSrc.value = props.src
-    scheduleRefresh(props.expiresAt)
+    scheduleRefresh(props.expiresTime)
   },
   { immediate: true }
 )

@@ -21,12 +21,7 @@
             <view class="order-info-label">下单用户：</view>
             <view class="order-info-value user-info">
               <view class="user-avatar">
-                <SuAvatar
-                  :id="formData.createUser.avatarId"
-                  :src="formData.createUser.avatarUrl"
-                  :expires-at="formData.createUser.urlExpiresAt"
-                  @refresh="Object.assign(formData.createUser, $event)"
-                />
+                <SuAvatar :id="formData.createUser.avatarId" :src="formData.createUser.avatarUrl" :expires-time="formData.createUser.expiresTime" />
               </view>
               <view class="user-name">{{ formData.createUser.nickname }}</view>
             </view>
@@ -97,7 +92,7 @@ const formData = ref<FoodOrderItem>({
     nickname: '',
     avatarId: 0,
     avatarUrl: '',
-    urlExpiresAt: null
+    expiresTime: null
   },
   createTime: ''
 })
@@ -116,7 +111,7 @@ const getDetail = async (id: number) => {
         nickname: response.createUser.nickname,
         avatarId: response.createUser.avatarId,
         avatarUrl: response.createUser.avatarUrl,
-        urlExpiresAt: response.createUser.urlExpiresAt
+        expiresTime: response.createUser.expiresTime
       },
       createTime: parseTime(response.createTime, '{y}-{m}-{d} {h}:{i}:{s}')
     }
