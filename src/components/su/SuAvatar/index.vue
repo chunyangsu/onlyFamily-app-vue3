@@ -52,6 +52,8 @@ const emit = defineEmits<{
 
 const refreshBefore = 5 * 60 * 1000
 let timer: ReturnType<typeof setTimeout> | undefined
+let refreshing = false
+let unmounted = false
 // 清空刷新时间
 const clearRefreshTimer = () => {
   if (timer !== undefined) {
@@ -63,7 +65,7 @@ const clearRefreshTimer = () => {
 // 按接口返回的真实有效期，在到期前 5 分钟刷新，不按固定 12 小时推算
 const scheduleRefresh = (expiresTime: number | null) => {
   clearRefreshTimer()
-  if (!props.refreshExpiresTime || props.id <= 0 || typeof expiresTime !== 'number' || !Number.isFinite(expiresTime) || expiresTime <= 0) return
+  if (unmounted || !props.refreshExpiresTime || props.id <= 0 || typeof expiresTime !== 'number' || !Number.isFinite(expiresTime) || expiresTime <= 0) return
   const delay = Math.max(0, expiresTime - Date.now() - refreshBefore)
   timer = setTimeout(() => {
     timer = undefined
@@ -73,9 +75,11 @@ const scheduleRefresh = (expiresTime: number | null) => {
 
 // 刷新头像
 const refreshAvatar = async () => {
-  if (!props.refreshExpiresTime || props.id <= 0) return
+  if (unmounted || refreshing || !props.refreshExpiresTime || props.id <= 0) return
+  refreshing = true
   try {
     const list = await getAttachmentListApi({ ids: props.id.toString() })
+    if (unmounted || !props.refreshExpiresTime) return
     const attachment = list.find((item) => item.id === props.id)
     if (!attachment?.url || typeof attachment.expiresTime !== 'number' || !Number.isFinite(attachment.expiresTime) || attachment.expiresTime <= Date.now() + refreshBefore) return
 
@@ -85,6 +89,8 @@ const refreshAvatar = async () => {
   } catch (error) {
     // 本阶段只实现正常续签，接口失败不自动重试。
     console.error('[SuAvatar] 刷新头像地址失败:', error)
+  } finally {
+    refreshing = false
   }
 }
 
@@ -97,7 +103,18 @@ watch(
   { immediate: true }
 )
 
-onBeforeUnmount(clearRefreshTimer)
+// 从后台回到前台时按当前时间重新安排计时，临期或已过期则立即刷新。
+const handleAppShow = () => {
+  scheduleRefresh(props.expiresTime)
+}
+
+uni.onAppShow(handleAppShow)
+
+onBeforeUnmount(() => {
+  unmounted = true
+  clearRefreshTimer()
+  uni.offAppShow(handleAppShow)
+})
 </script>
 
 <style lang="scss" scoped>

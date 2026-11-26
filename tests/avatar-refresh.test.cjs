@@ -16,6 +16,7 @@ function fixture({ id = 7, src = 'old-url', expiresTime = 360000, refreshExpires
   const calls = []
   const events = []
   const errors = []
+  const appShowListeners = new Set()
   const props = vue.reactive({ id, src, expiresTime, refreshExpiresTime })
   const source = read('src/components/su/SuAvatar/index.vue').match(/<script setup lang="ts">([\s\S]*?)<\/script>/)[1]
   const script = ts.transpileModule(source + '\nexports.localSrc = localSrc;', {
@@ -52,6 +53,10 @@ function fixture({ id = 7, src = 'old-url', expiresTime = 360000, refreshExpires
       },
       Date: { now: () => now },
       Number,
+      uni: {
+        onAppShow: (callback) => appShowListeners.add(callback),
+        offAppShow: (callback) => appShowListeners.delete(callback)
+      },
       console: { error: (...args) => errors.push(args) },
       setTimeout(callback, delay) {
         const timerId = ++nextId
@@ -67,6 +72,13 @@ function fixture({ id = 7, src = 'old-url', expiresTime = 360000, refreshExpires
     calls,
     events,
     errors,
+    appShowListeners,
+    elapseInBackground(ms) {
+      now += ms
+    },
+    appShow() {
+      for (const callback of appShowListeners) callback()
+    },
     localSrc: module.exports.localSrc,
     async advance(ms) {
       now += ms
@@ -202,6 +214,80 @@ test('同一头像多个实例中只有开启的实例请求刷新', async () =>
   assert.equal(displayOnly.timers.size, 0)
   active.unmount()
   displayOnly.unmount()
+})
+
+test('回到前台时已过期或临期的头像立即刷新并更新视图', async () => {
+  for (const elapsed of [60000, 400000]) {
+    const f = fixture({ refreshExpiresTime: true })
+    f.elapseInBackground(elapsed)
+    assert.equal(f.calls.length, 0)
+    f.appShow()
+    assert.equal(f.timers.size, 1)
+    await f.advance(0)
+    assert.equal(f.calls.length, 1)
+    assert.equal(f.localSrc.value, 'new-url')
+    assert.equal(f.events.length, 1)
+    assert.equal(f.timers.size, 1)
+    f.unmount()
+  }
+})
+
+test('回到前台尚未临期时重新计时，不提前请求', async () => {
+  const f = fixture({ refreshExpiresTime: true, expiresTime: 900000 })
+  f.elapseInBackground(100000)
+  f.appShow()
+  assert.equal(f.timers.size, 1)
+  assert.equal([...f.timers.values()][0].at, 600000)
+  await f.advance(499999)
+  assert.equal(f.calls.length, 0)
+  await f.advance(1)
+  assert.equal(f.calls.length, 1)
+  f.unmount()
+})
+
+test('未开启、默认头像或缺少有效期时前台事件不触发刷新', async () => {
+  for (const options of [{}, { refreshExpiresTime: true, id: 0 }, { refreshExpiresTime: true, expiresTime: null }]) {
+    const f = fixture(options)
+    f.elapseInBackground(1000000)
+    f.appShow()
+    await f.advance(0)
+    assert.equal(f.calls.length, 0)
+    assert.equal(f.timers.size, 0)
+    f.unmount()
+  }
+})
+
+test('定时刷新尚未完成时多次回到前台不重复请求', async () => {
+  let resolveRequest
+  const pending = new Promise((resolve) => { resolveRequest = resolve })
+  const f = fixture({ refreshExpiresTime: true, load: () => pending })
+  await f.advance(60000)
+  assert.equal(f.calls.length, 1)
+  for (let i = 0; i < 2; i++) {
+    f.appShow()
+    await f.advance(0)
+  }
+  assert.equal(f.calls.length, 1)
+  resolveRequest([{ id: 7, url: 'foreground-url', expiresTime: 43260000 }])
+  await f.advance(0)
+  assert.equal(f.localSrc.value, 'foreground-url')
+  assert.equal(f.timers.size, 1)
+  f.unmount()
+})
+
+test('卸载时移除前台监听，未完成的请求不再回写或重建定时器', async () => {
+  let resolveRequest
+  const pending = new Promise((resolve) => { resolveRequest = resolve })
+  const f = fixture({ refreshExpiresTime: true, load: () => pending })
+  await f.advance(60000)
+  assert.equal(f.appShowListeners.size, 1)
+  f.unmount()
+  assert.equal(f.appShowListeners.size, 0)
+  resolveRequest([{ id: 7, url: 'late-url', expiresTime: 43260000 }])
+  await f.advance(0)
+  f.appShow()
+  assert.equal(f.events.length, 0)
+  assert.equal(f.timers.size, 0)
 })
 
 test('仅我的页开启刷新，个人资料使用共享 Store，其他页面仅展示', () => {
