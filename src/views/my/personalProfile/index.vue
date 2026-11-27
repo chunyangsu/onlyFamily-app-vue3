@@ -76,8 +76,12 @@
       </view>
       <template #actions="{ confirm, cancel }">
         <view class="nickname-actions">
-          <wd-button plain :disabled="nicknameBusy" @click="cancel">取消</wd-button>
-          <wd-button :loading="nicknameBusy" :disabled="nicknameBusy" @click="confirm">确定</wd-button>
+          <view class="nickname-action">
+            <wd-button type="info" plain block :disabled="nicknameBusy" @click="cancel">取消</wd-button>
+          </view>
+          <view class="nickname-action">
+            <wd-button block :loading="nicknameBusy" :disabled="nicknameBusy" @click="confirm">确定</wd-button>
+          </view>
         </view>
       </template>
     </wd-dialog>
@@ -178,6 +182,9 @@ const handleLogout = () => {
 
 <style lang="scss" scoped>
 .personal-profile {
+  --wot-dialog-width: calc(100vw - 48rpx);
+  --wot-dialog-radius: 24rpx;
+  --wot-dialog-body-padding: 48rpx 32rpx 0;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -269,14 +276,25 @@ const handleLogout = () => {
   }
 
   .nickname-content {
-    padding: 8rpx 40rpx 24rpx;
+    padding: 24rpx 0 40rpx;
     text-align: left;
   }
 
   .nickname-actions {
+    --wot-button-primary-bg: #{$theme};
+    --wot-button-primary-bg-active: #{$theme};
+    --wot-button-info-plain-bg: #fff;
+    --wot-button-info-plain-bg-active: #fff;
+    --wot-button-info-plain-border: #{$line};
+    --wot-button-info-color: #{$textDefault};
     display: flex;
-    justify-content: space-evenly;
-    padding: 0 24rpx 32rpx;
+    gap: 24rpx;
+    padding: 0 32rpx 40rpx;
+
+    .nickname-action {
+      flex: 1;
+      min-width: 0;
+    }
   }
 }
 </style>

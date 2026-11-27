@@ -15,7 +15,7 @@
           <SuImage name="login-phone.png"></SuImage>
         </view> -->
         <!-- <view class="btn-text">手机号一键登录</view> -->
-        <view class="btn-text">微信一键登录</view>
+        <view class="btn-text">{{ loggingIn ? '登录中...' : '微信一键登录' }}</view>
       </view>
       <view class="agree">
         <view class="check-box">
@@ -32,15 +32,19 @@
 <script setup lang="ts">
 // 全局属性
 import { useUserStore } from '@/stores/useUserStore'
+import { redirectAfterLogin } from '@/utils/loginRedirect'
 // api
 // ts
 
 const userStore = useUserStore()
 
 const checked = ref(false)
+const loggingIn = ref(false)
+let pageVisible = false
 
 // 登录
 const handleLogin = async () => {
+  if (loggingIn.value) return
   try {
     if (!checked.value) {
       uni.showToast({
@@ -49,30 +53,37 @@ const handleLogin = async () => {
       })
       return
     }
+    loggingIn.value = true
     await userStore.login()
-
-    uni.showToast({ title: '登录成功', icon: 'success' })
-    setTimeout(() => {
-      // 跳转首页
-      uni.switchTab({ url: '/pages/home/index' })
-    }, 1000)
+    // 不延时跳首页；用户已打开其他分享页时，不覆盖当前入口
+    if (pageVisible && (await redirectAfterLogin())) {
+      uni.showToast({ title: '登录成功', icon: 'success' })
+    }
   } catch (err) {
-    // 接口请求失败
-    console.error(err)
+    // 请求层已提示业务和网络错误；补齐微信登录异常及其他 HTTP 错误
+    const detail = err as { statusCode?: number; msg?: string }
+    if ((detail?.statusCode && detail.statusCode !== 401) || err instanceof Error) {
+      uni.showToast({ title: detail?.msg || (err instanceof Error ? err.message : '登录失败，请重试'), icon: 'none' })
+    }
+  } finally {
+    loggingIn.value = false
   }
 }
 
 // 登录页是启动时的默认页面。页面真正显示后再检查一次登录态
 onShow(async () => {
+  pageVisible = true
+  // 微信登录可能触发前后台切换，登录进行中不重复初始化或跳转。
+  if (loggingIn.value) return
   await userStore.initUserStore()
-  if (userStore.token) {
-    uni.reLaunch({
-      url: '/pages/home/index',
-      fail: (error) => {
-        console.error('[Login] 跳转首页失败:', error)
-      }
-    })
-  }
+  if (pageVisible && !loggingIn.value) await redirectAfterLogin()
+})
+
+onHide(() => {
+  pageVisible = false
+})
+onUnload(() => {
+  pageVisible = false
 })
 </script>
 

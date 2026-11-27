@@ -1,5 +1,16 @@
 import request from '@/api/service'
-import type { FamilyForm, JoinFamilyRequest, JoinFamilyResponse, FamilyDetailResponse, FamilyMemberItem, FamilyAvatarRequest, FamilyAvatarResponse } from '@/api/modules/family/types'
+import type {
+  FamilyForm,
+  FamilyDetailResponse,
+  FamilyMemberItem,
+  FamilyAvatarRequest,
+  FamilyAvatarResponse,
+  InvitationCodeResponse,
+  InvitationDetailRequest,
+  InvitationDetailResponse,
+  JoinFamilyRequest,
+  JoinFamilyResponse
+} from '@/api/modules/family/types'
 
 /**
  * 获取菜品列表
@@ -20,19 +31,6 @@ import type { FamilyForm, JoinFamilyRequest, JoinFamilyResponse, FamilyDetailRes
 export function createFamilyApi(data: FamilyForm) {
   return request({
     url: '/api/family/create',
-    method: 'POST',
-    data: data
-  })
-}
-
-/**
- * 加入家庭
- *
- * @param data
- */
-export function joinFamilyApi(data: JoinFamilyRequest): Promise<JoinFamilyResponse> {
-  return request<JoinFamilyResponse>({
-    url: '/api/family/join',
     method: 'POST',
     data: data
   })
@@ -68,6 +66,44 @@ export const updateFamilyAvatarApi = (data: FamilyAvatarRequest): Promise<Family
   return request<FamilyAvatarResponse>({
     url: '/api/family/updateAvatar',
     method: 'PUT',
+    data: data
+  })
+}
+
+/**
+ * 创建邀请码
+ *
+ * @param data
+ */
+export function createInvitationCodeApi() {
+  return request<InvitationCodeResponse>({
+    url: '/api/family/invitation/create',
+    method: 'POST'
+  })
+}
+
+/**
+ * 获取邀请信息
+ *
+ * @param data
+ */
+export function getInvitationDetailApi(data: InvitationDetailRequest) {
+  return request<InvitationDetailResponse>({
+    url: '/api/family/invitation/getDetail',
+    method: 'POST',
+    data: data
+  })
+}
+
+/**
+ * 加入家庭
+ *
+ * @param data
+ */
+export function joinFamilyApi(data: JoinFamilyRequest): Promise<JoinFamilyResponse> {
+  return request<JoinFamilyResponse>({
+    url: '/api/family/invitation/join',
+    method: 'POST',
     data: data
   })
 }

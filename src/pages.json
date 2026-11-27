@@ -74,6 +74,12 @@
       "style": {
         "navigationBarTitleText": "家庭管理"
       }
+    },
+    {
+      "path": "views/my/joinFamily/index",
+      "style": {
+        "navigationBarTitleText": "加入我们"
+      }
     }
   ],
   "globalStyle": {

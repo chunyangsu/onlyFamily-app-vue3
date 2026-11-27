@@ -57,9 +57,6 @@ const request = <T>(options: UniApp.RequestOptions): Promise<T> => {
             // 身份凭证无效或过期
             handleUnauthorized()
           }
-          if (statusCode === 409) {
-            uni.showToast({ title: '已加入该家庭，请勿重复加入', icon: 'none' })
-          }
           const error = typeof data === 'object' && data ? data : { msg: `请求失败，HTTP ${statusCode}` }
           reject({ ...error, statusCode })
         }

@@ -26,7 +26,7 @@
     </view>
     <!-- 今日菜单-模块 -->
     <view class="card-item">
-      <SuCard title="今日菜单推荐" icon="cutlery">
+      <SuCard title="菜单推荐" icon="cutlery">
         <view class="food-menu">
           <view class="food-menu-main">
             <view class="left-img">
@@ -45,7 +45,7 @@
       </SuCard>
     </view>
     <!-- 本月账单-模块 -->
-    <!-- <view class="card-item">
+    <view class="card-item">
       <SuCard title="本月账单" icon="wallet" show-more>
         <view class="transaction">
           <view class="transaction-main">
@@ -67,14 +67,14 @@
           <view class="add-btn" @click="goToTransaction">+记一笔</view>
         </view>
       </SuCard>
-    </view> -->
+    </view>
     <!-- 生活动态-模块 -->
-    <!-- <view class="card-item">
+    <view class="card-item">
       <SuCard title="生活动态" icon="image" show-more>
         <view class="life">
           <view class="header">
             <view class="user-avatar">
-              <SuImage name="xfcf.jpg"></SuImage>
+              <SuAvatar :id="userStore.userInfo.avatarId" :src="userStore.userInfo.avatarUrl" :expires-time="userStore.userInfo.expiresTime" @refresh="userStore.updateUserAvatar" />
             </view>
             <view class="header-info">
               <view class="user-name">妈妈</view>
@@ -84,7 +84,7 @@
           <view class="content"> 周末做了丰富的早餐，开启元气满满的一天！ </view>
         </view>
       </SuCard>
-    </view> -->
+    </view>
   </view>
 </template>
 
@@ -260,7 +260,8 @@ onPullDownRefresh(async () => {
 
         .dish-item {
           color: $textLight;
-          line-height: 52rpx;
+          line-height: 54rpx;
+          font-size: 32rpx;
         }
       }
     }
@@ -341,11 +342,6 @@ onPullDownRefresh(async () => {
       .user-avatar {
         width: 80rpx;
         height: 80rpx;
-        line-height: 76rpx;
-        text-align: center;
-        border-radius: 50%;
-        background-color: #fff;
-        overflow: hidden;
       }
 
       .header-info {

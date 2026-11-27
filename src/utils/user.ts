@@ -1,6 +1,7 @@
 const tokenKey = 'token'
 const userInfoKey = 'userInfo'
 const familyInfoKey = 'familyInfo'
+const familyInvitationKey = 'familyInvitation'
 
 /**
  * token
@@ -54,4 +55,22 @@ export const setFamilyInfo = <T>(familyInfo: T): void => {
 // 清除
 export const removeFamilyInfo = (): void => {
   uni.removeStorageSync(familyInfoKey)
+}
+
+/**
+ * 家庭邀请
+ */
+// 获取
+export const getFamilyInvitation = () => {
+  return uni.getStorageSync(familyInvitationKey) || null
+}
+
+// 保存
+export const setFamilyInvitation = <T>(familyInfo: T): void => {
+  uni.setStorageSync(familyInvitationKey, familyInfo)
+}
+
+// 清除
+export const removeFamilyInvitation = (): void => {
+  uni.removeStorageSync(familyInvitationKey)
 }
