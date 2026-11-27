@@ -14,9 +14,6 @@
           <view v-for="(item, index) in familyMemberList" :key="item.id" class="member-item">
             <SuAvatar v-if="index < 3" :id="item.avatarId" :src="item.avatarUrl" :expires-time="item.expiresTime" />
           </view>
-          <view class="member-item">
-            <SuAvatar :id="0" />
-          </view>
         </view>
       </view>
       <view class="family-logo">
